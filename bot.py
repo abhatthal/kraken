@@ -10,10 +10,10 @@ bot = commands.Bot(command_prefix = '.', description = "A very honest discord bo
 
 @bot.event
 async def on_ready():
-    log.write('Logged in as')
-    log.write(bot.user.name)
-    log.write(bot.user.id)
-    log.write('------')
+    log.write('Logged in as\n')
+    log.write(bot.user.name + '\n')
+    log.write(str(bot.user.id) + '\n')
+    log.write('------\n')
     log.flush()
 
 @bot.event
