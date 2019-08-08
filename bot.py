@@ -62,7 +62,7 @@ async def clear(ctx, amount=10):
     await ctx.channel.purge(limit=amount)
 
 @bot.command()
-@commands.has_any_role('mod', 609112079252717604)
+@commands.has_permissions(kick_members=True)
 async def kick(ctx, member : discord.Member, *, reason=None):
     msg = f'[KICK] {member.name}#{member.discriminator} {str(member.id)}\n Reason: {reason}\n'
     log.write(msg)
@@ -72,7 +72,7 @@ async def kick(ctx, member : discord.Member, *, reason=None):
     await channel.send(msg)
 
 @bot.command()
-@commands.has_any_role('mod', 609112079252717604)
+@commands.has_permissions(ban_members=True)
 async def ban(ctx, member : discord.Member, *, reason=None):
     msg = f'[BAN] {member.name}#{member.discriminator} {str(member.id)}\n Reason: {reason}\n'
     log.write(msg)
