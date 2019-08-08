@@ -1,2 +1,2 @@
 #!/bin/bash
-kill $(echo $(ps -ef | grep bot.py) | awk '{print $2}')
+kill $(ps -ef | grep -v grep | grep bot.py | awk '{print $2}')
