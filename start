@@ -1,3 +1,8 @@
 #!/bin/bash
-./bot.py &
-disown %1
+if [[ $(ps -ef | grep -v grep | grep bot.py) ]]
+then
+	echo "Bot is already running"
+else
+	./bot.py &
+	disown %1
+fi
