@@ -58,11 +58,11 @@ async def clear(ctx, amount=10):
     await ctx.channel.purge(limit=amount)
 
 @bot.command()
-async def kick(ctx, member : discord.Member), *, reason=None):
+async def kick(ctx, member : discord.Member, *, reason=None):
     await member.kick(reason=reason)
 
 @bot.command()
-async def ban(ctx, member : discord.Member), *, reason=None):
+async def ban(ctx, member : discord.Member, *, reason=None):
     await member.ban(reason=reason)
 
 bot.run(environ['token'])
