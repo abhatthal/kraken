@@ -3,18 +3,25 @@ import discord
 from discord.ext import commands
 from os import environ
 
+log = open("log", 'w')
+
 bot = commands.Bot(command_prefix = '.')
 
 @bot.event
 async def on_ready():
-    print("Bot is ready.")
+    log.write("Bot is ready.")
+    log.flush()
 
 @bot.event
 async def on_member_join(member):
-    print(f"{member} has joined the server!")
+    log.write(f"{member} has joined the server!")
+    log.flush()
 
 @bot.event
 async def on_member_remove(member):
-    print(f"{member} has left the server!")
+    log.write(f"{member} has left the server!")
+    log.flush()
 
 bot.run(environ["token"])
+
+log.close()
