@@ -6,11 +6,14 @@ from os import environ
 
 log = open('log', 'w')
 
-bot = commands.Bot(command_prefix = '.')
+bot = commands.Bot(command_prefix = '.', description = "A very honest discord bot")
 
 @bot.event
 async def on_ready():
-    log.write('Bot is ready.')
+    log.write('Logged in as')
+    log.write(bot.user.name)
+    log.write(bot.user.id)
+    log.write('------')
     log.flush()
 
 @bot.event

@@ -1,3 +1,3 @@
 # HonestBear
-A discord bot
+A very honest discord bot
 
