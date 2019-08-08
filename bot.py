@@ -18,12 +18,12 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    log.write(f'{member} has joined the server!')
+    log.write(f'{member} has joined the server!\n')
     log.flush()
 
 @bot.event
 async def on_member_remove(member):
-    log.write(f'{member} has left the server!')
+    log.write(f'{member} has left the server!\n')
     log.flush()
 
 @bot.command()
@@ -62,11 +62,21 @@ async def clear(ctx, amount=10):
 
 @bot.command()
 async def kick(ctx, member : discord.Member, *, reason=None):
+    msg = f'[KICK] {member.name}#{member.discriminator} {str(member.id)}\n Reason: {reason}\n'
+    log.write(msg)
+    log.flush()
+    channel = bot.get_channel(609112292742660099) #logging
     await member.kick(reason=reason)
+    await channel.send(msg)
 
 @bot.command()
 async def ban(ctx, member : discord.Member, *, reason=None):
+    msg = f'[BAN] {member.name}#{member.discriminator} {str(member.id)}\n Reason: {reason}\n'
+    log.write(msg)
+    log.flush()
+    channel = bot.get_channel(609112292742660099) #logging
     await member.ban(reason=reason)
+    await channel.send(msg)
 
 bot.run(environ['token'])
 
