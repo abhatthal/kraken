@@ -57,10 +57,12 @@ async def _8ball(ctx, *, question):
     await ctx.send(f'Question {question}\nAnswer: {random.choice(responses)}')
 
 @bot.command()
+@commands.has_permissions(manage_messages=True)
 async def clear(ctx, amount=10):
     await ctx.channel.purge(limit=amount)
 
 @bot.command()
+@commands.has_any_role('mod', 609112079252717604)
 async def kick(ctx, member : discord.Member, *, reason=None):
     msg = f'[KICK] {member.name}#{member.discriminator} {str(member.id)}\n Reason: {reason}\n'
     log.write(msg)
@@ -70,6 +72,7 @@ async def kick(ctx, member : discord.Member, *, reason=None):
     await channel.send(msg)
 
 @bot.command()
+@commands.has_any_role('mod', 609112079252717604)
 async def ban(ctx, member : discord.Member, *, reason=None):
     msg = f'[BAN] {member.name}#{member.discriminator} {str(member.id)}\n Reason: {reason}\n'
     log.write(msg)
