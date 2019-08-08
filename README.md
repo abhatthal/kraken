@@ -1,0 +1,2 @@
+# HonestBear
+A discord bot
