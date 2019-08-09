@@ -12,7 +12,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         log.write(strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-        log.write('\nLogged in as\n')
+        log.write(' UTC\nLogged in as\n')
         log.write(self.bot.user.name + '\n')
         log.write(str(self.bot.user.id) + '\n')
         log.write('------\n')
