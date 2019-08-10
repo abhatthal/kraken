@@ -20,6 +20,10 @@ class Events(commands.Cog):
         # await self.bot.change_presence(status=discord.Status.idle, activity=discord.Game('Hello there!'))
 
     @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        await ctx.send(error)
+
+    @commands.Cog.listener()
     async def on_member_join(self, member):
         log.write(f'{member} has joined the server!\n')
         log.flush()
