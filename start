@@ -1,9 +1,8 @@
 #!/bin/bash
-if [[ $(ps -ef | grep -v grep | grep bot.py) ]]
+if [[ $(ps -ef | grep -v grep | grep main.py) ]]
 then
 	echo "Bot is already running"
 else
-	rm log
-	./bot.py &
+	./main.py &
 	disown %1
 fi
