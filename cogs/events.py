@@ -17,6 +17,7 @@ class Events(commands.Cog):
         log.write(str(self.bot.user.id) + '\n')
         log.write('------\n')
         log.flush()
+        # await self.bot.change_presence(status=discord.Status.idle, activity=discord.Game('Hello there!'))
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
