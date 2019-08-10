@@ -37,7 +37,7 @@ class Member(commands.Cog):
             'Outlook not so good.',
             'Very doubtful.'
         ]
-        await ctx.send(f'Question {question}\nAnswer: {random.choice(responses)}')
+        await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
         
 def setup(bot):
     bot.add_cog(Member(bot))
