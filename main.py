@@ -2,8 +2,8 @@
 import discord
 import os
 from discord.ext import commands
-
-log = open('log', 'a')
+import logging
+logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctime)s %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
 
 bot = commands.Bot(command_prefix = '.', description = "A very honest discord bot")
 
@@ -12,8 +12,7 @@ bot = commands.Bot(command_prefix = '.', description = "A very honest discord bo
 async def load(ctx, extension):
     bot.load_extension(f'cogs.{extension}')
     msg = f'load: cogs.{extension}\n'
-    log.write(msg)
-    log.flush()
+    logging.info(msg)
     await ctx.send(msg)
 
 @bot.command()
@@ -21,8 +20,7 @@ async def load(ctx, extension):
 async def unload(ctx, extension):
     bot.unload_extension(f'cogs.{extension}')
     msg = f'unload: cogs.{extension}\n'
-    log.write(msg)
-    log.flush()
+    logging.info(msg)
     await ctx.send(msg)
 
 for filename in os.listdir('./cogs'):
@@ -30,5 +28,3 @@ for filename in os.listdir('./cogs'):
         bot.load_extension(f'cogs.{filename[:-3]}')
 
 bot.run(os.environ['token'])
-
-log.close()

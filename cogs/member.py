@@ -2,8 +2,6 @@ import discord
 import random
 from discord.ext import commands
 
-log = open('log', 'a')
-
 class Member(commands.Cog):
 
     def __init__(self, bot):

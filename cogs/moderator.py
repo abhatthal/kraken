@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-
-log = open('log', 'a')
+import logging
+logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctime)s %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
 
 class Moderator(commands.Cog):
 
@@ -17,8 +17,7 @@ class Moderator(commands.Cog):
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason=None):
         msg = f'[KICK] {member.mention}\n Reason: {reason}\n'
-        log.write(msg)
-        log.flush()
+        logging.info(msg)
         channel = self.bot.get_channel(609112292742660099) #logging
         await member.kick(reason=reason)
         await channel.send(msg)
@@ -27,8 +26,7 @@ class Moderator(commands.Cog):
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
         msg = f'[BAN] {member.mention}\n Reason: {reason}\n'
-        log.write(msg)
-        log.flush()
+        logging.info(msg)
         channel = self.bot.get_channel(609112292742660099) #logging
         await member.ban(reason=reason)
         await channel.send(msg)
@@ -43,8 +41,7 @@ class Moderator(commands.Cog):
             user = ban_entry.user
             if (user.name, user.discriminator) == (member_name, member_discriminator):
                 msg = f'[UNBAN] {member}\n'
-                log.write(msg)
-                log.flush()
+                logging.info(msg)
                 await ctx.guild.unban(user)
                 await channel.send(msg)
                 return
