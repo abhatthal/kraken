@@ -18,6 +18,12 @@ class Events(commands.Cog):
         await ctx.send(error)
 
     @commands.Cog.listener()
+    async def on_message(self, message):
+        if self.bot.user.id != message.author.id:
+            if 'creeper' in message.content.lower():
+                await self.bot.send_message(message.channel, 'Oh we back in the mine')
+
+    @commands.Cog.listener()
     async def on_member_join(self, member):
         logging.info(f'{member} has joined the server!\n')
 
