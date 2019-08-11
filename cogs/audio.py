@@ -13,8 +13,8 @@ class Audio(commands.Cog):
         channel = ctx.message.author.voice.channel
         if not channel:
             await ctx.send("You are not connected to a voice channel")
-            return
-        await self.bot.join_voice_channel(channel)
+        else:
+            await self.bot.join_voice_channel(channel)
 
     @commands.command(pass_context=True)
     async def leave(self, ctx):
