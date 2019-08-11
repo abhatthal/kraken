@@ -20,8 +20,8 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if self.bot.user.id != message.author.id:
-            if 'creeper' in message.content.lower():
-                await self.bot.send_message(message.channel, 'Oh we back in the mine')
+            if 'creeper' in message.content:
+                await message.channel.send('Oh we back in the mine')
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
