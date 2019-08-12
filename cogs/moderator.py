@@ -18,23 +18,25 @@ class Moderator(commands.Cog):
     async def kick(self, ctx, member : discord.Member, *, reason=None):
         msg = f'[KICK] {member.mention}\n Reason: {reason}\n'
         logging.info(msg)
-        channel = self.bot.get_channel(609112292742660099) #logging
+        channel = self.bot.get_channel(607056829067034634) #logging
         await member.kick(reason=reason)
         await channel.send(msg)
+        await ctx.send(msg)
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
         msg = f'[BAN] {member.mention}\n Reason: {reason}\n'
         logging.info(msg)
-        channel = self.bot.get_channel(609112292742660099) #logging
+        channel = self.bot.get_channel(607056829067034634) #logging
         await member.ban(reason=reason)
         await channel.send(msg)
+        await ctx.send(msg)
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
-        channel = self.bot.get_channel(609112292742660099) #logging
+        channel = self.bot.get_channel(607056829067034634) #logging
         banned_users = await ctx.guild.bans()
         member_name, member_discriminator = member.split('#')
         for ban_entry in banned_users:
@@ -44,6 +46,7 @@ class Moderator(commands.Cog):
                 logging.info(msg)
                 await ctx.guild.unban(user)
                 await channel.send(msg)
+                await ctx.send(msg)
                 return
 
 def setup(bot):
