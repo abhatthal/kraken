@@ -11,24 +11,35 @@ class Audio(commands.Cog):
     @commands.command(pass_context=True)
     async def join(self, ctx):
         global voice
-        channel = ctx.message.author.voice.channel
+        channel = ctx.message.author.voice
         voice = get(self.bot.voice_clients, guild = ctx.guild)
-        if not channel:
-            await ctx.send("You are not connected to a voice channel")
+        if (channel == None):
+            await ctx.send('[ERROR] You are not in a voice channel')
+            return
+        else:
+            channel = channel.channel
         # if bot already in a voice channel, move to the vc of author
-        else if voice and voice.is_connected():
+        if voice and voice.is_connected():
             await voice.move_to(channel)
         else:
             voice = await channel.connect()
 
+        await ctx.send(f'[JOIN] {channel}')
+
     @commands.command(pass_context=True)
     async def leave(self, ctx):
-        global voice
         voice = get(self.bot.voice_clients, guild = ctx.guild)
-        if voice:
-            voice.disconnect()
+        if (voice == None):
+            await ctx.send('[ERROR] Bot is not in a voice channel')
+            return
         else:
-            await ctx.send("Bot is not in a voice channel")
+            channel = voice.channel
+        if voice and voice.is_connected():
+            await voice.disconnect()
+        else:
+            await ctx.send('[ERROR] Bot is not in a voice channel')
+            return
+        await ctx.send(f'[LEAVE] {voice.channel}')
         
 def setup(bot):
     bot.add_cog(Audio(bot))

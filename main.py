@@ -11,7 +11,7 @@ bot = commands.Bot(command_prefix = '.', description = "A very honest discord bo
 @commands.has_role('mod')
 async def load(ctx, extension):
     bot.load_extension(f'cogs.{extension}')
-    msg = f'load: cogs.{extension}\n'
+    msg = f'[LOAD] cogs.{extension}\n'
     logging.info(msg)
     await ctx.send(msg)
 
@@ -19,7 +19,7 @@ async def load(ctx, extension):
 @commands.has_role('mod')
 async def unload(ctx, extension):
     bot.unload_extension(f'cogs.{extension}')
-    msg = f'unload: cogs.{extension}\n'
+    msg = f'[UNLOAD] cogs.{extension}\n'
     logging.info(msg)
     await ctx.send(msg)
 
@@ -28,7 +28,7 @@ async def unload(ctx, extension):
 async def reload(ctx, extension):
     bot.unload_extension(f'cogs.{extension}')
     bot.load_extension(f'cogs.{extension}')
-    msg = f'reload: cogs.{extension}\n'
+    msg = f'[RELOAD] cogs.{extension}\n'
     logging.info(msg)
     await ctx.send(msg)
 
