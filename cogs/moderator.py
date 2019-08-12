@@ -18,40 +18,55 @@ class Moderator(commands.Cog):
     @commands.command(brief = "kick a user from server 'kick [@member] [reason](optional)'")
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason=None):
-        msg = f'[KICK] {member.mention}\n Reason: {reason}\n'
-        logging.info(msg)
-        channel = self.bot.get_channel(607056829067034634) #logging
-        await member.kick(reason=reason)
-        await channel.send(msg)
-        await ctx.send(msg)
+        if member.id == self.bot.user.id:
+            await ctx.send('Ouch ;-;')
+        elif member.id == ctx.author.id:
+            await ctx.send('Why are you hitting yourself?')
+        else:
+            msg = f'[KICK] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
+            logging.info(msg)
+            channel = self.bot.get_channel(607056829067034634) #logging
+            await member.kick(reason=reason)
+            await channel.send(msg)
+            await ctx.send(msg)
 
 
     @commands.command(brief = "Ban a user from server 'ban [@member] [reason](optional)'")
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
-        msg = f'[BAN] {member.mention}\n Reason: {reason}\n'
-        logging.info(msg)
-        channel = self.bot.get_channel(607056829067034634) #logging
-        await member.ban(reason=reason)
-        await channel.send(msg)
-        await ctx.send(msg)
+        if member.id == self.bot.user.id:
+            await ctx.send('no u')
+        elif member.id == ctx.author.id:
+            await ctx.send("Please don't ban yourself")
+        else:
+            msg = f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
+            logging.info(msg)
+            channel = self.bot.get_channel(607056829067034634) #logging
+            await member.ban(reason=reason)
+            await channel.send(msg)
+            await ctx.send(msg)
 
 
     @commands.command(brief = "Unban a user from server 'unban [member#1234]'")
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
-        channel = self.bot.get_channel(607056829067034634) #logging
-        banned_users = await ctx.guild.bans()
-        member_name, member_discriminator = member.split('#')
-        for ban_entry in banned_users:
-            user = ban_entry.user
-            if (user.name, user.discriminator) == (member_name, member_discriminator):
-                msg = f'[UNBAN] {member}\n'
-                logging.info(msg)
-                await ctx.guild.unban(user)
-                await channel.send(msg)
-                await ctx.send(msg)
-                return
+        if member == '<@608911590515015701>' or 'Honest Bear' in member:
+            await ctx.send("Wait, am I banned? >.<")
+        elif str(ctx.author.id) in member or str(ctx.author) == member:
+            await ctx.send("You can't unban yourself silly")
+        else:
+            channel = self.bot.get_channel(607056829067034634) #logging
+            banned_users = await ctx.guild.bans()
+            member_name, member_discriminator = member.split('#')
+            for ban_entry in banned_users:
+                user = ban_entry.user
+                if (user.name, user.discriminator) == (member_name, member_discriminator):
+                    msg = f'[UNBAN] {member}\n Moderator: {ctx.author}'
+                    logging.info(msg)
+                    await ctx.guild.unban(user)
+                    await channel.send(msg)
+                    await ctx.send(msg)
+                    return
 
 
 def setup(bot):
