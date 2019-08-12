@@ -1,9 +1,10 @@
 import discord
-from discord.ext import commands
-# from discord import FFmpegPCMAudio
-from discord.utils import get
 import youtube_dl
 import os
+from discord.ext import commands
+from discord import FFmpegPCMAudio
+from discord.utils import get
+from os import system
 
 class Audio(commands.Cog):
 
@@ -36,11 +37,10 @@ class Audio(commands.Cog):
             await voice.disconnect()
         else:
             await ctx.send('[ERROR] Bot is not in a voice channel')
-
-    @commands.command(pass_context=True)
+    
+    @commands.command(pass_context=True, brief="This will play a song 'play [url]'")
     async def play(self, ctx, url : str):
         song_there = os.path.isfile('song.mp3')
-        # try delete because if song is in use, will throw permissions error
         try:
             if song_there:
                 os.remove('song.mp3')
@@ -48,7 +48,6 @@ class Audio(commands.Cog):
             await ctx.send('[ERROR] Music playing')
             return
         voice = get(self.bot.voice_clients, guild = ctx.guild)
-        # options for download
         ydl_opts = {
             'format': 'bestaudio/best',
             'postprocessors': [{
@@ -57,23 +56,21 @@ class Audio(commands.Cog):
                 'preferredquality': '192',
             }],
         }
-        # download song
+        await ctx.send('[PLAY] Downloading song')
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        # rename downloaded song into song.mp3
+        await ctx.send('[PLAY] Song downloaded')
         for file in os.listdir('./'):
             if file.endswith('.mp3'):
                 name = file
                 os.rename(file, 'song.mp3')
                 break
-        # play the song
         voice.play(discord.FFmpegPCMAudio('song.mp3'))
         voice.source = discord.PCMVolumeTransformer(voice.source)
-        # Note: don't go above 0.5, very loud. 0.07 is good
-        voice.source.volume = 0.07
+        voice.volume = 100
+        voice.is_playing()
         nname = name.rsplit('-', 2)
-        await ctx.send(f'[PLAY] {nname}')
-        
+        await ctx.send(f'Now Playing: {nname}')
         
         
 def setup(bot):
