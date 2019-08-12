@@ -22,6 +22,8 @@ class Events(commands.Cog):
         if self.bot.user.id != message.author.id:
             if 'creeper' in message.content.lower():
                 await message.channel.send('Oh we back in the mine')
+            if 'owo' in message.content.lower():
+                await message.channel.send("OwO What's this?")
 
     @commands.Cog.listener()
     async def on_member_join(self, member):

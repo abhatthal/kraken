@@ -29,17 +29,12 @@ class Audio(commands.Cog):
     @commands.command(pass_context=True)
     async def leave(self, ctx):
         voice = get(self.bot.voice_clients, guild = ctx.guild)
-        if (voice == None):
-            await ctx.send('[ERROR] Bot is not in a voice channel')
-            return
-        else:
-            channel = voice.channel
         if voice and voice.is_connected():
+            await ctx.send(f'[LEAVE] {voice.channel}')
             await voice.disconnect()
         else:
             await ctx.send('[ERROR] Bot is not in a voice channel')
-            return
-        await ctx.send(f'[LEAVE] {voice.channel}')
+
         
 def setup(bot):
     bot.add_cog(Audio(bot))
