@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord import FFmpegPCMAudio
+# from discord import FFmpegPCMAudio
 from discord.utils import get
 import youtube_dl
 import os
@@ -54,8 +54,8 @@ class Audio(commands.Cog):
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
-                'preferredquality': '192'
-            }]
+                'preferredquality': '192',
+            }],
         }
         # download song
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -67,7 +67,7 @@ class Audio(commands.Cog):
                 os.rename(file, 'song.mp3')
                 break
         # play the song
-        voice.play(FFmpegPCMAudio('song.mp3'))
+        voice.play(discord.FFmpegPCMAudio('song.mp3'))
         voice.source = discord.PCMVolumeTransformer(voice.source)
         # Note: don't go above 0.5, very loud. 0.07 is good
         voice.source.volume = 0.07
