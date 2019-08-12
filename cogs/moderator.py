@@ -50,7 +50,7 @@ class Moderator(commands.Cog):
     @commands.command(brief = "Unban a user from server 'unban [member#1234]'")
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
-        if member == '<@608911590515015701>' or 'Honest Bear' in member:
+        if member == '<@608911590515015701>' or member == 'Honest Bear#9253':
             await ctx.send("Wait, am I banned? >.<")
         elif str(ctx.author.id) in member or str(ctx.author) == member:
             await ctx.send("You can't unban yourself silly")
