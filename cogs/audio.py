@@ -11,17 +11,23 @@ class Audio(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True)
+
+    @commands.command(pass_context = True, brief = 'bot joins the voice channel of the user')
     async def join(self, ctx):
         global voice
-        channel = ctx.message.author.voice
+        try:
+            channel = ctx.message.author.voice.channel
+        except:
+            await ctx.send(f'[ERROR] You are not in a voice channel')
         voice = get(self.bot.voice_clients, guild = ctx.guild)
-        if (channel == None):
-            await ctx.send('[ERROR] You are not in a voice channel')
-            return
-        else:
-            channel = channel.channel
         # if bot already in a voice channel, move to the vc of author
+        if voice and voice.is_connected():
+            await voice.move_to(channel)
+        else:
+            voice = await channel.connect()        
+        # disconnect and reconnect, bug fix    
+        await voice.disconnect()
+
         if voice and voice.is_connected():
             await voice.move_to(channel)
         else:
@@ -29,7 +35,8 @@ class Audio(commands.Cog):
 
         await ctx.send(f'[JOIN] {channel}')
 
-    @commands.command(pass_context=True)
+
+    @commands.command(pass_context = True, brief = 'bot leaves a voice chat if in one')
     async def leave(self, ctx):
         voice = get(self.bot.voice_clients, guild = ctx.guild)
         if voice and voice.is_connected():
@@ -38,7 +45,8 @@ class Audio(commands.Cog):
         else:
             await ctx.send('[ERROR] Bot is not in a voice channel')
     
-    @commands.command(pass_context=True, brief="This will play a song 'play [url]'")
+
+    @commands.command(pass_context = True, brief = "This will play a song 'play [url]'")
     async def play(self, ctx, url : str):
         song_there = os.path.isfile('song.mp3')
         try:
@@ -48,6 +56,7 @@ class Audio(commands.Cog):
             await ctx.send('[ERROR] Music playing')
             return
         voice = get(self.bot.voice_clients, guild = ctx.guild)
+
         ydl_opts = {
             'format': 'bestaudio/best',
             'postprocessors': [{
@@ -56,15 +65,18 @@ class Audio(commands.Cog):
                 'preferredquality': '192',
             }],
         }
+
         await ctx.send('[PLAY] Downloading song')
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
         await ctx.send('[PLAY] Song downloaded')
+
         for file in os.listdir('./'):
             if file.endswith('.mp3'):
                 name = file
                 os.rename(file, 'song.mp3')
                 break
+
         voice.play(discord.FFmpegPCMAudio('song.mp3'))
         voice.source = discord.PCMVolumeTransformer(voice.source)
         voice.volume = 100

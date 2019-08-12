@@ -7,24 +7,24 @@ logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctim
 
 bot = commands.Bot(command_prefix = '.', description = "A very honest discord bot")
 
-@bot.command()
-@commands.has_role('mod')
+@bot.command(brief = 'load [extension]')
+@commands.has_role('GOD')
 async def load(ctx, extension):
     bot.load_extension(f'cogs.{extension}')
     msg = f'[LOAD] cogs.{extension}\n'
     logging.info(msg)
     await ctx.send(msg)
 
-@bot.command()
-@commands.has_role('mod')
+@bot.command(brief = 'unload [extension]')
+@commands.has_role('GOD')
 async def unload(ctx, extension):
     bot.unload_extension(f'cogs.{extension}')
     msg = f'[UNLOAD] cogs.{extension}\n'
     logging.info(msg)
     await ctx.send(msg)
 
-@bot.command()
-@commands.has_role('mod')
+@bot.command(brief = 'reload [extension]')
+@commands.has_role('GOD')
 async def reload(ctx, extension):
     bot.unload_extension(f'cogs.{extension}')
     bot.load_extension(f'cogs.{extension}')

@@ -8,12 +8,14 @@ class Moderator(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.command()
+
+    @commands.command(brief = "remove last n messages 'clear [n]'")
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount=10):
         await ctx.channel.purge(limit=amount)
 
-    @commands.command()
+
+    @commands.command(brief = "kick a user from server 'kick [@member] [reason](optional)'")
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason=None):
         msg = f'[KICK] {member.mention}\n Reason: {reason}\n'
@@ -23,7 +25,8 @@ class Moderator(commands.Cog):
         await channel.send(msg)
         await ctx.send(msg)
 
-    @commands.command()
+
+    @commands.command(brief = "Ban a user from server 'ban [@member] [reason](optional)'")
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
         msg = f'[BAN] {member.mention}\n Reason: {reason}\n'
@@ -33,7 +36,8 @@ class Moderator(commands.Cog):
         await channel.send(msg)
         await ctx.send(msg)
 
-    @commands.command()
+
+    @commands.command(brief = "Unban a user from server 'unban [member#1234]'")
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
         channel = self.bot.get_channel(607056829067034634) #logging
@@ -48,6 +52,7 @@ class Moderator(commands.Cog):
                 await channel.send(msg)
                 await ctx.send(msg)
                 return
+
 
 def setup(bot):
     bot.add_cog(Moderator(bot))

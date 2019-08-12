@@ -7,11 +7,13 @@ class Member(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+
+    @commands.command(brief = 'returns bot latency')
     async def ping(self, ctx):
         await ctx.send(f'Pong! {round(self.bot.latency * 1000)}ms')
     
-    @commands.command(aliases=['8ball'])
+
+    @commands.command(aliases=['8ball'], brief = "Ask a yes or no question, get an answer '8ball [question]'")
     async def _8ball(self, ctx, *, question):
         responses = [
             'It is certain.',
@@ -37,5 +39,6 @@ class Member(commands.Cog):
         ]
         await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
         
+
 def setup(bot):
     bot.add_cog(Member(bot))
