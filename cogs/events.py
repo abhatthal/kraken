@@ -25,9 +25,12 @@ class Events(commands.Cog):
         if self.bot.user.id != message.author.id:
             if 'creeper' in message.content.lower():
                 await message.channel.send('Oh we back in the mine')
-                
+
             if 'owo' in message.content.lower():
                 await message.channel.send("OwO What's this?")
+
+            if 'no u' in message.content.lower():
+                await message.channel.send("NO U")
 
 
     @commands.Cog.listener()
