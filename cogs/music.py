@@ -32,7 +32,6 @@ ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
 
 class YTDLSource(discord.PCMVolumeTransformer):
-
     def __init__(self, source, *, data, volume=0.5):
         super().__init__(source, volume)
 
@@ -56,7 +55,6 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
 
 class Music(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
@@ -97,7 +95,10 @@ class Music(commands.Cog):
     async def stop(self, ctx):
         """Stops and disconnects the bot from voice"""
 
-        await ctx.voice_client.disconnect()
+        if ctx.voice_client != None:
+            await ctx.voice_client.disconnect()
+        else:
+            raise commands.CommandError("No music playing to stop.")
 
 
     @play.before_invoke
@@ -106,8 +107,9 @@ class Music(commands.Cog):
             if ctx.author.voice:
                 await ctx.author.voice.channel.connect()
             else:
-                await ctx.send("You are not connected to a voice channel.")
-                raise commands.CommandError("Author not connected to a voice channel.")
+                # await ctx.send("You are not connected to a voice channel.")
+                # raise commands.CommandError("Author not connected to a voice channel.")
+                raise commands.CommandError("You are not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 

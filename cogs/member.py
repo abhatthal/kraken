@@ -3,7 +3,6 @@ import random
 from discord.ext import commands
 
 class Member(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
@@ -11,7 +10,7 @@ class Member(commands.Cog):
     @commands.command()
     async def ping(self, ctx):
         """returns bot latency"""
-        
+
         await ctx.send(f'Pong! {round(self.bot.latency * 1000)}ms')
     
 

@@ -7,6 +7,7 @@ logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctim
 
 bot = commands.Bot(command_prefix = '.', description = "A very honest discord bot")
 
+
 @bot.command()
 @commands.has_role('GOD')
 async def load(ctx, extension):
@@ -16,6 +17,7 @@ async def load(ctx, extension):
     msg = f'[LOAD] cogs.{extension}\n'
     logging.info(msg)
     await ctx.send(msg)
+
 
 @bot.command()
 @commands.has_role('GOD')
@@ -27,6 +29,7 @@ async def unload(ctx, extension):
     logging.info(msg)
     await ctx.send(msg)
 
+
 @bot.command()
 @commands.has_role('GOD')
 async def reload(ctx, extension):
@@ -37,6 +40,7 @@ async def reload(ctx, extension):
     msg = f'[RELOAD] cogs.{extension}\n'
     logging.info(msg)
     await ctx.send(msg)
+
 
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):

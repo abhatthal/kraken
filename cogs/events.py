@@ -5,7 +5,6 @@ import logging
 logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctime)s %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
 
 class Events(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 

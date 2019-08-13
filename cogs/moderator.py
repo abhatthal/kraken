@@ -4,7 +4,6 @@ import logging
 logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctime)s %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
 
 class Moderator(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
     
@@ -18,7 +17,6 @@ class Moderator(commands.Cog):
 
 
     @commands.command()
-    @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason=None):
         """kick a user from server 'kick [@member] [reason](optional)'"""
 
@@ -26,17 +24,18 @@ class Moderator(commands.Cog):
             await ctx.send('Ouch ;-;')
         elif member.id == ctx.author.id:
             await ctx.send('Why are you hitting yourself?')
-        else:
+        elif ctx.message.author.server_permissions.kick_members:
             msg = f'[KICK] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
             logging.info(msg)
             channel = self.bot.get_channel(607056829067034634) #logging
             await member.kick(reason=reason)
             await channel.send(msg)
             await ctx.send(msg)
+        else:
+            raise commands.CommandError("Sorry, you don't have permission to do that.")
 
 
     @commands.command()
-    @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
         """Ban a user from server 'ban [@member] [reason](optional)'"""
 
@@ -44,17 +43,18 @@ class Moderator(commands.Cog):
             await ctx.send('no u')
         elif member.id == ctx.author.id:
             await ctx.send("Please don't ban yourself")
-        else:
+        elif ctx.message.author.server_permissions.ban_members:
             msg = f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
             logging.info(msg)
             channel = self.bot.get_channel(607056829067034634) #logging
             await member.ban(reason=reason)
             await channel.send(msg)
             await ctx.send(msg)
+        else:
+            raise commands.CommandError("Sorry, you don't have permission to do that.")          
 
 
     @commands.command()
-    @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
         """Unban a user from server 'unban [member#1234]'"""
 
@@ -62,7 +62,7 @@ class Moderator(commands.Cog):
             await ctx.send("Wait, am I banned? >.<")
         elif str(ctx.author.id) in member or str(ctx.author) == member:
             await ctx.send("You can't unban yourself silly")
-        else:
+        elif ctx.message.author.server_permissions.ban_members:
             channel = self.bot.get_channel(607056829067034634) #logging
             banned_users = await ctx.guild.bans()
             member_name, member_discriminator = member.split('#')
@@ -75,6 +75,8 @@ class Moderator(commands.Cog):
                     await channel.send(msg)
                     await ctx.send(msg)
                     return
+        else:
+            raise commands.CommandError("Sorry, you don't have permission to do that.")                
 
 
 def setup(bot):
