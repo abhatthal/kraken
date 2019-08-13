@@ -34,16 +34,6 @@ class Events(commands.Cog):
 
             if 'no u' in message.content.lower():
                 await message.channel.send("NO U")
-
-
-    @commands.Cog.listener()
-    async def on_member_join(self, member):
-        logging.info(f'{member} has joined the server!\n')
-
-
-    @commands.Cog.listener()
-    async def on_member_remove(self, member):
-        logging.info(f'{member} has left the server!\n')
         
 
 def setup(bot):

@@ -8,13 +8,17 @@ class Member(commands.Cog):
         self.bot = bot
 
 
-    @commands.command(brief = 'returns bot latency')
+    @commands.command()
     async def ping(self, ctx):
+        """returns bot latency"""
+        
         await ctx.send(f'Pong! {round(self.bot.latency * 1000)}ms')
     
 
-    @commands.command(aliases=['8ball'], brief = "Ask a yes or no question, get an answer '8ball [question]'")
+    @commands.command(aliases=['8ball'])
     async def _8ball(self, ctx, *, question):
+        """Ask a yes or no question, get an answer '8ball [question]'"""
+
         responses = [
             'It is certain.',
             'It is decidedly so.',
@@ -40,8 +44,10 @@ class Member(commands.Cog):
         await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
 
 
-    @commands.command(brief = 'returns how many members are on the server')
+    @commands.command()
     async def membercount(self, ctx):
+        """returns how many members are on the server"""
+
         id = self.bot.get_guild(ctx.guild.id)
         await ctx.send(f'Member Count: {id.member_count}')        
         

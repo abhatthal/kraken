@@ -9,15 +9,19 @@ class Moderator(commands.Cog):
         self.bot = bot
     
 
-    @commands.command(brief = "remove last n messages 'clear [n]'")
+    @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount=10):
+        """remove last n messages 'clear [n]'"""
+
         await ctx.channel.purge(limit=amount)
 
 
-    @commands.command(brief = "kick a user from server 'kick [@member] [reason](optional)'")
+    @commands.command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason=None):
+        """kick a user from server 'kick [@member] [reason](optional)'"""
+
         if member.id == self.bot.user.id:
             await ctx.send('Ouch ;-;')
         elif member.id == ctx.author.id:
@@ -31,9 +35,11 @@ class Moderator(commands.Cog):
             await ctx.send(msg)
 
 
-    @commands.command(brief = "Ban a user from server 'ban [@member] [reason](optional)'")
+    @commands.command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
+        """Ban a user from server 'ban [@member] [reason](optional)'"""
+
         if member.id == self.bot.user.id:
             await ctx.send('no u')
         elif member.id == ctx.author.id:
@@ -47,9 +53,11 @@ class Moderator(commands.Cog):
             await ctx.send(msg)
 
 
-    @commands.command(brief = "Unban a user from server 'unban [member#1234]'")
+    @commands.command()
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
+        """Unban a user from server 'unban [member#1234]'"""
+
         if member == '<@608911590515015701>' or member == 'Honest Bear#9253':
             await ctx.send("Wait, am I banned? >.<")
         elif str(ctx.author.id) in member or str(ctx.author) == member:
