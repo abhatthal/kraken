@@ -3,6 +3,7 @@ if [[ $(ps -ef | grep -v grep | grep main.py) ]]
 then
 	echo "Bot is already running"
 else
+	cd /home/kash/Desktop/HonestBear
 	./main.py &
 	disown %1
 fi
