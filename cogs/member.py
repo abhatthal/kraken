@@ -15,7 +15,7 @@ class Member(commands.Cog):
     async def ping(self, ctx):
         """returns bot latency"""
 
-        eObj = await embed(ctx, description = f'Pong! {round(self.bot.latency * 1000)}ms', author = 'Honest Bear', avatar = 'HonestBear.png')
+        eObj = await embed(ctx, description = f'Pong! {round(self.bot.latency * 1000)}ms', author = 'Honest Bear', avatar = 'https://github.com/abhatthal/HonestBear/raw/master/HonestBear.png')
         if eObj is not False:
             await ctx.send(embed = eObj)
     
