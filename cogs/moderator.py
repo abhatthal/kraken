@@ -80,6 +80,19 @@ class Moderator(commands.Cog):
         else:
             await ctx.send("You're not allowed to unban anybirdie! <:Asami:610590675142049868>")
 
+    
+        async def warn(self, ctx, member : discord.Member, *, reason = None):
+            """give a user an infraction 'warn [@member] [reason](optional)"""
+
+            channel = self.bot.get_channel(607056829067034634) #logging
+            logging.info(f'[WARN] {member}\n Moderator: {ctx.author}')
+
+            eObj = await embed(ctx, title = 'ATTENTION:', colour = 0xff0000, author = ctx.author.display_name,
+                        avatar = ctx.author.avatar_url, description = reason, footer = 'Moderator Warning')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+                await channel.send(embed = eObj)
+
 
 def setup(bot):
     bot.add_cog(Moderator(bot))
