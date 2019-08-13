@@ -5,6 +5,8 @@ from discord.ext import commands
 # https://github.com/CSSS/wall_e/tree/master/helper_files
 from helper_files.embed import embed
 
+bot_name = 'Honest Bear'
+bot_avatar = 'https://github.com/abhatthal/HonestBear/raw/master/HonestBear.png'
 
 class Member(commands.Cog):
     def __init__(self, bot):
@@ -13,9 +15,7 @@ class Member(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        """returns bot latency"""
-
-        eObj = await embed(ctx, description = f'Pong! {round(self.bot.latency * 1000)}ms', author = 'Honest Bear', avatar = 'https://github.com/abhatthal/HonestBear/raw/master/HonestBear.png')
+        eObj = await embed(ctx, description = f'Pong! {round(self.bot.latency * 1000)}ms', author = bot_name, avatar = bot_avatar)
         if eObj is not False:
             await ctx.send(embed = eObj)
     
@@ -51,18 +51,20 @@ class Member(commands.Cog):
 
     @commands.command()
     async def membercount(self, ctx):
-        """returns how many members are on the server"""
-
         id = self.bot.get_guild(ctx.guild.id)
-        await ctx.send(f'Member Count: {id.member_count}')
+        eObj = await embed(ctx, author = bot_name, avatar = bot_avatar, description = f'Member Count: {id.member_count}')
+        if eObj is not False:
+            await ctx.send(embed=eObj)
         
         
     @commands.command()
     async def echo(self, ctx, *, string : str):
-        """bot repeats what you say"""
+        user = ctx.author.display_name
+        avatar = ctx.author.avatar_url
+        eObj = await embed(ctx, author = user, avatar = avatar, description = string)
+        if eObj is not False:
+            await ctx.send(embed=eObj)
 
-        await ctx.send(string)
-        
 
 def setup(bot):
     bot.add_cog(Member(bot))

@@ -9,16 +9,16 @@ class Moderator(commands.Cog):
     
 
     @commands.command()
-    @commands.has_permissions(manage_messages=True)
+    @commands.has_permissions(manage_messages = True)
     async def clear(self, ctx, amount=10):
         """remove last n messages 'clear [n]'"""
 
-        await ctx.channel.purge(limit=amount)
+        await ctx.channel.purge(limit = amount + 1)
 
 
     @commands.command()
     # @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member : discord.Member, *, reason=None):
+    async def kick(self, ctx, member : discord.Member, *, reason = None):
         """kick a user from server 'kick [@member] [reason](optional)'"""
 
         if member.id == self.bot.user.id:
@@ -29,7 +29,7 @@ class Moderator(commands.Cog):
             msg = f'[KICK] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
             logging.info(msg)
             channel = self.bot.get_channel(607056829067034634) #logging
-            await member.kick(reason=reason)
+            await member.kick(reason = reason)
             await channel.send(msg)
             await ctx.send(msg)
         else:
@@ -38,7 +38,7 @@ class Moderator(commands.Cog):
 
     @commands.command()
     # @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member : discord.Member, *, reason=None):
+    async def ban(self, ctx, member : discord.Member, *, reason = None):
         """Ban a user from server 'ban [@member] [reason](optional)'"""
 
         if member.id == self.bot.user.id:
@@ -49,7 +49,7 @@ class Moderator(commands.Cog):
             msg = f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
             logging.info(msg)
             channel = self.bot.get_channel(607056829067034634) #logging
-            await member.ban(reason=reason)
+            await member.ban(reason = reason)
             await channel.send(msg)
             await ctx.send(msg)
         else:

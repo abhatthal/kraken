@@ -1,7 +1,7 @@
 # from discord.ext import commands
 import discord
 import asyncio # noqa, flake8 F401
-import json # noqa, flake8 F401
+# import json # noqa, flake8 F401
 
 
 async def embed(ctx, title='', content='', description='', author='', colour=0xd2a220, link='', thumbnail='',
