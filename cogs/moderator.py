@@ -33,7 +33,7 @@ class Moderator(commands.Cog):
             await channel.send(msg)
             await ctx.send(msg)
         else:
-            await ctx.send("Hey, don't kick anybirdie!")
+            await ctx.send("Hey, don't kick anybirdie! <:Asami:610590675142049868>")
 
 
     @commands.command()
@@ -53,7 +53,7 @@ class Moderator(commands.Cog):
             await channel.send(msg)
             await ctx.send(msg)
         else:
-            await ctx.send("Hey, don't ban anybirdie!")
+            await ctx.send("Hey, don't ban anybirdie! <:Asami:610590675142049868>")
 
     @commands.command()
     # @commands.has_permissions(ban_members=True)
@@ -78,7 +78,7 @@ class Moderator(commands.Cog):
                     await ctx.send(msg)
                     return
         else:
-            await ctx.send("You're not allowed to unban anybirdie!")
+            await ctx.send("You're not allowed to unban anybirdie! <:Asami:610590675142049868>")
 
 
 def setup(bot):
