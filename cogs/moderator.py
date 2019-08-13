@@ -1,5 +1,8 @@
 import discord
 from discord.ext import commands
+# Shamelessly took helper_files from Wall-E
+# https://github.com/CSSS/wall_e/tree/master/helper_files
+from helper_files.embed import embed
 import logging
 logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctime)s %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
 
