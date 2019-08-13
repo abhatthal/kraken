@@ -2,11 +2,9 @@
 import discord
 import asyncio # noqa, flake8 F401
 import json # noqa, flake8 F401
-import logging
-logger = logging.getLogger('wall_e')
 
 
-async def embed(ctx, title='', content='', description='', author='', colour=0x00bfbd, link='', thumbnail='',
+async def embed(ctx, title='', content='', description='', author='', colour=0xd2a220, link='', thumbnail='',
                 avatar='', footer=''):
     """
     title:<str> Title of the embed 99% of the time it'll be the command name, exceptions when it makes sense like
@@ -29,7 +27,6 @@ async def embed(ctx, title='', content='', description='', author='', colour=0x0
         length = str(len(title) - 256)
         await ctx.send("Embed Error:\nlength of the title ```" + title + "``` being added to the title field is "
                        + length + " characters too big, pleae cut down to a size of 256")
-        logger.info("[embed.py embed()] length of title [" + str(title) + "] being added to the field is too big")
         return False
 
     if len(description) > 2048:
@@ -37,14 +34,12 @@ async def embed(ctx, title='', content='', description='', author='', colour=0x0
                        str(description[0:2000-135-len(str(len(description)-2048))]) + "``` being added to the "
                        "description field is " + str(len(description) - 2048) + " characters too big, pleae cut "
                        "down to a size of 2048")
-        logger.info("[embed.py embed()] length of description [" + str(description) + "] being added to the "
                     "field is too big")
         return False
 
     if len(content) > 25:
         await ctx.send("Embed Error:\nlength of content ```" + str(content) + "``` being added to the content field "
                        "is " + str(len(content) - 25) + " characters too big, pleae cut down to a size of 25")
-        logger.info("[embed.py embed()] length of content [" + str(content) + "] being added to the field is too big")
         return False
 
     for record in content:
@@ -52,21 +47,18 @@ async def embed(ctx, title='', content='', description='', author='', colour=0x0
             await ctx.send("Embed Error:\nlength of record ```" + str(record[0]) + "``` being added to the name "
                            "field is " + str(len(record[0]) - 256) + " characters too big, pleae cut down to a "
                            "size of 256")
-            logger.info("[embed.py embed()] length of record [" + str(record[0]) + "] being added to the field "
                         "is too big")
             return False
         if len(record[1]) > 1024:
             await ctx.send("Embed Error:\nlength of record ```" + str(record[1]) + "``` being added to the value "
                            "field is " + str(len(record[1]) - 1024) + " characters too big, pleae cut down to a "
                            "size of 1024")
-            logger.info("[embed.py embed()] length of record [" + str(record[1]) + "] being added to the field "
                         "is too big")
             return False
 
     if len(footer) > 2048:
         await ctx.send("Embed Error:\nlength of footer ```{0}``` being added to the footer field is {1}"
                        " characters too big, pleae cut down to a size of 2048".format(footer, len(footer) - 2048))
-        logger.info("[embed.py embed()] length of footer [" + str(footer) + "] being added to the field is too big")
         return False
 
     embObj = discord.Embed(title=title, type='rich')
