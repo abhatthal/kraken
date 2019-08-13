@@ -38,6 +38,12 @@ class Member(commands.Cog):
             'Very doubtful.'
         ]
         await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
+
+
+    @commands.command(brief = 'returns how many members are on the server')
+    async def membercount(self, ctx):
+        id = self.bot.get_guild(ctx.guild.id)
+        await ctx.send(f'Member Count: {id.member_count}')        
         
 
 def setup(bot):

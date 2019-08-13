@@ -15,25 +15,30 @@ class Audio(commands.Cog):
     @commands.command(pass_context = True, brief = 'bot joins the voice channel of the user')
     async def join(self, ctx):
         global voice
-        try:
-            channel = ctx.message.author.voice.channel
-        except:
-            await ctx.send(f'[ERROR] You are not in a voice channel')
         voice = get(self.bot.voice_clients, guild = ctx.guild)
-        # if bot already in a voice channel, move to the vc of author
         if voice and voice.is_connected():
-            await voice.move_to(channel)
+            await voice.disconnect()
+            voice = get(self.bot.voice_clients, guild = ctx.guild)
+        channel = ctx.message.author.voice
+        if channel == None:
+            await ctx.send(f'[ERROR] You are not in a voice channel')
         else:
-            voice = await channel.connect()        
-        # disconnect and reconnect, bug fix    
-        await voice.disconnect()
+            channel = channel.channel
 
-        if voice and voice.is_connected():
-            await voice.move_to(channel)
-        else:
-            voice = await channel.connect()
+            # if bot already in a voice channel, move to the vc of author
+            if voice and voice.is_connected():
+                await voice.move_to(channel)
+            else:
+                voice = await channel.connect()        
+            # disconnect and reconnect, bug fix    
+            await voice.disconnect()
 
-        await ctx.send(f'[JOIN] {channel}')
+            if voice and voice.is_connected():
+                await voice.move_to(channel)
+            else:
+                voice = await channel.connect()
+
+            await ctx.send(f'[JOIN] {channel}')
 
 
     @commands.command(pass_context = True, brief = 'bot leaves a voice chat if in one')
@@ -83,7 +88,15 @@ class Audio(commands.Cog):
         voice.is_playing()
         nname = name.rsplit('-', 2)
         await ctx.send(f'Now Playing: {nname}')
-        
+
+    
+    @commands.command(pass_context = True, brief = 'debugging play command')
+    async def test(self, ctx):
+        voice = get(self.bot.voice_clients, guild = ctx.guild)
+        voice.play(discord.FFmpegPCMAudio('song.mp3'))
+        voice.source = discord.PCMVolumeTransformer(voice.source)
+        voice.volume = 100
+        voice.is_playing()
         
 def setup(bot):
     bot.add_cog(Audio(bot))
