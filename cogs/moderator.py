@@ -89,13 +89,13 @@ class Moderator(commands.Cog):
     async def warn(self, ctx, member : discord.Member, *, reason = None):
         """give a user an infraction 'warn [@member] [reason](optional)"""
 
-        user = member.display_name
+        user = member.mention
         avatar = member.avatar_url
 
         channel = self.bot.get_channel(607056829067034634) #logging
         logging.info(f'[WARN] {member}\n Moderator: {ctx.author}')
         # 0xff0000 is red
-        eObj = await embed(ctx, title = 'ATTENTION:', colour = 0xfaa51b, author = f'[WARN] {user}' ,
+        eObj = await embed(ctx, title = 'ATTENTION:', author = f'[WARN] {user}' ,
                     avatar = avatar, description = str(reason), footer = 'Moderator Warning')
         if eObj is not False:
             await ctx.send(embed = eObj)
