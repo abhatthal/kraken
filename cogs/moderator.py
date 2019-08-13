@@ -90,7 +90,7 @@ class Moderator(commands.Cog):
         """give a user an infraction 'warn [@member] [reason](optional)"""
 
         channel = self.bot.get_channel(607056829067034634) #logging
-        logging.info(f'[WARN] {member}\n Moderator: {ctx.author} Reason: {reason}\n')
+        logging.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
         # 0xff0000 is red
         eObj = await embed(ctx, title = 'ATTENTION:', author = f'[WARN] {member}' ,
                     avatar = member.avatar_url, description = str(reason), footer = 'Moderator Warning')
