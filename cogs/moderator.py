@@ -82,7 +82,7 @@ class Moderator(commands.Cog):
 
     
     @commands.command()
-    @commands.has_any_role(['GOD', 'mod'])
+    @commands.has_role('mod')
     async def warn(self, ctx, member : discord.Member, *, reason = None):
         """give a user an infraction 'warn [@member] [reason](optional)"""
 
