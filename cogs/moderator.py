@@ -81,6 +81,8 @@ class Moderator(commands.Cog):
             await ctx.send("You're not allowed to unban anybirdie! <:Asami:610590675142049868>")
 
     
+        @commands.command()
+        @commands.has_any_role(['GOD', 'mod'])
         async def warn(self, ctx, member : discord.Member, *, reason = None):
             """give a user an infraction 'warn [@member] [reason](optional)"""
 
