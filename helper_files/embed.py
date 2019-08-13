@@ -4,7 +4,7 @@ import asyncio # noqa, flake8 F401
 # import json # noqa, flake8 F401
 
 
-async def embed(ctx, title='', content='', description='', author='', colour=0xd2a220, link='', thumbnail='',
+async def embed(ctx, title='', content='', description='', author='', colour=0xfaa51b, link='', thumbnail='',
                 avatar='', footer=''):
     """
     title:<str> Title of the embed 99% of the time it'll be the command name, exceptions when it makes sense like
