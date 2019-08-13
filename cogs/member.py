@@ -1,6 +1,10 @@
 import discord
 import random
 from discord.ext import commands
+# Shamelessly took helper_files from Wall-E
+# https://github.com/CSSS/wall_e/tree/master/helper_files
+from helper_files.embed import embed
+import helper_files.settings as settings
 
 
 class Member(commands.Cog):
@@ -12,7 +16,9 @@ class Member(commands.Cog):
     async def ping(self, ctx):
         """returns bot latency"""
 
-        await ctx.send(f'Pong! {round(self.bot.latency * 1000)}ms')
+        eObj = await embed(ctx, description = f'Pong! {round(self.bot.latency * 1000)}ms', color = 0xd2a220, author = settings.BOT_NAME, avatar = settings.BOT_AVATAR)
+        if eObj is not False:
+            await ctx.send(embed = eObj)
     
 
     @commands.command(aliases=['8ball'])
