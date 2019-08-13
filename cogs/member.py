@@ -48,7 +48,14 @@ class Member(commands.Cog):
         """returns how many members are on the server"""
 
         id = self.bot.get_guild(ctx.guild.id)
-        await ctx.send(f'Member Count: {id.member_count}')        
+        await ctx.send(f'Member Count: {id.member_count}')
+        
+        
+    @commands.command()
+    async def echo(self, ctx, *, string : str):
+        """bot repeats what you say"""
+
+        await ctx.send(string)
         
 
 def setup(bot):

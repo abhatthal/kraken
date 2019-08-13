@@ -17,6 +17,7 @@ class Moderator(commands.Cog):
 
 
     @commands.command()
+    # @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason=None):
         """kick a user from server 'kick [@member] [reason](optional)'"""
 
@@ -24,7 +25,7 @@ class Moderator(commands.Cog):
             await ctx.send('Ouch ;-;')
         elif member.id == ctx.author.id:
             await ctx.send('Why are you hitting yourself?')
-        elif ctx.message.author.server_permissions.kick_members:
+        elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
             msg = f'[KICK] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
             logging.info(msg)
             channel = self.bot.get_channel(607056829067034634) #logging
@@ -32,10 +33,11 @@ class Moderator(commands.Cog):
             await channel.send(msg)
             await ctx.send(msg)
         else:
-            raise commands.CommandError("Sorry, you don't have permission to do that.")
+            await ctx.send("Hey, don't kick anybirdie!")
 
 
     @commands.command()
+    # @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
         """Ban a user from server 'ban [@member] [reason](optional)'"""
 
@@ -43,7 +45,7 @@ class Moderator(commands.Cog):
             await ctx.send('no u')
         elif member.id == ctx.author.id:
             await ctx.send("Please don't ban yourself")
-        elif ctx.message.author.server_permissions.ban_members:
+        elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
             msg = f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
             logging.info(msg)
             channel = self.bot.get_channel(607056829067034634) #logging
@@ -51,10 +53,10 @@ class Moderator(commands.Cog):
             await channel.send(msg)
             await ctx.send(msg)
         else:
-            raise commands.CommandError("Sorry, you don't have permission to do that.")          
-
+            await ctx.send("Hey, don't ban anybirdie!")
 
     @commands.command()
+    # @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
         """Unban a user from server 'unban [member#1234]'"""
 
@@ -62,7 +64,7 @@ class Moderator(commands.Cog):
             await ctx.send("Wait, am I banned? >.<")
         elif str(ctx.author.id) in member or str(ctx.author) == member:
             await ctx.send("You can't unban yourself silly")
-        elif ctx.message.author.server_permissions.ban_members:
+        elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
             channel = self.bot.get_channel(607056829067034634) #logging
             banned_users = await ctx.guild.bans()
             member_name, member_discriminator = member.split('#')
@@ -76,7 +78,7 @@ class Moderator(commands.Cog):
                     await ctx.send(msg)
                     return
         else:
-            raise commands.CommandError("Sorry, you don't have permission to do that.")                
+            await ctx.send("You're not allowed to unban anybirdie!")
 
 
 def setup(bot):
