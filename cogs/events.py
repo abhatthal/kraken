@@ -24,7 +24,8 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if self.bot.user.id != message.author.id:
+        # If a message is sent not in #debate and is not sent by the bot
+        if message.channel.id != 606880223199363172 and self.bot.user.id != message.author.id:
             if 'aww man' in message.content.lower() or 'aw man' in message.content.lower():
                 await message.channel.send('Oh we back in the mine')
             elif 'creeper' in message.content.lower():
