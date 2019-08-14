@@ -33,7 +33,7 @@ class Moderator(commands.Cog):
             channel = self.bot.get_channel(607056829067034634) #logging
 
             eObj = await embed(ctx, colour = 0xFF0000, title = 'ATTENTION:', author = f'[KICK] {member}' ,
-                avatar = member.avatar_url, footer = 'User Kicked')
+                avatar = member.avatar_url, description = 'Reason: ' + str(reason))
             if eObj is not False:
                 await ctx.send(embed = eObj)
                 await channel.send(embed = eObj)
@@ -55,8 +55,8 @@ class Moderator(commands.Cog):
             logging.info(f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             channel = self.bot.get_channel(607056829067034634) #logging
 
-            eObj = await embed(ctx, colour = 0xFF0000, title = 'ATTENTION:', author = f'[BAN] {member}' ,
-                avatar = member.avatar_url, footer = 'User Banned')
+            eObj = await embed(ctx, colour = 0xFF0000, author = f'[BAN] {member}' ,
+                avatar = member.avatar_url, description = 'Reason: ' + str(reason))
             if eObj is not False:
                 await ctx.send(embed = eObj)
                 await channel.send(embed = eObj)
@@ -83,13 +83,13 @@ class Moderator(commands.Cog):
                 if (user.name, user.discriminator) == (member_name, member_discriminator):
                     logging.info(f'[UNBAN] {member}\n Moderator: {ctx.author}')
 
-                    eObj = await embed(ctx, colour = 0x05A000, title = 'ATTENTION:', author = f'[UNBAN] {member}' ,
-                        avatar = member.avatar_url, footer = 'User Unbanned')
+                    eObj = await embed(ctx, colour = 0x05A000, author = f'[UNBAN] {member}')
                     if eObj is not False:
                         await ctx.send(embed = eObj)
                         await channel.send(embed = eObj)
                         await ctx.guild.unban(user)
                     return
+            await ctx.send("That user isn't banned")
         else:
             await ctx.send("You're not allowed to unban anybirdie! <:Asami:610590675142049868>")
 
