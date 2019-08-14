@@ -4,6 +4,9 @@ from time import gmtime, strftime
 import logging
 import helper_files.settings as settings
 
+logger = logging.getLogger('HonestBear')
+
+
 class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

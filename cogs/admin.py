@@ -2,7 +2,9 @@ import discord
 from discord.ext import commands
 import logging
 import helper_files.settings as settings
+
 logger = logging.getLogger('HonestBear')
+
 
 class Admin(commands.Cog):
     def __init__(self, bot):

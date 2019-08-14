@@ -2,7 +2,6 @@
 import discord
 import os
 from discord.ext import commands
-import logging
 import helper_files.settings as settings
 
 bot = commands.Bot(command_prefix = '.', description = "A very honest discord bot")

@@ -8,6 +8,9 @@ from datetime import datetime # get time for db logging
 import logging
 import helper_files.settings as settings
 
+logger = logging.getLogger('HonestBear')
+
+
 class Moderator(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
