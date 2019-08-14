@@ -1,4 +1,3 @@
-import os
 import sqlite3 # maintain infractions in infractions.db
 import logging # maintain logs in bot.log
 
@@ -10,7 +9,6 @@ BOT_AVATAR = 'https://github.com/abhatthal/HonestBear/raw/master/HonestBear.png'
 # sqlite3 database of all infractions
 conn = sqlite3.connect('infractions.db')
 c = conn.cursor()
-if not os.path.isfile('infractions.db'):
-    c.execute('''CREATE TABLE infractions
-                (id, infraction, mod_reason, date)''')
-    conn.commit()
+c.execute('''CREATE TABLE IF NOT EXISTS infractions
+            (id text, infraction text, mod_reason text, date text)''')
+conn.commit()

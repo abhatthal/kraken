@@ -46,7 +46,7 @@ class Admin(commands.Cog):
 
     @commands.command()
     @commands.has_role('GOD')
-    async def shutdown(self, ctx, extension):
+    async def shutdown(self, ctx):
         """bot goes offline"""
     
         settings.conn.close()

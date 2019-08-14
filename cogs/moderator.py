@@ -117,10 +117,35 @@ class Moderator(commands.Cog):
             if eObj is not False:
                 await ctx.send(embed = eObj)
                 await channel.send(embed = eObj)
-                c.execute(f"INSERT INTO infractions VALUES ({member.id}, '', {str(reason)}, {str(datetime.now())})")
-                conn.commit()
+                settings.c.execute(f"INSERT INTO infractions VALUES ({member.id}, '', {str(reason)}, {str(datetime.now())})")
+                settings.conn.commit()
         else:
             await ctx.send("You're not allowed to warn anybirdie! <:Asami:610590675142049868>")
+
+
+    @commands.command()
+    # @commands.has_role('mod')
+    async def infractions(self, ctx, member : discord.Member):
+        """returns all a user's infractions 'infractions [@member]"""
+
+        if member.id == self.bot.user.id:
+            await ctx.send('no u')
+        elif member.id == ctx.author.id:
+            await ctx.send("You can't warn yourself")
+        elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
+            channel = self.bot.get_channel(607056829067034634) #logging
+            logger.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
+            
+            eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = f'[WARN] {member}' ,
+                avatar = member.avatar_url, description = str(reason), footer = 'Moderator Warning')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+                await channel.send(embed = eObj)
+                settings.c.execute(f"INSERT INTO infractions VALUES ('{member.id}', 'Moderator Warning', '{str(reason)}', '{str(datetime.now())}')")
+                settings.conn.commit()
+        else:
+            await ctx.send("You're not allowed to warn anybirdie! <:Asami:610590675142049868>")
+
 
 
 def setup(bot):
