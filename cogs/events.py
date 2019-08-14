@@ -2,8 +2,7 @@ import discord
 from discord.ext import commands
 from time import gmtime, strftime
 import logging
-logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctime)s %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
-
+import helper_files.settings as settings
 
 class Events(commands.Cog):
     def __init__(self, bot):
@@ -12,7 +11,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logging.info("Bot Online")
+        logger.info("Bot Online")
 
 
     @commands.Cog.listener()

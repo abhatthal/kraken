@@ -4,9 +4,8 @@ from discord.ext import commands
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
 from helper_files.embed import embed
+import helper_files.settings as settings
 
-bot_name = 'Honest Bear'
-bot_avatar = 'https://github.com/abhatthal/HonestBear/raw/master/HonestBear.png'
 
 class Member(commands.Cog):
     def __init__(self, bot):
@@ -15,7 +14,7 @@ class Member(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        eObj = await embed(ctx, description = f'Pong! {round(self.bot.latency * 1000)}ms', author = bot_name, avatar = bot_avatar)
+        eObj = await embed(ctx, description = f'Pong! {round(self.bot.latency * 1000)}ms', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR)
         if eObj is not False:
             await ctx.send(embed = eObj)
     
@@ -52,7 +51,7 @@ class Member(commands.Cog):
     @commands.command()
     async def membercount(self, ctx):
         id = self.bot.get_guild(ctx.guild.id)
-        eObj = await embed(ctx, author = bot_name, avatar = bot_avatar, description = f'Member Count: {id.member_count}')
+        eObj = await embed(ctx, author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = f'Member Count: {id.member_count}')
         if eObj is not False:
             await ctx.send(embed=eObj)
         
