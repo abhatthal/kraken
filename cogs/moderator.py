@@ -29,12 +29,15 @@ class Moderator(commands.Cog):
         elif member.id == ctx.author.id:
             await ctx.send('Why are you hitting yourself?')
         elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
-            msg = f'[KICK] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
-            logging.info(msg)
+            logging.info(f'[KICK] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             channel = self.bot.get_channel(607056829067034634) #logging
-            await member.kick(reason = reason)
-            await channel.send(msg)
-            await ctx.send(msg)
+
+            eObj = await embed(ctx, colour = 0xFF0000, title = 'ATTENTION:', author = f'[KICK] {member}' ,
+                avatar = member.avatar_url, footer = 'User Kicked')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+                await channel.send(embed = eObj)
+                await member.kick(reason = reason)
         else:
             await ctx.send("Hey, don't kick anybirdie! <:Asami:610590675142049868>")
 
@@ -49,14 +52,18 @@ class Moderator(commands.Cog):
         elif member.id == ctx.author.id:
             await ctx.send("Please don't ban yourself")
         elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
-            msg = f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n'
-            logging.info(msg)
+            logging.info(f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             channel = self.bot.get_channel(607056829067034634) #logging
-            await member.ban(reason = reason)
-            await channel.send(msg)
-            await ctx.send(msg)
+
+            eObj = await embed(ctx, colour = 0xFF0000, title = 'ATTENTION:', author = f'[BAN] {member}' ,
+                avatar = member.avatar_url, footer = 'User Banned')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+                await channel.send(embed = eObj)
+                await member.ban(reason = reason)
         else:
             await ctx.send("Hey, don't ban anybirdie! <:Asami:610590675142049868>")
+
 
     @commands.command()
     # @commands.has_permissions(ban_members=True)
@@ -74,29 +81,39 @@ class Moderator(commands.Cog):
             for ban_entry in banned_users:
                 user = ban_entry.user
                 if (user.name, user.discriminator) == (member_name, member_discriminator):
-                    msg = f'[UNBAN] {member}\n Moderator: {ctx.author}'
-                    logging.info(msg)
-                    await ctx.guild.unban(user)
-                    await channel.send(msg)
-                    await ctx.send(msg)
+                    logging.info(f'[UNBAN] {member}\n Moderator: {ctx.author}')
+
+                    eObj = await embed(ctx, colour = 0x05A000, title = 'ATTENTION:', author = f'[UNBAN] {member}' ,
+                        avatar = member.avatar_url, footer = 'User Unbanned')
+                    if eObj is not False:
+                        await ctx.send(embed = eObj)
+                        await channel.send(embed = eObj)
+                        await ctx.guild.unban(user)
                     return
         else:
             await ctx.send("You're not allowed to unban anybirdie! <:Asami:610590675142049868>")
 
     
     @commands.command()
-    @commands.has_role('mod')
+    # @commands.has_role('mod')
     async def warn(self, ctx, member : discord.Member, *, reason = None):
         """give a user an infraction 'warn [@member] [reason](optional)"""
 
-        channel = self.bot.get_channel(607056829067034634) #logging
-        logging.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
-        # 0xff0000 is red
-        eObj = await embed(ctx, title = 'ATTENTION:', author = f'[WARN] {member}' ,
-                    avatar = member.avatar_url, description = str(reason), footer = 'Moderator Warning')
-        if eObj is not False:
-            await ctx.send(embed = eObj)
-            await channel.send(embed = eObj)
+        if member.id == self.bot.user.id:
+            await ctx.send('no u')
+        elif member.id == ctx.author.id:
+            await ctx.send("You can't warn yourself")
+        elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
+            channel = self.bot.get_channel(607056829067034634) #logging
+            logging.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
+            
+            eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = f'[WARN] {member}' ,
+                avatar = member.avatar_url, description = str(reason), footer = 'Moderator Warning')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+                await channel.send(embed = eObj)
+        else:
+            await ctx.send("You're not allowed to warn anybirdie! <:Asami:610590675142049868>")
 
 
 def setup(bot):
