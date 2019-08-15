@@ -43,9 +43,9 @@ class Member(commands.Cog):
                 # print all commands and their corresponding descriptions for that cog
                 for command in cog_commands:
                     if command.name != 'help' and command.name != '_8ball':
-                        eObj.add_field(name = command.name, value = command.description, inline = False)
+                        eObj.add_field(name = '!' + command.name, value = command.description, inline = False)
                     elif command.name == '_8ball':
-                        eObj.add_field(name = command.name[1:], value = command.description, inline = False)
+                        eObj.add_field(name = '!' + command.name[1:], value = command.description, inline = False)
                 # only send embed if no parsing errors
                 if eObj is not False:
                     await ctx.send(embed = eObj)
