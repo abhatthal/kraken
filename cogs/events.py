@@ -19,7 +19,8 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        await ctx.send(error)
+        if not isinstance(error, commands.CommandNotFound):
+            await ctx.send(error)
 
 
     @commands.Cog.listener()
