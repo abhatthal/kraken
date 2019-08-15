@@ -5,7 +5,7 @@ from discord.ext import commands
 import helper_files.settings as settings
 
 bot = commands.Bot(command_prefix = '.', description = settings.DESCRIPTION)
-# bot.remove_command('help')
+bot.remove_command('help')
 
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):

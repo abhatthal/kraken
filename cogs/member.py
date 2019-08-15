@@ -1,5 +1,6 @@
 import discord
 import random
+import os
 from discord.ext import commands
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
@@ -12,22 +13,27 @@ class Member(commands.Cog):
         self.bot = bot
 
 
-    @commands.command(pass_context = True, description = 'under construction')
-    async def help2(self, ctx):
-        user = ctx.author.display_name
-        avatar = ctx.author.avatar_url
+    @commands.command(pass_context = True)
+    async def help(self, ctx):
 
-        eObj = await embed(ctx, title = f'{settings.BOT_NAME} - Help', description = settings.DESCRIPTION)
-        eObj.add_field(name = 'ping', value = 'returns bot latency', inline = False)
-        eObj.add_field(name = '8ball', value = "Ask a yes or no question, get an answer '8ball [question]'", inline = False)
-        if eObj is not False:
-            await ctx.send(embed = eObj)
+        # get all the cogs
+        for filename in os.listdir('./cogs'):
+            if filename.endswith('.py') and filename != 'events.py':
+                cog_name = filename[:-3].capitalize()
+                cog = self.bot.get_cog(cog_name)
+                cog_commands = cog.get_commands()
+                # send an embed for each cog
+                eObj = await embed(ctx, title = f'{cog_name} Plugin Commands')
+                # print all commands and their corresponding descriptions for that cog
+                for command in cog_commands:
+                    if command.name != 'help' and command.name != '_8ball':
+                        eObj.add_field(name = command.name, value = command.description, inline = False)
+                    elif command.name == '_8ball':
+                        eObj.add_field(name = command.name[1:], value = command.description, inline = False)
+                # only send embed if no parsing errors
+                if eObj is not False:
+                    await ctx.send(embed = eObj)
 
-        msg = '```'
-        for command in self.bot.commands:
-            msg += f'{command.category} - {command.name} - {command.description}\n'
-        msg += '```'
-        await ctx.send(msg)
 
 
     @commands.command(description = 'returns bot latency')
