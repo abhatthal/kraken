@@ -5,7 +5,7 @@ logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctim
 
 BOT_NAME = 'Honest Bear'
 BOT_AVATAR = 'https://github.com/abhatthal/HonestBear/raw/master/HonestBear.png'
-
+DESCRIPTION = 'A very honest discord bot'
 # sqlite3 database of all infractions
 conn = sqlite3.connect('infractions.db')
 c = conn.cursor()

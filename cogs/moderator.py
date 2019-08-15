@@ -16,19 +16,15 @@ class Moderator(commands.Cog):
         self.bot = bot
     
 
-    @commands.command()
+    @commands.command(description = "Clears messages 'clear [amount](optional)'")
     @commands.has_permissions(manage_messages = True)
     async def clear(self, ctx, amount=10):
-        """remove last n messages 'clear [n]'"""
-
         await ctx.channel.purge(limit = amount + 1)
 
 
-    @commands.command()
+    @commands.command(description = "kick a user from server 'kick [@member] [reason](optional)'")
     # @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason = None):
-        """kick a user from server 'kick [@member] [reason](optional)'"""
-
         if member.id == self.bot.user.id:
             await ctx.send('Ouch ;-;')
         elif member.id == ctx.author.id:
@@ -47,11 +43,9 @@ class Moderator(commands.Cog):
             await ctx.send("Hey, don't kick anybirdie! <:Asami:610590675142049868>")
 
 
-    @commands.command()
+    @commands.command(description = "Ban a user from server 'ban [@member] [reason](optional)'")
     # @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason = None):
-        """Ban a user from server 'ban [@member] [reason](optional)'"""
-
         if member.id == self.bot.user.id:
             await ctx.send('no u')
         elif member.id == ctx.author.id:
@@ -70,11 +64,9 @@ class Moderator(commands.Cog):
             await ctx.send("Hey, don't ban anybirdie! <:Asami:610590675142049868>")
 
 
-    @commands.command()
+    @commands.command(description = "Unban a user from server 'unban [member#1234]'")
     # @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
-        """Unban a user from server 'unban [member#1234]'"""
-
         if member == '<@608911590515015701>' or member == 'Honest Bear#9253':
             await ctx.send("Wait, am I banned? >.<")
         elif str(ctx.author.id) in member or str(ctx.author) == member:
@@ -99,11 +91,9 @@ class Moderator(commands.Cog):
             await ctx.send("You're not allowed to unban anybirdie! <:Asami:610590675142049868>")
 
     
-    @commands.command()
+    @commands.command(description = "give a user an infraction 'warn [@member] [reason](optional)'")
     # @commands.has_role('mod')
     async def warn(self, ctx, member : discord.Member, *, reason = None):
-        """give a user an infraction 'warn [@member] [reason](optional)"""
-
         if member.id == self.bot.user.id:
             await ctx.send('no u')
         elif member.id == ctx.author.id:
@@ -123,11 +113,9 @@ class Moderator(commands.Cog):
             await ctx.send("You're not allowed to warn anybirdie! <:Asami:610590675142049868>")
 
 
-    @commands.command()
+    @commands.command(description = "returns all a user's infractions 'infractions [@member]'")
     # @commands.has_role('mod')
     async def infractions(self, ctx, member : discord.Member):
-        """returns all a user's infractions 'infractions [@member]"""
-
         if 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
             
             eObj = await embed(ctx, title = 'INFRACTIONS:', author = f'{member}' ,

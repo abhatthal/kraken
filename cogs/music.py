@@ -59,20 +59,16 @@ class Music(commands.Cog):
         self.bot = bot
 
 
-    @commands.command()
+    @commands.command(description = 'Joins a voice channel')
     async def join(self, ctx, *, channel: discord.VoiceChannel):
-        """Joins a voice channel"""
-
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
 
         await channel.connect()
 
 
-    @commands.command()
+    @commands.command(description = 'Streams from a url')
     async def play(self, ctx, *, url):
-        """Streams from a url"""
-
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
             ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
@@ -80,10 +76,8 @@ class Music(commands.Cog):
         await ctx.send('Now playing: {}'.format(player.title))
 
 
-    @commands.command()
+    @commands.command(description = "Changes the player's volume")
     async def volume(self, ctx, volume: int):
-        """Changes the player's volume"""
-
         if ctx.voice_client is None:
             return await ctx.send("Not connected to a voice channel.")
 
@@ -91,10 +85,8 @@ class Music(commands.Cog):
         await ctx.send("Changed volume to {}%".format(volume))
 
 
-    @commands.command()
+    @commands.command(description = 'Stops and disconnects the bot from voice')
     async def stop(self, ctx):
-        """Stops and disconnects the bot from voice"""
-
         if ctx.voice_client != None:
             await ctx.voice_client.disconnect()
         else:
