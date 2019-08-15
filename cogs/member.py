@@ -15,14 +15,22 @@ class Member(commands.Cog):
 
     @commands.command(pass_context = True)
     async def help(self, ctx):
+        # only show relevant cogs
+        ignore = ['events.py']
+        if not ('mod' in [role.name for role in ctx.author.roles]):
+            ignore.append('moderator.py')
+        if not ('GOD' in [role.name for role in ctx.author.roles]):
+            ignore.append('admin.py')
+
         # get images
         admin = 'http://icons.iconarchive.com/icons/alecive/flatwoken/512/Apps-Terminal-Pc-104-icon.png'
         member = 'https://www.airfieldresearchgroup.org.uk/images/icons/member-icon.png'
         moderator = 'http://www.clker.com/cliparts/O/f/t/B/a/V/green-hammer-gray.svg.hi.png'
         music = 'http://www.veryicon.com/icon/png/Media/Music%20notes/Note%20green.png'
+
         # get all the cogs
         for filename in os.listdir('./cogs'):
-            if filename.endswith('.py') and filename != 'events.py':
+            if filename.endswith('.py') and filename not in ignore:
                 # get commands from cog
                 cog_name = filename[:-3].capitalize()
                 cog = self.bot.get_cog(cog_name)

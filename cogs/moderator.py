@@ -73,7 +73,7 @@ class Moderator(commands.Cog):
             await ctx.send("Wait, am I banned? >.<")
         elif str(ctx.author.id) in member or str(ctx.author) == member:
             await ctx.send("You can't unban yourself silly")
-        elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
+        elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             channel = self.bot.get_channel(607056829067034634) #logging
             banned_users = await ctx.guild.bans()
             member_name, member_discriminator = member.split('#')
@@ -99,7 +99,7 @@ class Moderator(commands.Cog):
             await ctx.send('no u')
         elif member.id == ctx.author.id:
             await ctx.send("You can't warn yourself")
-        elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
+        elif 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             channel = self.bot.get_channel(607056829067034634) #logging
             logger.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = f'[WARN] {member}' ,
@@ -116,7 +116,7 @@ class Moderator(commands.Cog):
     @commands.command(description = "returns all a user's infractions 'infractions [@member]'")
     # @commands.has_role('mod')
     async def infractions(self, ctx, member : discord.Member):
-        if 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
+        if 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             eObj = await embed(ctx, title = 'INFRACTIONS:', author = f'{member}' ,
                 avatar = member.avatar_url, description = 'uuh, database broke. sorry')
             if eObj is not False:
@@ -128,7 +128,7 @@ class Moderator(commands.Cog):
     @commands.command(description = "gives a user bluecan role 'blueify [@member]'")
     async def blueify(self, ctx, member : discord.Member):
         bluecan = get(ctx.guild.roles, id = 606911719217823745)
-        if 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
+        if 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             eObj = await embed(ctx, title = 'Congrats!', author = f'{member}' ,
                 avatar = member.avatar_url, description = "You're a bluecan now!")
             if eObj is not False:
@@ -141,7 +141,7 @@ class Moderator(commands.Cog):
     @commands.command(description = "removes a user's bluecan role 'blueify [@member]'")
     async def unblueify(self, ctx, member : discord.Member):
         bluecan = get(ctx.guild.roles, id = 606911719217823745)
-        if 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name.lower() for role in ctx.author.roles]:
+        if 'mod' in [role.name.lower() for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             eObj = await embed(ctx, title = 'Sorry!', author = f'{member}' ,
                 avatar = member.avatar_url, description = "Your bluecan role has been removed.")
             if eObj is not False:
