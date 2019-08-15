@@ -15,15 +15,31 @@ class Member(commands.Cog):
 
     @commands.command(pass_context = True)
     async def help(self, ctx):
-
+        # get images
+        admin = 'http://icons.iconarchive.com/icons/alecive/flatwoken/512/Apps-Terminal-Pc-104-icon.png'
+        member = 'https://www.airfieldresearchgroup.org.uk/images/icons/member-icon.png'
+        moderator = 'http://www.clker.com/cliparts/O/f/t/B/a/V/green-hammer-gray.svg.hi.png'
+        music = 'http://www.veryicon.com/icon/png/Media/Music%20notes/Note%20green.png'
         # get all the cogs
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py') and filename != 'events.py':
+                # get commands from cog
                 cog_name = filename[:-3].capitalize()
                 cog = self.bot.get_cog(cog_name)
                 cog_commands = cog.get_commands()
+                # set image for thumbnail
+                if cog_name == 'Admin':
+                    thumbnail = admin
+                elif cog_name == 'Member':
+                    thumbnail = member
+                elif cog_name == 'Moderator':
+                    thumbnail = moderator
+                elif cog_name == 'Music':
+                    thumbnail = music
+                else:
+                    thumbnail = ''
                 # send an embed for each cog
-                eObj = await embed(ctx, title = f'{cog_name} Plugin Commands')
+                eObj = await embed(ctx, title = f'{cog_name} Plugin Commands', thumbnail = thumbnail)
                 # print all commands and their corresponding descriptions for that cog
                 for command in cog_commands:
                     if command.name != 'help' and command.name != '_8ball':
