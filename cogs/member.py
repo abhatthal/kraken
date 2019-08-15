@@ -17,7 +17,7 @@ class Member(commands.Cog):
     async def help(self, ctx):
         # only show relevant cogs
         ignore = ['events.py']
-        if not ('mod' in [role.name for role in ctx.author.roles]):
+        if not ('mod' in [role.name for role in ctx.author.roles]) and not ('GOD' in [role.name for role in ctx.author.roles]):
             ignore.append('moderator.py')
         if not ('GOD' in [role.name for role in ctx.author.roles]):
             ignore.append('admin.py')
