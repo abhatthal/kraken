@@ -35,6 +35,7 @@ class Member(commands.Cog):
                 cog_name = filename[:-3].capitalize()
                 cog = self.bot.get_cog(cog_name)
                 cog_commands = cog.get_commands()
+
                 # set image for thumbnail
                 if cog_name == 'Admin':
                     thumbnail = admin
@@ -46,9 +47,10 @@ class Member(commands.Cog):
                     thumbnail = music
                 else:
                     thumbnail = ''
+
                 # send an embed for each cog
-                eObj = await embed(ctx, title = f'{cog_name} Plugin Commands', thumbnail = thumbnail)
-                
+                eObj = await embed(ctx, title = f'{cog_name} Plugin Commands', thumbnail = thumbnail)   
+
                 # determine command usage
                 usage = {
                     # Music
@@ -73,14 +75,18 @@ class Member(commands.Cog):
                     # Admin
                     'load' : '[extension]',
                     'unload' : '[extension]',
-                    'reload' : '[extension]',
+                    'reload' : '[extension]'
                 }
+
                 # print all commands and their corresponding descriptions for that cog
                 for command in cog_commands:
                     if command.name != 'help' and command.name != '_8ball':
-                        eObj.add_field(name = f'.{command.name} {usage[command]}', value = command.description, inline = False)
+                        usage_string = usage.get(command.name)
+                        if not usage_string:
+                            usage_string = ''
+                        eObj.add_field(name = f'.{command.name} {usage_string}', value = command.description, inline = False)
                     elif command.name == '_8ball':
-                        eObj.add_field(name = f'.{command.name[1:]} {usage[command]}', value = command.description, inline = False)
+                        eObj.add_field(name = f'.{command.name[1:]} {usage_string}', value = command.description, inline = False)
                 # only send embed if no parsing errors
                 if eObj is not False:
                     await ctx.send(embed = eObj)
