@@ -10,7 +10,7 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(description = 'load [extension]')
+    @commands.command(description = 'loads an extension')
     @commands.has_role('GOD')
     async def load(self, ctx, extension):
         self.bot.load_extension(f'cogs.{extension}')
@@ -19,7 +19,7 @@ class Admin(commands.Cog):
         await ctx.send(msg)
     
     
-    @commands.command(description = 'unload [extension]')
+    @commands.command(description = 'unloads an extension')
     @commands.has_role('GOD')
     async def unload(self, ctx, extension):
         self.bot.unload_extension(f'cogs.{extension}')
@@ -28,7 +28,7 @@ class Admin(commands.Cog):
         await ctx.send(msg)
     
     
-    @commands.command(description = 'reload [extension]')
+    @commands.command(description = 'reloads an extension')
     @commands.has_role('GOD')
     async def reload(self, ctx, extension):
         self.bot.unload_extension(f'cogs.{extension}')

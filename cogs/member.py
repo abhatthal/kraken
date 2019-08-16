@@ -48,12 +48,39 @@ class Member(commands.Cog):
                     thumbnail = ''
                 # send an embed for each cog
                 eObj = await embed(ctx, title = f'{cog_name} Plugin Commands', thumbnail = thumbnail)
+                
+                # determine command usage
+                usage = {
+                    # Music
+                    'join' : '[member]',
+                    'play' : '[search] or [url]',
+                    'volume' : '[number]',
+
+                    # Member
+                    '_8ball' : '[question]',
+                    'echo' : '[string]',
+
+                    # Moderator
+                    'clear' : '(optional count)',
+                    'kick' : '[member] (optional reason)',
+                    'ban' : '[member] (optional reason)',
+                    'unban' : '[member] (optional reason)',
+                    'warn' : '[member] (optional reason)',
+                    'infractions' : '[member]',
+                    'blueify' : '[member]',
+                    'unblueify' : '[member]',
+
+                    # Admin
+                    'load' : '[extension]',
+                    'unload' : '[extension]',
+                    'reload' : '[extension]',
+                }
                 # print all commands and their corresponding descriptions for that cog
                 for command in cog_commands:
                     if command.name != 'help' and command.name != '_8ball':
-                        eObj.add_field(name = '.' + command.name, value = command.description, inline = False)
+                        eObj.add_field(name = f'.{command.name} {usage[command]}', value = command.description, inline = False)
                     elif command.name == '_8ball':
-                        eObj.add_field(name = '.' + command.name[1:], value = command.description, inline = False)
+                        eObj.add_field(name = f'.{command.name[1:]} {usage[command]}', value = command.description, inline = False)
                 # only send embed if no parsing errors
                 if eObj is not False:
                     await ctx.send(embed = eObj)
@@ -67,7 +94,7 @@ class Member(commands.Cog):
             await ctx.send(embed = eObj)
     
 
-    @commands.command(aliases=['8ball'], description = "Ask a yes or no question, get an answer '8ball [question]'")
+    @commands.command(aliases=['8ball'], description = 'Ask a yes or no question, get an answer')
     async def _8ball(self, ctx, *, question):
         responses = [
             'It is certain.',

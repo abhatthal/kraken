@@ -14,7 +14,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        logger.info("Bot Online")
+        logger.info('Bot Online')
 
 
     @commands.Cog.listener()
@@ -36,7 +36,7 @@ class Events(commands.Cog):
                 await message.channel.send("OwO What's this?")
 
             if 'no u' in message.content.lower():
-                await message.channel.send("NO U")
+                await message.channel.send('NO U')
         
             # If a message is posted in #suggestions, allow people to vote
             if message.channel.id == 607102047195496456:

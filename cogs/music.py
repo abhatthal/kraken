@@ -67,7 +67,7 @@ class Music(commands.Cog):
         await channel.connect()
 
 
-    @commands.command(description = 'Streams from a url')
+    @commands.command(description = 'Play a song')
     async def play(self, ctx, *, url):
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
@@ -79,10 +79,10 @@ class Music(commands.Cog):
     @commands.command(description = "Changes the player's volume")
     async def volume(self, ctx, volume: int):
         if ctx.voice_client is None:
-            return await ctx.send("Not connected to a voice channel.")
+            return await ctx.send('Not connected to a voice channel.')
 
         ctx.voice_client.source.volume = volume / 100
-        await ctx.send("Changed volume to {}%".format(volume))
+        await ctx.send('Changed volume to {}%'.format(volume))
 
 
     @commands.command(description = 'Stops and disconnects the bot from voice')
@@ -90,7 +90,7 @@ class Music(commands.Cog):
         if ctx.voice_client != None:
             await ctx.voice_client.disconnect()
         else:
-            raise commands.CommandError("No music playing to stop.")
+            raise commands.CommandError('No music playing to stop.')
 
 
     @play.before_invoke
@@ -101,7 +101,7 @@ class Music(commands.Cog):
             else:
                 # await ctx.send("You are not connected to a voice channel.")
                 # raise commands.CommandError("Author not connected to a voice channel.")
-                raise commands.CommandError("You are not connected to a voice channel.")
+                raise commands.CommandError('You are not connected to a voice channel.')
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
 
