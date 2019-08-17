@@ -111,11 +111,11 @@ class Moderator(commands.Cog):
                 cursor = db.cursor()
                 # get infraction_id (number of global infractions + 1)
                 cursor.execute('SELECT COUNT(*) FROM infractions')
-                infraction_id = cursor.fetchone() + 1
+                infraction_id = cursor.fetchone()[0] + 1
                 # insert data
                 cursor.execute('''
                 INSERT INTO infractions(member_id, infraction_id, infraction, date)
-                VALUES(?, ?, ?, ?)''', (member.id, infraction_id, str(reason), str(datetime.datetime.now())))
+                VALUES(?, ?, ?, ?)''', (str(member.id), str(infraction_id), str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
                 db.commit()
         else:
             await ctx.send("You're not allowed to warn anybirdie! <:Asami:610590675142049868>")
@@ -129,11 +129,11 @@ class Moderator(commands.Cog):
             db = sqlite3.connect('HonestBear.sqlite')
             cursor = db.cursor()
             # fetch data
-            cursor.execute(f'SELECT infraction FROM infractions WHERE member_id = {member.id}')
+            cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE member_id = {str(member.id)}')
             all_rows = cursor.fetchall()
             msg = ''
             for row in all_rows:
-                msg += f'{row}\n'
+                msg += f'{row[0]} #{row[1]} {row[2]}\n'
             # return data
             eObj = await embed(ctx, title = 'INFRACTIONS:', author = f'{member}' ,
                 avatar = member.avatar_url, description = msg)
