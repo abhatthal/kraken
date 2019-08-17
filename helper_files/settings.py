@@ -11,7 +11,7 @@ COMMAND_PREFIX = '.'
 DATABASE = 'HonestBear.sqlite'
 LOGGING_CHANNEL = 607056829067034634
 
-ADMIN_IMG = './images/admin.png'
-MEMBER_IMG = './images/member.png'
-MODERATOR_IMG = './images/moderator.png'
-MUSIC_IMG = './images/music.png'
+ADMIN_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/admin.png'
+MEMBER_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/member.png'
+MODERATOR_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/moderator.png'
+MUSIC_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/music.png'

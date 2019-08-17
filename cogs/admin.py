@@ -48,7 +48,7 @@ class Admin(commands.Cog):
     async def shutdown(self, ctx):
         db = sqlite3.connect(settings.DATABASE)
         db.close()
-        logger.info(f'{self.author} : Shut Down')
+        logger.info(f'{ctx.author} : Shut Down')
         await ctx.send("Shutting down!")
         await self.bot.logout()
 
