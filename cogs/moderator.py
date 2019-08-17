@@ -34,7 +34,7 @@ class Moderator(commands.Cog):
             await ctx.send('Why are you hitting yourself?')
         elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             logger.info(f'[KICK] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
-            channel = self.bot.get_channel(607056829067034634) #logging
+            channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             eObj = await embed(ctx, colour = 0xFF0000, author = f'[KICK] {member}' ,
                 avatar = member.avatar_url, description = 'Reason: ' + str(reason))
             if eObj is not False:
@@ -54,7 +54,7 @@ class Moderator(commands.Cog):
             await ctx.send("Please don't ban yourself")
         elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             logger.info(f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
-            channel = self.bot.get_channel(607056829067034634) #logging
+            channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             eObj = await embed(ctx, colour = 0xFF0000, author = f'[BAN] {member}' ,
                 avatar = member.avatar_url, description = 'Reason: ' + str(reason))
             if eObj is not False:
@@ -68,14 +68,22 @@ class Moderator(commands.Cog):
     @commands.command(description = 'Unban a user from the server')
     # @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
-        if member == '<@608911590515015701>' or member == 'Honest Bear#9253':
+        if member == '<@608911590515015701>' or member == f'{settings.BOT_NAME}#9253':
             await ctx.send("Wait, am I banned? >.<")
         elif str(ctx.author.id) in member or str(ctx.author) == member:
             await ctx.send("You can't unban yourself silly")
         elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
-            channel = self.bot.get_channel(607056829067034634) #logging
+            channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             banned_users = await ctx.guild.bans()
-            member_name, member_discriminator = member.split('#')
+            # Check if member is valid
+            if type(member) == string and '#' in member:
+                member_name, member_discriminator = member.split('#')
+            elif type(member) = discord.Member:
+                member_name = member.name
+                member_discriminator = member.discriminator
+            else:
+                raise commands.CommandError('Invalid member passed')
+            # unban if in banned users list
             for ban_entry in banned_users:
                 user = ban_entry.user
                 if (user.name, user.discriminator) == (member_name, member_discriminator):
@@ -99,7 +107,7 @@ class Moderator(commands.Cog):
         elif member.id == ctx.author.id:
             await ctx.send("You can't warn yourself")
         elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
-            channel = self.bot.get_channel(607056829067034634) #logging
+            channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             logger.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = f'[WARN] {member}' ,
                 avatar = member.avatar_url, description = str(reason), footer = 'Moderator Warning')
@@ -107,7 +115,7 @@ class Moderator(commands.Cog):
                 await ctx.send(embed = eObj)
                 await channel.send(embed = eObj)
                 # connect to database
-                db = sqlite3.connect('HonestBear.sqlite')
+                db = sqlite3.connect(settings.DATABASE)
                 cursor = db.cursor()
                 # get infraction_id (number of global infractions + 1)
                 cursor.execute('SELECT COUNT(*) FROM infractions')
@@ -126,7 +134,7 @@ class Moderator(commands.Cog):
     async def infractions(self, ctx, member : discord.Member):
         if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles] or ctx.author.id == member.id:
             # connect to database
-            db = sqlite3.connect('HonestBear.sqlite')
+            db = sqlite3.connect(settings.DATABASE)
             cursor = db.cursor()
             # fetch data
             cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE member_id = {member.id}')
@@ -150,7 +158,7 @@ class Moderator(commands.Cog):
     async def clear_infractions(self, ctx, member : discord.Member):
         if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             # connect to database
-            db = sqlite3.connect('HonestBear.sqlite')
+            db = sqlite3.connect(settings.DATABASE)
             cursor = db.cursor()
             # clear infractions
             cursor.execute(f'DELETE FROM infractions WHERE member_id = {member.id}')
@@ -169,19 +177,19 @@ class Moderator(commands.Cog):
     async def clear_infraction(self, ctx, infraction_id : int):
         if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             # connect to database
-            db = sqlite3.connect('HonestBear.sqlite')
+            db = sqlite3.connect(settings.DATABASE)
             cursor = db.cursor()
             # get member
             cursor.execute((f'SELECT member_id FROM infractions WHERE infraction_id = {infraction_id}'))
             member_id = int(cursor.fetchone()[0])
             member = ctx.guild.get_member(member_id)
-            # get infraction
+            # get infraction data
             cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE infraction_id = {infraction_id}')
             all_rows = cursor.fetchall()
             msg = ''
             for row in all_rows:
                 msg += f'{row[0]} #{row[1]} {row[2]}\n'
-            # clear infractions
+            # clear infraction
             cursor.execute(f'DELETE FROM infractions WHERE infraction_id = {infraction_id}')
             db.commit()
             # return data

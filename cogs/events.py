@@ -15,7 +15,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         # connect to SQL database
-        db = sqlite3.connect('HonestBear.sqlite')
+        db = sqlite3.connect(settings.DATABSE)
         cursor = db.cursor()
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS infractions(

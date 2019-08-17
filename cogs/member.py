@@ -22,11 +22,7 @@ class Member(commands.Cog):
         if not ('GOD' in [role.name for role in ctx.author.roles]):
             ignore.append('admin.py')
 
-        # get images
-        admin = 'http://icons.iconarchive.com/icons/alecive/flatwoken/512/Apps-Terminal-Pc-104-icon.png'
-        member = 'https://www.airfieldresearchgroup.org.uk/images/icons/member-icon.png'
-        moderator = 'http://www.clker.com/cliparts/O/f/t/B/a/V/green-hammer-gray.svg.hi.png'
-        music = 'http://www.veryicon.com/icon/png/Media/Music%20notes/Note%20green.png'
+
 
         # get all the cogs
         for filename in os.listdir('./cogs'):
@@ -38,13 +34,13 @@ class Member(commands.Cog):
 
                 # set image for thumbnail
                 if cog_name == 'Admin':
-                    thumbnail = admin
+                    thumbnail = settings.ADMIN_IMG
                 elif cog_name == 'Member':
-                    thumbnail = member
+                    thumbnail = settings.MEMBER_IMG
                 elif cog_name == 'Moderator':
-                    thumbnail = moderator
+                    thumbnail = settings.MODERATOR_IMG
                 elif cog_name == 'Music':
-                    thumbnail = music
+                    thumbnail = settings.MUSIC_IMG
                 else:
                     thumbnail = ''
 
@@ -66,7 +62,7 @@ class Member(commands.Cog):
                     'clear' : '(optional count)',
                     'kick' : '[member] (optional reason)',
                     'ban' : '[member] (optional reason)',
-                    'unban' : '[member] (optional reason)',
+                    'unban' : '[member]',
                     'warn' : '[member] (optional reason)',
                     'infractions' : '[member]',
                     'clear_infractions' : '[member]',

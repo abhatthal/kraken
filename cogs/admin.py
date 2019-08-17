@@ -46,8 +46,9 @@ class Admin(commands.Cog):
     @commands.command(description = 'bot goes offline')
     @commands.has_role('GOD')
     async def shutdown(self, ctx):
-        db = sqlite3.connect('HonestBear.sqlite')
+        db = sqlite3.connect(settings.DATABASE)
         db.close()
+        logger.info(f'{self.author} : Shut Down')
         await ctx.send("Shutting down!")
         await self.bot.logout()
 
