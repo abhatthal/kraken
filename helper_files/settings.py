@@ -4,7 +4,7 @@ import logging # maintain logs in bot.log
 logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctime)s %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
 
 BOT_NAME = 'Honest Bear'
-BOT_AVATAR = './images/HonestBear.png'
+BOT_AVATAR = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/HonestBear.png'
 DESCRIPTION = 'A very honest discord bot'
 COMMAND_PREFIX = '.'
 
