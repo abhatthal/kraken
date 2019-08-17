@@ -69,8 +69,9 @@ class Member(commands.Cog):
                     'unban' : '[member] (optional reason)',
                     'warn' : '[member] (optional reason)',
                     'infractions' : '[member]',
-                    'blueify' : '[member]',
-                    'unblueify' : '[member]',
+                    'clear_infractions' : '[member]',
+                    'give_bluecan' : '[member]',
+                    'remove_bluecan' : '[member]',
 
                     # Admin
                     'load' : '[extension]',

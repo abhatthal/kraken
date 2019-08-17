@@ -124,7 +124,7 @@ class Moderator(commands.Cog):
     @commands.command(description = "returns all a user's infractions")
     # @commands.has_role('mod')
     async def infractions(self, ctx, member : discord.Member):
-        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles] or ctx.author.id == member.id:
             # connect to database
             db = sqlite3.connect('HonestBear.sqlite')
             cursor = db.cursor()
@@ -134,6 +134,8 @@ class Moderator(commands.Cog):
             msg = ''
             for row in all_rows:
                 msg += f'{row[0]} #{row[1]} {row[2]}\n'
+            if msg == '':
+                msg = 'No infractions! <:Asami:610590675142049868>'
             # return data
             eObj = await embed(ctx, title = 'INFRACTIONS:', author = f'{member}' ,
                 avatar = member.avatar_url, description = msg)
@@ -143,8 +145,27 @@ class Moderator(commands.Cog):
             await ctx.send("You're not allowed to view infractions! <:Asami:610590675142049868>")
 
 
+    @commands.command(description = "removes all of a user's infractions")
+    # @commands.has_role('mod')
+    async def clear_infractions(self, ctx, member : discord.Member):
+        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+            # connect to database
+            db = sqlite3.connect('HonestBear.sqlite')
+            cursor = db.cursor()
+            # clear infractions
+            cursor.execute(f'DELETE FROM infractions WHERE member_id = {str(member.id)}')
+            db.commit()
+            # return data
+            eObj = await embed(ctx, title = 'All Infractions Cleared', author = f'{member}' ,
+                avatar = member.avatar_url)
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+        else:
+            await ctx.send("You're not allowed to clear infractions! <:Asami:610590675142049868>")
+
+
     @commands.command(description = 'gives a user the Bluecan role')
-    async def blueify(self, ctx, member : discord.Member):
+    async def give_bluecan(self, ctx, member : discord.Member):
         bluecan = get(ctx.guild.roles, id = 606911719217823745)
         if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             eObj = await embed(ctx, title = 'Congrats!', author = f'{member}' ,
@@ -157,7 +178,7 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = "removes a user's Bluecan role")
-    async def unblueify(self, ctx, member : discord.Member):
+    async def remove_bluecan(self, ctx, member : discord.Member):
         bluecan = get(ctx.guild.roles, id = 606911719217823745)
         if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             eObj = await embed(ctx, title = 'Sorry!', author = f'{member}' ,
