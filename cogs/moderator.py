@@ -115,7 +115,7 @@ class Moderator(commands.Cog):
                 # insert data
                 cursor.execute('''
                 INSERT INTO infractions(member_id, infraction_id, infraction, date)
-                VALUES(?, ?, ?, ?)''', (str(member.id), str(infraction_id), str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
+                VALUES(?, ?, ?, ?)''', (member.id, infraction_id, str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
                 db.commit()
         else:
             await ctx.send("You're not allowed to warn anybirdie! <:Asami:610590675142049868>")
@@ -129,7 +129,7 @@ class Moderator(commands.Cog):
             db = sqlite3.connect('HonestBear.sqlite')
             cursor = db.cursor()
             # fetch data
-            cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE member_id = {str(member.id)}')
+            cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE member_id = {member.id}')
             all_rows = cursor.fetchall()
             msg = ''
             for row in all_rows:
@@ -153,11 +153,40 @@ class Moderator(commands.Cog):
             db = sqlite3.connect('HonestBear.sqlite')
             cursor = db.cursor()
             # clear infractions
-            cursor.execute(f'DELETE FROM infractions WHERE member_id = {str(member.id)}')
+            cursor.execute(f'DELETE FROM infractions WHERE member_id = {member.id}')
             db.commit()
             # return data
             eObj = await embed(ctx, title = 'All Infractions Cleared', author = f'{member}' ,
                 avatar = member.avatar_url)
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+        else:
+            await ctx.send("You're not allowed to clear infractions! <:Asami:610590675142049868>")
+
+        
+    @commands.command(description = "removes a specific user infraction")
+    # @commands.has_role('mod')
+    async def clear_infraction(self, ctx, infraction_id : int):
+        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+            # connect to database
+            db = sqlite3.connect('HonestBear.sqlite')
+            cursor = db.cursor()
+            # get member
+            cursor.execute((f'SELECT member_id FROM infractions WHERE infraction_id = {infraction_id}'))
+            member_id = int(cursor.fetchone()[0])
+            member = ctx.guild.get_member(member_id)
+            # get infraction
+            cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE infraction_id = {infraction_id}')
+            all_rows = cursor.fetchall()
+            msg = ''
+            for row in all_rows:
+                msg += f'{row[0]} #{row[1]} {row[2]}\n'
+            # clear infractions
+            cursor.execute(f'DELETE FROM infractions WHERE infraction_id = {infraction_id}')
+            db.commit()
+            # return data
+            eObj = await embed(ctx, title = f'Infraction #{infraction_id} Cleared', author = f'{member}' ,
+                avatar = member.avatar_url, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
         else:

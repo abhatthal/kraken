@@ -70,6 +70,7 @@ class Member(commands.Cog):
                     'warn' : '[member] (optional reason)',
                     'infractions' : '[member]',
                     'clear_infractions' : '[member]',
+                    'clear_infraction' : '[infraction id]',
                     'give_bluecan' : '[member]',
                     'remove_bluecan' : '[member]',
 
