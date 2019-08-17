@@ -83,9 +83,9 @@ class Member(commands.Cog):
                         usage_string = usage.get(command.name)
                         if not usage_string:
                             usage_string = ''
-                        eObj.add_field(name = f'.{command.name} {usage_string}', value = command.description, inline = False)
+                        eObj.add_field(name = f'{settings.COMMAND_PREFIX}{command.name} {usage_string}', value = command.description, inline = False)
                     elif command.name == '_8ball':
-                        eObj.add_field(name = f'.{command.name[1:]} {usage_string}', value = command.description, inline = False)
+                        eObj.add_field(name = f'{settings.COMMAND_PREFIX}{command.name[1:]} {usage_string}', value = command.description, inline = False)
                 # only send embed if no parsing errors
                 if eObj is not False:
                     await ctx.send(embed = eObj)
