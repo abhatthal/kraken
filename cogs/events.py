@@ -3,7 +3,7 @@ from discord.ext import commands
 from time import gmtime, strftime
 import logging
 import helper_files.settings as settings
-
+import sqlite3
 logger = logging.getLogger('HonestBear')
 
 
@@ -14,6 +14,18 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        # connect to SQL database
+        db = sqlite3.connect('HonestBear.sqlite')
+        cursor = db.cursor()
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS infractions(
+            member_id TEXT,
+            infraction_id TEXT, 
+            infraction TEXT,
+            date TEXT
+            )
+            ''')
+        db.commit()
         logger.info('Bot Online')
 
 

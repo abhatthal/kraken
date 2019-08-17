@@ -4,11 +4,10 @@ from discord.utils import get
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
 from helper_files.embed import embed
-import sqlite3
-from datetime import datetime # get time for db logging
 import logging
 import helper_files.settings as settings
-
+import sqlite3
+import datetime
 logger = logging.getLogger('HonestBear')
 
 
@@ -107,8 +106,17 @@ class Moderator(commands.Cog):
             if eObj is not False:
                 await ctx.send(embed = eObj)
                 await channel.send(embed = eObj)
-                settings.c.execute(f"INSERT INTO infractions VALUES ({member.id}, '', {str(reason)}, {str(datetime.now())})")
-                settings.conn.commit()
+                # connect to database
+                db = sqlite3.connect('HonestBear.sqlite')
+                cursor = db.cursor()
+                # get infraction_id (number of global infractions + 1)
+                cursor.execute('SELECT COUNT(*) FROM infractions')
+                infraction_id = cursor.fetchone() + 1
+                # insert data
+                cursor.execute('''
+                INSERT INTO infractions(member_id, infraction_id, infraction, date)
+                VALUES(?, ?, ?, ?)''', (member.id, infraction_id, str(reason), str(datetime.datetime.now())))
+                db.commit()
         else:
             await ctx.send("You're not allowed to warn anybirdie! <:Asami:610590675142049868>")
 
@@ -117,8 +125,18 @@ class Moderator(commands.Cog):
     # @commands.has_role('mod')
     async def infractions(self, ctx, member : discord.Member):
         if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+            # connect to database
+            db = sqlite3.connect('HonestBear.sqlite')
+            cursor = db.cursor()
+            # fetch data
+            cursor.execute(f'SELECT infraction FROM infractions WHERE member_id = {member.id}')
+            all_rows = cursor.fetchall()
+            msg = ''
+            for row in all_rows:
+                msg += f'{row}\n'
+            # return data
             eObj = await embed(ctx, title = 'INFRACTIONS:', author = f'{member}' ,
-                avatar = member.avatar_url, description = 'uuh, database broke. sorry')
+                avatar = member.avatar_url, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
         else:
