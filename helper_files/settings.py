@@ -8,7 +8,7 @@ BOT_AVATAR = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/imag
 DESCRIPTION = 'A very honest discord bot'
 COMMAND_PREFIX = '.'
 
-DATABASE = 'HonestBear.sqlite'
+DATABASE = 'honestbear.db'
 LOGGING_CHANNEL = 607056829067034634
 
 ADMIN_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/admin.png'
