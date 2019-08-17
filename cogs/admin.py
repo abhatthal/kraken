@@ -10,6 +10,11 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(description = 'bot speaks in specified channel')
+    @commands.has_role('GOD')
+    async def sayin(self, ctx, channel : discord.TextChannel, *, msg : str):
+        await channel.send(msg)
+
     @commands.command(description = 'loads an extension')
     @commands.has_role('GOD')
     async def load(self, ctx, extension):

@@ -60,7 +60,7 @@ class Member(commands.Cog):
 
                     # Member
                     '_8ball' : '[question]',
-                    'echo' : '[string]',
+                    'echo' : '[message]',
 
                     # Moderator
                     'clear' : '(optional count)',
@@ -77,7 +77,8 @@ class Member(commands.Cog):
                     # Admin
                     'load' : '[extension]',
                     'unload' : '[extension]',
-                    'reload' : '[extension]'
+                    'reload' : '[extension]',
+                    'sayin' : '[channel] [message]'
                 }
 
                 # print all commands and their corresponding descriptions for that cog
@@ -138,10 +139,10 @@ class Member(commands.Cog):
         
         
     @commands.command(description = 'repeats what you say')
-    async def echo(self, ctx, *, string : str):
+    async def echo(self, ctx, *, msg : str):
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
-        eObj = await embed(ctx, author = user, avatar = avatar, description = string)
+        eObj = await embed(ctx, author = user, avatar = avatar, description = msg)
         if eObj is not False:
             await ctx.send(embed=eObj)
 
