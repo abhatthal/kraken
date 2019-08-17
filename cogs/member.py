@@ -22,8 +22,6 @@ class Member(commands.Cog):
         if not ('GOD' in [role.name for role in ctx.author.roles]):
             ignore.append('admin.py')
 
-
-
         # get all the cogs
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py') and filename not in ignore:
@@ -83,9 +81,11 @@ class Member(commands.Cog):
                         usage_string = usage.get(command.name)
                         if not usage_string:
                             usage_string = ''
-                        eObj.add_field(name = f'{settings.COMMAND_PREFIX}{command.name} {usage_string}', value = command.description, inline = False)
-                    elif command.name == '_8ball':
-                        eObj.add_field(name = f'{settings.COMMAND_PREFIX}{command.name[1:]} {usage_string}', value = command.description, inline = False)
+                        if command.name == '_8ball':
+                            eObj.add_field(name = f'{settings.COMMAND_PREFIX}{command.name[1:]} {usage_string}', value = command.description, inline = False)
+                        else:
+                            eObj.add_field(name = f'{settings.COMMAND_PREFIX}{command.name} {usage_string}', value = command.description, inline = False)
+                        
                 # only send embed if no parsing errors
                 if eObj is not False:
                     await ctx.send(embed = eObj)

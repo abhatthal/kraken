@@ -78,7 +78,7 @@ class Moderator(commands.Cog):
             # Check if member is valid
             if type(member) == string and '#' in member:
                 member_name, member_discriminator = member.split('#')
-            elif type(member) = discord.Member:
+            elif type(member) == discord.Member:
                 member_name = member.name
                 member_discriminator = member.discriminator
             else:
