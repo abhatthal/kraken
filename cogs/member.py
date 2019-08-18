@@ -71,7 +71,7 @@ class Member(commands.Cog):
                     # Admin
                     'load' : '[extension]',
                     'unload' : '[extension]',
-                    'reload' : '[extension]',
+                    'reload' : '[extension] ...',
                     'sayin' : '[channel] [message]'
                 }
 

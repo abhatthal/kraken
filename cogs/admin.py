@@ -27,20 +27,25 @@ class Admin(commands.Cog):
     @commands.command(description = 'unloads an extension')
     @commands.has_role('GOD')
     async def unload(self, ctx, extension):
+        if extension == 'admin':
+            raise commands.CommandError('Unloading admin is a REALLY bad idea')
         self.bot.unload_extension(f'cogs.{extension}')
         msg = f'[UNLOAD] cogs.{extension}\n'
         logger.info(msg)
         await ctx.send(msg)
     
     
-    @commands.command(description = 'reloads an extension')
+    @commands.command(description = 'reloads extensions')
     @commands.has_role('GOD')
-    async def reload(self, ctx, extension):
-        self.bot.unload_extension(f'cogs.{extension}')
-        self.bot.load_extension(f'cogs.{extension}')
-        msg = f'[RELOAD] cogs.{extension}\n'
-        logger.info(msg)
-        await ctx.send(msg)
+    async def reload(self, ctx, *extensions):
+        if len(extensions) == 0:
+            raise commands.CommandError('Must pass at least one extension')
+        for extension in extensions:
+            self.bot.unload_extension(f'cogs.{extension}')
+            self.bot.load_extension(f'cogs.{extension}')
+            msg = f'[RELOAD] cogs.{extension}\n'
+            logger.info(msg)
+            await ctx.send(msg)
 
 
     @commands.command(description = 'bot goes offline')
