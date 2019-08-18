@@ -1,5 +1,6 @@
 import discord
 import random
+import sqlite3
 from discord.ext import commands
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
