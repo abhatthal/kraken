@@ -25,6 +25,12 @@ class Events(commands.Cog):
             date TEXT
             )
             ''')
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS economy(
+            member_id INTEGER,
+            currency INTEGER
+            )
+            ''')            
         db.commit()
         logger.info('Bot Online')
 

@@ -142,7 +142,7 @@ class Moderator(commands.Cog):
             if msg == '':
                 msg = 'No infractions! <:Asami:610590675142049868>'
             # return data
-            eObj = await embed(ctx, title = 'INFRACTIONS:', author = f'{member}' ,
+            eObj = await embed(ctx, title = 'INFRACTIONS:', author = member,
                 avatar = member.avatar_url, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
