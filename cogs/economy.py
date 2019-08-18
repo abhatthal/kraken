@@ -140,7 +140,7 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = 'Who has the most fish? Returns top ten richest toucans')
+    @commands.command(description = 'Returns top ten richest toucans')
     async def leaderboard(self, ctx):
         # connect to database
         db = sqlite3.connect(settings.DATABASE)
@@ -157,7 +157,7 @@ class Economy(commands.Cog):
             # try in case member wasn't found
             try:
                 member = ctx.guild.get_member(rows[row_index][0])
-                eObj.add_field(name = f'{place}. {member.name}#{member.discriminator}', value = f'```{rows[row_index][1]} Fish```', inline = False)
+                eObj.add_field(name = f'{place}. {member.name}#{member.discriminator}', value = f'```{rows[row_index][1]} {CURRENCY_NAME.capitalize()}```', inline = False)
                 place += 1
             except:
                 pass
