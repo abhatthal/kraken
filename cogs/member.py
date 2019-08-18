@@ -31,15 +31,15 @@ class Member(commands.Cog):
                 cog_commands = cog.get_commands()
 
                 # set image for thumbnail
-                if cog_name == 'Admin':
-                    thumbnail = settings.ADMIN_IMG
-                elif cog_name == 'Member':
-                    thumbnail = settings.MEMBER_IMG
-                elif cog_name == 'Moderator':
-                    thumbnail = settings.MODERATOR_IMG
-                elif cog_name == 'Music':
-                    thumbnail = settings.MUSIC_IMG
-                else:
+                thumbnails = {
+                    'Admin' : settings.ADMIN_IMG,
+                    'Economy' : settings.ECONOMY_IMG,
+                    'Member' : settings.MEMBER_IMG,
+                    'Moderator' : settings.MODERATOR_IMG,
+                    'Music' : settings.MUSIC_IMG
+                }
+                thumbnail = thumbnails.get(cog_name)
+                if not thumbnail:
                     thumbnail = ''
 
                 # send an embed for each cog
