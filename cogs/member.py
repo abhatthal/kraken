@@ -49,7 +49,7 @@ class Member(commands.Cog):
                 usage = {
                     # Music
                     'join' : '[member]',
-                    'play' : '[search] or [url]',
+                    'play' : '[search or url]',
                     'volume' : '[number]',
 
                     # Member
