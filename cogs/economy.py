@@ -37,6 +37,21 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
+    @commands.command(description = 'Deletes your account and all of your fish')
+    async def delete_account(self, ctx):
+        # connect to database
+        db = sqlite3.connect(settings.DATABASE)
+        cursor = db.cursor()
+        # delete account
+        cursor.execute(f'DELETE FROM economy WHERE member_id = {ctx.author.id}')
+        db.commit()
+        # send user message
+        eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
+        avatar = settings.BOT_AVATAR, description = 'Your account has been deleted.')
+        if eObj is not False:
+            await ctx.send(embed = eObj)
+
+
     @commands.command(description = 'see how many fish you have')
     async def check_balance(self, ctx):
         # connect to database
