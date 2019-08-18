@@ -14,13 +14,19 @@ class Member(commands.Cog):
 
 
     @commands.command(pass_context = True)
-    async def help(self, ctx):
+    async def help(self, ctx, extension = None):
         # only show relevant cogs
         ignore = ['events.py']
-        if not ('mod' in [role.name for role in ctx.author.roles]) and not ('GOD' in [role.name for role in ctx.author.roles]):
-            ignore.append('moderator.py')
-        if not ('GOD' in [role.name for role in ctx.author.roles]):
-            ignore.append('admin.py')
+        if extension == None:
+            if not ('mod' in [role.name for role in ctx.author.roles]) and not ('GOD' in [role.name for role in ctx.author.roles]):
+                ignore.append('moderator.py')
+            if not ('GOD' in [role.name for role in ctx.author.roles]):
+                ignore.append('admin.py')
+        else:
+            for filename in os.listdir('./cogs'):
+                 if filename.endswith('.py'):
+                     if extension.lower() not in filename:
+                         ignore.append(filename)
 
         # get all the cogs
         for filename in os.listdir('./cogs'):
@@ -47,17 +53,22 @@ class Member(commands.Cog):
 
                 # determine command usage
                 usage = {
-                    # Music
-                    'join' : '[member]',
-                    'play' : '[search or url]',
-                    'volume' : '[number]',
+                    # Admin
+                    'load' : '[extension]',
+                    'unload' : '[extension]',
+                    'reload' : '[extension] ...',
+                    'sayin' : '[channel] [message]',
+
+                    # Economy
+                    'check_balance' : '(optional member)',
+                    'transfer' : '[member] [amount]',
 
                     # Member
                     '_8ball' : '[question]',
                     'echo' : '[message]',
 
                     # Moderator
-                    'clear' : '(optional count)',
+                    'clear' : '(optional amount)',
                     'kick' : '[member] (optional reason)',
                     'ban' : '[member] (optional reason)',
                     'unban' : '[member]',
@@ -68,11 +79,10 @@ class Member(commands.Cog):
                     'give_bluecan' : '[member]',
                     'remove_bluecan' : '[member]',
 
-                    # Admin
-                    'load' : '[extension]',
-                    'unload' : '[extension]',
-                    'reload' : '[extension] ...',
-                    'sayin' : '[channel] [message]'
+                    # Music
+                    'join' : '[member]',
+                    'play' : '[search or url]',
+                    'volume' : '[number]'
                 }
 
                 # print all commands and their corresponding descriptions for that cog

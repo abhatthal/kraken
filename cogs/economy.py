@@ -7,13 +7,14 @@ from discord.ext import commands
 from helper_files.embed import embed
 import helper_files.settings as settings
 
+CURRENCY_NAME = 'fish'
 
 class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
 
-    @commands.command(description = 'Make yourself a bank account to keep your fish')
+    @commands.command(description = f'Make yourself a bank account to keep your {CURRENCY_NAME}')
     async def make_account(self, ctx):
         # connect to database
         db = sqlite3.connect(settings.DATABASE)
@@ -29,7 +30,7 @@ class Economy(commands.Cog):
             INSERT INTO economy(member_id, currency)
             VALUES(?, ?)''', (ctx.author.id, 500))
             db.commit()
-            msg = "Your account has been registered, here's 500 fish to get you started! <:Asami:610590675142049868>"
+            msg = f"Your account has been registered, here's 500 {CURRENCY_NAME} to get you started! <:Asami:610590675142049868>"
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
         avatar = settings.BOT_AVATAR, description = msg)
@@ -37,7 +38,9 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = 'Deletes your account and all of your fish')
+    # For testing purposes
+    '''
+    @commands.command(description = f'Deletes your account and all of your {CURRENCY_NAME}')
     async def delete_account(self, ctx):
         # connect to database
         db = sqlite3.connect(settings.DATABASE)
@@ -57,29 +60,84 @@ class Economy(commands.Cog):
         avatar = settings.BOT_AVATAR, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
+    '''
 
 
-    @commands.command(description = 'see how many fish you have')
-    async def check_balance(self, ctx):
+    @commands.command(description = f'see how many {CURRENCY_NAME} you have')
+    async def check_balance(self, ctx, member : discord.Member = None):
+        # check member
+        if member == None:
+            member = ctx.author
         # connect to database
         db = sqlite3.connect(settings.DATABASE)
         cursor = db.cursor()
         # get user account
-        cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
+        cursor.execute(f'SELECT currency FROM economy WHERE member_id = {member.id}')
         account = cursor.fetchone()
         if str(type(account)) == "<class 'NoneType'>":
-            msg = "You don't have an account! Use ``.make_account`` to make one."
+            if member.id == ctx.author.id:
+                msg = "You don't have an account! Use ``.make_account`` to make one."
+            else:
+                msg = f"{member.name} doesn't have an account!"
         else:
             currency = account[0]
-            # return currency
-            msg = f'You have {currency} fish. 🐟'
+            if member.id == ctx.author.id:
+                msg = f'You have {currency} {CURRENCY_NAME}. 🐟'
+            else:
+                msg = f'{member.name} has {currency} {CURRENCY_NAME}. 🐟'
+        # send user message
+        eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
+        avatar = settings.BOT_AVATAR, description = msg)
+        if eObj is not False:
+            await ctx.send(embed = eObj)
+
+        
+    @commands.command(description = f'see how many {CURRENCY_NAME} you have')
+    async def transfer(self, ctx, member : discord.Member, amount : int):
+        # connect to database
+        db = sqlite3.connect(settings.DATABASE)
+        cursor = db.cursor()
+        msg = ''
+        # check if amount is valid
+        if amount <= 0:
+            msg = 'Amount transferred must be > 0'
+        else:
+            # check if member is valid
+            if member.id == ctx.author.id:
+                msg = "You can't transfer funds to yourself"
+            else:
+                # get sender account
+                cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
+                account = cursor.fetchone()
+                if str(type(account)) == "<class 'NoneType'>":
+                    if msg == '':
+                        msg = "You don't have an account! Use ``.make_account`` to make one"
+                else:
+                    currency_sender = account[0]
+                    if amount > currency_sender:
+                        if msg == '':
+                            msg = 'You have insufficient funds!'
+                    else:
+                        # get recipient account
+                        cursor.execute(f'SELECT currency FROM economy WHERE member_id = {member.id}')
+                        account = cursor.fetchone()
+                        if str(type(account)) == "<class 'NoneType'>":
+                            if msg == '':
+                                msg = f"{member.name} doesn't have an account!"
+                        else:
+                            currency_recipient = account[0]
+                            # decrease sender account by amount to transfer
+                            cursor.execute(f'UPDATE economy SET currency = {currency_sender - amount} WHERE member_id = {ctx.author.id}')
+                            # increase recipient account by amount to transfer
+                            cursor.execute(f'UPDATE economy SET currency = {currency_recipient + amount} WHERE member_id = {member.id}')
+                            db.commit()
+                            msg = f"Transfer complete!\nYour Balance: {currency_sender - amount} {CURRENCY_NAME}\n{member.name}'s Balance: {currency_recipient + amount} {CURRENCY_NAME}"
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
         avatar = settings.BOT_AVATAR, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
             
-
 
 def setup(bot):
     bot.add_cog(Economy(bot))
