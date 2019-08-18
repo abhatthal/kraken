@@ -22,7 +22,7 @@ class Events(commands.Cog):
             member_id INTEGER,
             infraction_id INTEGER, 
             infraction TEXT,
-            date TEXT
+            date DATE
             )
             ''')
         cursor.execute('''

@@ -63,7 +63,7 @@ class Economy(commands.Cog):
     '''
 
 
-    @commands.command(description = f'see how many {CURRENCY_NAME} you have')
+    @commands.command(description = f'see how many {CURRENCY_NAME} you or someone else have')
     async def check_balance(self, ctx, member : discord.Member = None):
         # check member
         if member == None:
@@ -92,7 +92,7 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
         
-    @commands.command(description = f'see how many {CURRENCY_NAME} you have')
+    @commands.command(description = f'give some {CURRENCY_NAME}')
     async def transfer(self, ctx, member : discord.Member, amount : int):
         # connect to database
         db = sqlite3.connect(settings.DATABASE)
