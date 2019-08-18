@@ -8,6 +8,7 @@ from helper_files.embed import embed
 import helper_files.settings as settings
 
 CURRENCY_NAME = 'fish'
+CURRENCY_IMG = '🐟'
 
 class Economy(commands.Cog):
     def __init__(self, bot):
@@ -82,9 +83,9 @@ class Economy(commands.Cog):
         else:
             currency = account[0]
             if member.id == ctx.author.id:
-                msg = f'You have {currency} {CURRENCY_NAME}. 🐟'
+                msg = f'You have {currency} {CURRENCY_NAME}. {CURRENCY_IMG}'
             else:
-                msg = f'{member.name} has {currency} {CURRENCY_NAME}. 🐟'
+                msg = f'{member.name} has {currency} {CURRENCY_NAME}. {CURRENCY_IMG}'
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
         avatar = settings.BOT_AVATAR, description = msg)
@@ -135,6 +136,33 @@ class Economy(commands.Cog):
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
         avatar = settings.BOT_AVATAR, description = msg)
+        if eObj is not False:
+            await ctx.send(embed = eObj)
+
+
+    @commands.command(description = 'Who has the most fish?')
+    async def leaderboard(self, ctx):
+        # connect to database
+        db = sqlite3.connect(settings.DATABASE)
+        cursor = db.cursor()
+        # sort by currency
+        cursor.execute(f'SELECT member_id, currency FROM economy ORDER BY currency DESC')
+        msg = ''
+        # fetch data
+        rows = cursor.fetchall()
+        place = 1
+        row_index = 0
+        # top 10
+        while row_index <= 10 and row_index < len(rows):
+            member = ctx.guild.get_member(rows[row_index][0])
+            try:
+                msg += f'{place}. {member.name}#{member.discriminator}          {rows[row_index][1]}\n'
+                place += 1
+            except:
+                pass
+            row_index += 1
+        # send user message
+        eObj = await embed(ctx, title = f'{CURRENCY_IMG} Honest Bank Leaderboard {CURRENCY_IMG}', description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
             
