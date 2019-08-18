@@ -42,12 +42,19 @@ class Economy(commands.Cog):
         # connect to database
         db = sqlite3.connect(settings.DATABASE)
         cursor = db.cursor()
-        # delete account
-        cursor.execute(f'DELETE FROM economy WHERE member_id = {ctx.author.id}')
-        db.commit()
+        # check if user has an account
+        cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {ctx.author.id}')
+        account = cursor.fetchone()[0]
+        if account < 1:
+            msg = "You don't have an account!"
+        else:
+            msg = 'Your account has been deleted.'
+            # delete account
+            cursor.execute(f'DELETE FROM economy WHERE member_id = {ctx.author.id}')
+            db.commit()
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
-        avatar = settings.BOT_AVATAR, description = 'Your account has been deleted.')
+        avatar = settings.BOT_AVATAR, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
