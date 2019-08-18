@@ -76,11 +76,8 @@ class Moderator(commands.Cog):
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             banned_users = await ctx.guild.bans()
             # Check if member is valid
-            if type(member) == string and '#' in member:
+            if '#' in member:
                 member_name, member_discriminator = member.split('#')
-            elif type(member) == discord.Member:
-                member_name = member.name
-                member_discriminator = member.discriminator
             else:
                 raise commands.CommandError('Invalid member passed')
             # unban if in banned users list

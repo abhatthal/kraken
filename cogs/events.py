@@ -19,8 +19,8 @@ class Events(commands.Cog):
         cursor = db.cursor()
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS infractions(
-            member_id TEXT,
-            infraction_id TEXT, 
+            member_id INTEGER,
+            infraction_id INTEGER, 
             infraction TEXT,
             date TEXT
             )
