@@ -157,7 +157,7 @@ class Economy(commands.Cog):
             # try in case member wasn't found
             try:
                 member = ctx.guild.get_member(rows[row_index][0])
-                eObj.add_field(name = f'{place}. {member.name}#{member.discriminator}', value = f'```{rows[row_index][1]} {CURRENCY_NAME.capitalize()}```', inline = False)
+                eObj.add_field(name = f'{place}. {member.name}#{member.discriminator}', value = f'```{rows[row_index][1]} {CURRENCY_NAME.capitalize()}```', inline = True)
                 place += 1
             except:
                 pass
