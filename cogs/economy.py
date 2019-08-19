@@ -69,29 +69,37 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    # For testing purposes
-    '''
     @commands.command(description = f'Deletes your account and all of your {CURRENCY_NAME}')
-    async def delete_account(self, ctx):
-        # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
-        # check if user has an account
-        cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {ctx.author.id}')
-        account = cursor.fetchone()[0]
-        if account < 1:
-            msg = "You don't have an account!"
+    async def delete_account(self, ctx, member : discord.Member = None):
+        # check member
+        if member == None:
+            member = ctx.author
+        if 'GOD' in [role.name for role in ctx.author.roles]:
+            # connect to database
+            db = sqlite3.connect(settings.DATABASE)
+            cursor = db.cursor()
+            # check if user has an account
+            cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
+            account = cursor.fetchone()[0]
+            if account < 1:
+                if member == ctx.author:
+                    msg = "You don't have an account! Use ``.make_account`` to make one."
+                else:
+                    msg = f"{member.name} doesn't have an account!"
+            else:
+                if member == ctx.author:
+                    msg = 'Your account has been deleted.'
+                else:
+                    msg = f"{member.name}'s account has been deleted."
+                # delete account
+                cursor.execute(f'DELETE FROM economy WHERE member_id = {member.id}')
+                db.commit()
         else:
-            msg = 'Your account has been deleted.'
-            # delete account
-            cursor.execute(f'DELETE FROM economy WHERE member_id = {ctx.author.id}')
-            db.commit()
+            msg = "You don't have permission to delete bank accounts! <:Asami:610590675142049868>"
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
-        avatar = settings.BOT_AVATAR, description = msg)
+        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
-    '''
 
 
     @commands.command(description = f'see how many {CURRENCY_NAME} you or someone else have')
