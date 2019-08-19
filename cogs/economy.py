@@ -211,7 +211,7 @@ class Economy(commands.Cog):
             # try in case member wasn't found
             try:
                 member = ctx.guild.get_member(rows[row_index][0])
-                eObj.add_field(name = f'{place}. {member.name}#{member.discriminator}', value = f'```{rows[row_index][1]} {CURRENCY_NAME.capitalize()}```', inline = True)
+                eObj.add_field(name = f'{place}. {member.name}', value = f'```{rows[row_index][1]} {CURRENCY_NAME.capitalize()}```', inline = True)
                 place += 1
             except:
                 pass
@@ -219,6 +219,32 @@ class Economy(commands.Cog):
         # send user message
         if eObj is not False:
             await ctx.send(embed = eObj)
+
+
+    @commands.command(description = "Free money! (Command still in development)")
+    @commands.has_role('GOD')
+    async def income(self, ctx):
+        # connect to database
+        db = sqlite3.connect(settings.DATABASE)
+        cursor = db.cursor()
+        # check if user has an account
+        cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
+        account = cursor.fetchone()
+        if str(type(account)) == "<class 'NoneType'>":
+            msg = "You don't have an account! Use ``.make_account`` to make one"
+            footer = ''
+        else:
+            # add money to account
+            account = account[0]
+            amount_to_add = int(STARTING_VALUE / 5)
+            cursor.execute(f'UPDATE economy SET currency = {account + amount_to_add} WHERE member_id = {ctx.author.id}')
+            db.commit()
+            msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
+            footer = 'Come back tomorrow for more!'
+        # send user message
+        eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = footer)
+        if eObj is not False:
+            await ctx.send(embed = eObj)            
             
 
 def setup(bot):
