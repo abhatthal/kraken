@@ -225,8 +225,8 @@ class Economy(commands.Cog):
 
     @commands.command(description = 'Free money!')
     async def income(self, ctx):
+        msg = ''
         footer = ''
-        has_account = True
         maintenance = False
         if maintenance and not ('GOD' in [role.name for role in ctx.author.roles]):
             msg = 'The economy collapsed, we are trying to bail out.'
@@ -240,7 +240,6 @@ class Economy(commands.Cog):
             account = cursor.fetchone()
             if type(account) != tuple:
                 msg = "You don't have an account! Use ``.make_account`` to make one"
-                has_account = False
             else:
                 # check if user can use this command
                 wait = account[0]
