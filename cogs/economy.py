@@ -20,6 +20,7 @@ class Economy(commands.Cog):
 
 
     @commands.command(description = "Admins Only: Change a user's balance")
+    @commands.has_role('GOD')
     async def set_balance(self, ctx, amount : int, member : discord.Member = None):
         # check member
         if member == None:
