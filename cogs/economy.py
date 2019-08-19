@@ -246,8 +246,6 @@ class Economy(commands.Cog):
                 if wait == None:
                     wait = 0
                 time_left = wait - int(time.time())
-                if wait == None:
-                    time_left = 0
                 if time_left > 0:
                     msg = 'Sorry! Come back later.'
                     footer = f'Time Left: {str(datetime.timedelta(seconds = time_left))}'
