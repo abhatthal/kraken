@@ -242,11 +242,12 @@ class Economy(commands.Cog):
             else:
                 # add money to account
                 account = account[0]
-                amount_to_add = int(STARTING_VALUE / 5)
+                base = int(STARTING_VALUE / 50)
+                amount_to_add = random.randrange(base, (10 * base) + 1, base)
                 cursor.execute(f'UPDATE economy SET currency = {account + amount_to_add} WHERE member_id = {ctx.author.id}')
                 db.commit()
                 msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
-                footer = 'Come back tomorrow for more!'
+                footer = 'Come back in a few hours!'
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = footer)
         if eObj is not False:
@@ -254,7 +255,8 @@ class Economy(commands.Cog):
         # set timer for user
         if not ctx.author.id in WAIT:
             WAIT.append(ctx.author.id)
-            await asyncio.sleep(86400) # 24 hours
+            hours = random.randint(3, 12)
+            await asyncio.sleep(hours * 60 * 60)
             WAIT.remove(ctx.author.id)
 
             
