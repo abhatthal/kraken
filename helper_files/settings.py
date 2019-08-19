@@ -9,10 +9,16 @@ DESCRIPTION = 'A very honest discord bot'
 COMMAND_PREFIX = '.'
 
 DATABASE = 'honestbear.db'
-LOGGING_CHANNEL = 607056829067034634
 
+# Thumbnails
 ADMIN_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/admin.png'
 ECONOMY_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/economy.png'
 MEMBER_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/member.png'
 MODERATOR_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/moderator.png'
 MUSIC_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/music.png'
+
+# Channels
+LOGGING_CHANNEL = 607056829067034634
+DEBATE_CHANNEL = 606880223199363172
+SUGGESTIONS_CHANNEL = 607102047195496456
+EMOJI_SUGGESTIONS_CHANNEL = 612899402683514880
