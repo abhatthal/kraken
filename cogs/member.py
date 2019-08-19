@@ -62,6 +62,7 @@ class Member(commands.Cog):
                     # Economy
                     'check_balance' : '(optional member)',
                     'transfer' : '[member] [amount]',
+                    'set_balance' : '[amount] (optional member)',
 
                     # Member
                     '_8ball' : '[question]',

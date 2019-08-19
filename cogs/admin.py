@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from os import listdir
 import logging
 import helper_files.settings as settings
 import sqlite3
@@ -41,22 +42,26 @@ class Admin(commands.Cog):
         if len(extensions) == 0:
             raise commands.CommandError('Must pass at least one extension')
         if 'all' in extensions:
-            for filename in os.listdir('./cogs'):
+            for filename in listdir('./cogs'):
                  if filename.endswith('.py'):
-                     try:
-                        bot.unload_extension(f'cogs.{filename[:-3]}')
-                        bot.load_extension(f'cogs.{filename[:-3]}')
+                    try:
+                        self.bot.unload_extension(f'cogs.{filename[:-3]}')
+                        self.bot.load_extension(f'cogs.{filename[:-3]}')
                     except:
-                        bot.load_extension(f'cogs.{filename[:-3]}')
-        for extension in extensions:
-            try:
-                self.bot.unload_extension(f'cogs.{extension}')
-                self.bot.load_extension(f'cogs.{extension}')
-            except:
-                self.bot.load_extension(f'cogs.{extension}')
-            msg = f'[RELOAD] cogs.{extension}\n'
-            logger.info(msg)
-            await ctx.send(msg)
+                        self.bot.load_extension(f'cogs.{filename[:-3]}')
+                    msg = f'[RELOAD] cogs.{filename[:-3]}\n'
+                    logger.info(msg)
+                    await ctx.send(msg)
+        else:
+            for extension in extensions:
+                try:
+                    self.bot.unload_extension(f'cogs.{extension}')
+                    self.bot.load_extension(f'cogs.{extension}')
+                except:
+                    self.bot.load_extension(f'cogs.{extension}')
+                msg = f'[RELOAD] cogs.{extension}\n'
+                logger.info(msg)
+                await ctx.send(msg)
 
 
     @commands.command(description = 'bot goes offline')

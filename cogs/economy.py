@@ -15,9 +15,9 @@ class Economy(commands.Cog):
         self.bot = bot
 
 
-    @command.command(description = 'For testing purposes only.')
+    @commands.command(description = 'For testing purposes only.')
     @commands.has_role('GOD')
-    async def set_balance(self, ctx, member : discord.Member = None, amount : int):
+    async def set_balance(self, ctx, amount : int, member : discord.Member = None):
         # check member
         if member == None:
             member = ctx.author
@@ -35,6 +35,7 @@ class Economy(commands.Cog):
         else:
             # set funds
             cursor.execute(f'UPDATE economy SET currency = {amount} WHERE member_id = {member.id}')
+            db.commit()
             if member == ctx.author:
                 msg = f'Your Balance: {amount} {CURRENCY_NAME}'
             else:
