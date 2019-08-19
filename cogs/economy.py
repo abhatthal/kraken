@@ -226,6 +226,7 @@ class Economy(commands.Cog):
     @commands.command(description = 'Free money!')
     async def income(self, ctx):
         footer = ''
+        has_account = True
         # check if user can use this command
         if ctx.author.id in WAIT:
             msg = 'Sorry! Come back later.'
@@ -238,6 +239,7 @@ class Economy(commands.Cog):
             account = cursor.fetchone()
             if str(type(account)) == "<class 'NoneType'>":
                 msg = "You don't have an account! Use ``.make_account`` to make one"
+                has_account = False
             else:
                 # add money to account
                 account = account[0]
@@ -252,9 +254,9 @@ class Economy(commands.Cog):
         if eObj is not False:
             await ctx.send(embed = eObj)  
         # set timer for user
-        if not ctx.author.id in WAIT:
+        if has_account and not ctx.author.id in WAIT:
             WAIT.append(ctx.author.id)
-            hours = random.randint(3, 12)
+            hours = random.randint(1, 6)
             await asyncio.sleep(hours * 60 * 60)
             WAIT.remove(ctx.author.id)
 
