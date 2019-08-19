@@ -9,13 +9,14 @@ import helper_files.settings as settings
 
 CURRENCY_NAME = 'fish'
 CURRENCY_IMG = '🐟'
+STARTING_VALUE = 500
 
 class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
 
-    @commands.command(description = "Change a user's balance")
+    @commands.command(description = "Admins Only: Change a user's balance")
     @commands.has_role('GOD')
     async def set_balance(self, ctx, amount : int, member : discord.Member = None):
         # check member
@@ -46,30 +47,44 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = f'Make yourself a bank account to keep your {CURRENCY_NAME}')
-    async def make_account(self, ctx):
-        # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
-        # check if user already has an account
-        cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {ctx.author.id}')
-        account = cursor.fetchone()[0]
-        if account >= 1:
-            msg = 'You already have an account!'
-        else:
-            # make an account
-            cursor.execute('''
-            INSERT INTO economy(member_id, currency)
-            VALUES(?, ?)''', (ctx.author.id, 500))
-            db.commit()
-            msg = f"Your account has been registered, here's 500 {CURRENCY_NAME} to get you started! <:Asami:610590675142049868>"
+    @commands.command(description = f'Make yourself a bank account to keep your {CURRENCY_NAME}. Admins can add an optional member.')
+    async def make_account(self, ctx, member : discord.Member = None):
+        # check member
+        run = True
+        if member == None:
+            member = ctx.author
+        elif not ('GOD' in [role.name for role in ctx.author.roles]):
+            run = False
+            msg = "You don't have permission to make bank accounts for others! <:Asami:610590675142049868>"
+        if run:
+            # connect to database
+            db = sqlite3.connect(settings.DATABASE)
+            cursor = db.cursor()
+            # check if user already has an account
+            cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
+            account = cursor.fetchone()[0]
+            if account >= 1:
+                if member == ctx.author:
+                    msg = 'You already have an account!'
+                else:
+                    msg = f'{member.name} already has an account!'
+            else:
+                # make an account
+                cursor.execute('''
+                INSERT INTO economy(member_id, currency)
+                VALUES(?, ?)''', (member.id, STARTING_VALUE))
+                db.commit()
+                if member == ctx.author:
+                    msg = f"Your account has been registered, here's {STARTING_VALUE} {CURRENCY_NAME} to get you started! <:Asami:610590675142049868>"
+                else:
+                    msg = f"{member.name}'s account has been registered.\nBalance: {STARTING_VALUE} {CURRENCY_NAME}"
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = f'Deletes an account and all of its {CURRENCY_NAME}')
+    @commands.command(description = f'Admins Only: Deletes an account and all of its {CURRENCY_NAME}')
     async def delete_account(self, ctx, member : discord.Member = None):
         # check member
         if member == None:

@@ -61,6 +61,7 @@ class Member(commands.Cog):
 
                     # Economy
                     'set_balance' : '[amount] (optional member)',
+                    'make_account' : '(optional member)',
                     'delete_account' : '(optional member)',
                     'check_balance' : '(optional member)',
                     'transfer' : '[member] [amount]',
