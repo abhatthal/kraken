@@ -2,6 +2,8 @@ import discord
 import random
 import sqlite3
 import asyncio # await asyncio.sleep()
+import time # time.time() timestamp
+import datetime # datetime.timedelta
 from discord.ext import commands
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
@@ -11,8 +13,6 @@ import helper_files.settings as settings
 CURRENCY_NAME = 'fish'
 CURRENCY_IMG = '🐟'
 STARTING_VALUE = 500
-
-WAIT = []
 
 class Economy(commands.Cog):
     def __init__(self, bot):
@@ -227,39 +227,46 @@ class Economy(commands.Cog):
     async def income(self, ctx):
         footer = ''
         has_account = True
-        # check if user can use this command
-        if ctx.author.id in WAIT:
-            msg = 'Sorry! Come back later.'
+        maintenance = False
+        if maintenance and not ('GOD' in [role.name for role in ctx.author.roles]):
+            msg = 'The economy collapsed, we are trying to bail out.'
+            footer = 'Command is under maintenance right now!'
         else:
             # connect to database
             db = sqlite3.connect(settings.DATABASE)
             cursor = db.cursor()
             # check if user has an account
-            cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
+            cursor.execute(f'SELECT wait_time, currency FROM economy WHERE member_id = {ctx.author.id}')
             account = cursor.fetchone()
-            if str(type(account)) == "<class 'NoneType'>":
+            if type(account) != tuple:
                 msg = "You don't have an account! Use ``.make_account`` to make one"
                 has_account = False
             else:
-                # add money to account
-                account = account[0]
-                base = int(STARTING_VALUE / 50)
-                amount_to_add = random.randrange(base, (10 * base) + 1, base)
-                cursor.execute(f'UPDATE economy SET currency = {account + amount_to_add} WHERE member_id = {ctx.author.id}')
-                db.commit()
-                msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
-                footer = 'Come back in a few hours!'
+                # check if user can use this command
+                wait = account[0]
+                if wait == None:
+                    wait = 0
+                time_left = wait - int(time.time())
+                if wait == None:
+                    time_left = 0
+                if time_left > 0:
+                    msg = 'Sorry! Come back later.'
+                    footer = f'Time Left: {str(datetime.timedelta(seconds = time_left))}'
+                else:
+                    # add money to account
+                    account_value = account[1]
+                    base = int(STARTING_VALUE / 50)
+                    amount_to_add = random.randrange(base, (10 * base) + 1, base)
+                    cursor.execute(f'UPDATE economy SET currency = {account_value + amount_to_add} WHERE member_id = {ctx.author.id}')
+                    # set timer
+                    cursor.execute(f'UPDATE economy SET wait_time = {int(time.time()) + (random.randint(1, 3) * 60 * 60)} WHERE member_id = {ctx.author.id}')
+                    db.commit()
+                    msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account_value + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
+                    footer = 'Come back in a few hours!'
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = footer)
         if eObj is not False:
             await ctx.send(embed = eObj)  
-        # set timer for user
-        if has_account and not ctx.author.id in WAIT:
-            WAIT.append(ctx.author.id)
-            hours = random.randint(1, 6)
-            await asyncio.sleep(hours * 60 * 60)
-            WAIT.remove(ctx.author.id)
-
             
 
 def setup(bot):

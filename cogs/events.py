@@ -28,7 +28,8 @@ class Events(commands.Cog):
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS economy(
             member_id INTEGER,
-            currency INTEGER
+            currency INTEGER,
+            wait_time INTEGER
             )
             ''')            
         db.commit()
