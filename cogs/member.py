@@ -90,7 +90,7 @@ class Member(commands.Cog):
 
                 # print all commands and their corresponding descriptions for that cog
                 for command in cog_commands:
-                    if command.name != 'help' and command.name != '_8ball':
+                    if command.name != 'help':
                         usage_string = usage.get(command.name)
                         if not usage_string:
                             usage_string = ''
