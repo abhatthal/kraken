@@ -22,7 +22,7 @@ class Moderator(commands.Cog):
         if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             await ctx.channel.purge(limit = amount + 1)
         else:
-            await ctx.send('Sorry, only mods can clear messages! <:Asami:610590675142049868>')
+            await ctx.send('Sorry, only mods can clear messages! <:Asami:613138811169538048>')
 
 
     @commands.command(description = 'kick a user from the server')
@@ -42,7 +42,7 @@ class Moderator(commands.Cog):
                 await channel.send(embed = eObj)
                 await member.kick(reason = reason)
         else:
-            await ctx.send("Hey, don't kick anybirdie! <:Asami:610590675142049868>")
+            await ctx.send("Hey, don't kick anybirdie! <:Asami:613138811169538048>")
 
 
     @commands.command(description = 'Ban a user from the server')
@@ -62,7 +62,7 @@ class Moderator(commands.Cog):
                 await channel.send(embed = eObj)
                 await member.ban(reason = reason)
         else:
-            await ctx.send("Hey, don't ban anybirdie! <:Asami:610590675142049868>")
+            await ctx.send("Hey, don't ban anybirdie! <:Asami:613138811169538048>")
 
 
     @commands.command(description = 'Unban a user from the server')
@@ -93,7 +93,7 @@ class Moderator(commands.Cog):
                     return
             await ctx.send("That user isn't banned")
         else:
-            await ctx.send("You're not allowed to unban anybirdie! <:Asami:610590675142049868>")
+            await ctx.send("You're not allowed to unban anybirdie! <:Asami:613138811169538048>")
 
     
     @commands.command(description = 'give a user an infraction')
@@ -123,7 +123,7 @@ class Moderator(commands.Cog):
                 VALUES(?, ?, ?, ?)''', (member.id, infraction_id, str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
                 db.commit()
         else:
-            await ctx.send("You're not allowed to warn anybirdie! <:Asami:610590675142049868>")
+            await ctx.send("You're not allowed to warn anybirdie! <:Asami:613138811169538048>")
 
 
     @commands.command(description = "returns all a user's infractions")
@@ -140,14 +140,14 @@ class Moderator(commands.Cog):
             for row in all_rows:
                 msg += f'{row[0]} #{row[1]} {row[2]}\n'
             if msg == '':
-                msg = 'No infractions! <:Asami:610590675142049868>'
+                msg = 'No infractions! <:Asami:613138811169538048>'
             # return data
             eObj = await embed(ctx, title = 'INFRACTIONS:', author = member,
                 avatar = member.avatar_url, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
         else:
-            await ctx.send("You're not allowed to view infractions! <:Asami:610590675142049868>")
+            await ctx.send("You're not allowed to view infractions! <:Asami:613138811169538048>")
 
 
     @commands.command(description = "removes all of a user's infractions")
@@ -166,7 +166,7 @@ class Moderator(commands.Cog):
             if eObj is not False:
                 await ctx.send(embed = eObj)
         else:
-            await ctx.send("You're not allowed to clear infractions! <:Asami:610590675142049868>")
+            await ctx.send("You're not allowed to clear infractions! <:Asami:613138811169538048>")
 
         
     @commands.command(description = "removes a specific user infraction")
@@ -195,7 +195,7 @@ class Moderator(commands.Cog):
             if eObj is not False:
                 await ctx.send(embed = eObj)
         else:
-            await ctx.send("You're not allowed to clear infractions! <:Asami:610590675142049868>")
+            await ctx.send("You're not allowed to clear infractions! <:Asami:613138811169538048>")
 
 
     @commands.command(description = 'gives a user the Bluecan role')
@@ -208,7 +208,7 @@ class Moderator(commands.Cog):
                 await ctx.send(embed = eObj)
             await member.add_roles(bluecan)
         else:
-            await ctx.send("You can't turn toucans into bluecans! <:Asami:610590675142049868>")
+            await ctx.send("You can't turn toucans into bluecans! <:Asami:613138811169538048>")
 
 
     @commands.command(description = "removes a user's Bluecan role")
@@ -221,7 +221,7 @@ class Moderator(commands.Cog):
                 await ctx.send(embed = eObj)
             await member.remove_roles(bluecan)
         else:
-            await ctx.send("You can't turn bluecans into toucans! <:Asami:610590675142049868>")
+            await ctx.send("You can't turn bluecans into toucans! <:Asami:613138811169538048>")
 
 
 def setup(bot):

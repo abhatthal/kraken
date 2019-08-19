@@ -58,7 +58,7 @@ class Economy(commands.Cog):
             member = ctx.author
         elif not ('GOD' in [role.name for role in ctx.author.roles]):
             run = False
-            msg = "You don't have permission to make bank accounts for others! <:Asami:610590675142049868>"
+            msg = "You don't have permission to make bank accounts for others! <:Asami:613138811169538048>"
         if run:
             # connect to database
             db = sqlite3.connect(settings.DATABASE)
@@ -78,7 +78,7 @@ class Economy(commands.Cog):
                 VALUES(?, ?)''', (member.id, STARTING_VALUE))
                 db.commit()
                 if member == ctx.author:
-                    msg = f"Your account has been registered, here's {STARTING_VALUE} {CURRENCY_NAME} to get you started! <:Asami:610590675142049868>"
+                    msg = f"Your account has been registered, here's {STARTING_VALUE} {CURRENCY_NAME} to get you started! <:Asami:613138811169538048>"
                 else:
                     msg = f"{member.name}'s account has been registered.\nBalance: {STARTING_VALUE} {CURRENCY_NAME}"
         # send user message
@@ -113,7 +113,7 @@ class Economy(commands.Cog):
                 cursor.execute(f'DELETE FROM economy WHERE member_id = {member.id}')
                 db.commit()
         else:
-            msg = "You don't have permission to delete bank accounts! <:Asami:610590675142049868>"
+            msg = "You don't have permission to delete bank accounts! <:Asami:613138811169538048>"
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
