@@ -15,7 +15,7 @@ class Economy(commands.Cog):
         self.bot = bot
 
 
-    @commands.command(description = 'For testing purposes only.')
+    @commands.command(description = "Change a user's balance")
     @commands.has_role('GOD')
     async def set_balance(self, ctx, amount : int, member : discord.Member = None):
         # check member
@@ -69,7 +69,7 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = f'Deletes your account and all of your {CURRENCY_NAME}')
+    @commands.command(description = f'Deletes an account and all of its {CURRENCY_NAME}')
     async def delete_account(self, ctx, member : discord.Member = None):
         # check member
         if member == None:

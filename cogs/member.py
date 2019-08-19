@@ -60,9 +60,10 @@ class Member(commands.Cog):
                     'sayin' : '[channel] [message]',
 
                     # Economy
+                    'set_balance' : '[amount] (optional member)',
+                    'delete_account' : '(optional member)',
                     'check_balance' : '(optional member)',
                     'transfer' : '[member] [amount]',
-                    'set_balance' : '[amount] (optional member)',
 
                     # Member
                     '_8ball' : '[question]',
