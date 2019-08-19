@@ -40,9 +40,20 @@ class Admin(commands.Cog):
     async def reload(self, ctx, *extensions):
         if len(extensions) == 0:
             raise commands.CommandError('Must pass at least one extension')
+        if 'all' in extensions:
+            for filename in os.listdir('./cogs'):
+                 if filename.endswith('.py'):
+                     try:
+                        bot.unload_extension(f'cogs.{filename[:-3]}')
+                        bot.load_extension(f'cogs.{filename[:-3]}')
+                    except:
+                        bot.load_extension(f'cogs.{filename[:-3]}')
         for extension in extensions:
-            self.bot.unload_extension(f'cogs.{extension}')
-            self.bot.load_extension(f'cogs.{extension}')
+            try:
+                self.bot.unload_extension(f'cogs.{extension}')
+                self.bot.load_extension(f'cogs.{extension}')
+            except:
+                self.bot.load_extension(f'cogs.{extension}')
             msg = f'[RELOAD] cogs.{extension}\n'
             logger.info(msg)
             await ctx.send(msg)
