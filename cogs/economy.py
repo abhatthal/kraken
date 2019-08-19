@@ -140,8 +140,8 @@ class Economy(commands.Cog):
             else:
                 msg = f'{member.name} has {currency} {CURRENCY_NAME}. {CURRENCY_IMG}'
         # send user message
-        user = ctx.author.display_name
-        avatar = ctx.author.avatar_url
+        user = member.display_name
+        avatar = member.avatar_url
         eObj = await embed(ctx, title = 'Honest Bank', author = user,
         avatar = avatar, description = msg)
         if eObj is not False:
