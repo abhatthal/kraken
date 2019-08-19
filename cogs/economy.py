@@ -224,7 +224,6 @@ class Economy(commands.Cog):
 
 
     @commands.command(description = 'Free money!')
-    @commands.has_role('GOD')
     async def income(self, ctx):
         footer = ''
         # check if user can use this command
