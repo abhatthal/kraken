@@ -15,6 +15,36 @@ class Economy(commands.Cog):
         self.bot = bot
 
 
+    @command.command(description = 'For testing purposes only.')
+    @commands.has_role('GOD')
+    async def set_balance(self, ctx, member : discord.Member = None, amount : int):
+        # check member
+        if member == None:
+            member = ctx.author
+        # connect to database
+        db = sqlite3.connect(settings.DATABASE)
+        cursor = db.cursor()
+        # check if user already has an account
+        cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
+        account = cursor.fetchone()[0]
+        if account < 1:
+            if member == ctx.author:
+                msg = "You don't have an account!"
+            else:
+                msg = f"{member.name} doesn't have an account!"
+        else:
+            # set funds
+            cursor.execute(f'UPDATE economy SET currency = {amount} WHERE member_id = {member.id}')
+            if member == ctx.author:
+                msg = f'Your Balance: {amount} {CURRENCY_NAME}'
+            else:
+                msg = f"{member.name}'s Balance: {amount} {CURRENCY_NAME}"
+        # send user message
+        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
+        if eObj is not False:
+            await ctx.send(embed = eObj)
+
+
     @commands.command(description = f'Make yourself a bank account to keep your {CURRENCY_NAME}')
     async def make_account(self, ctx):
         # connect to database
@@ -33,8 +63,7 @@ class Economy(commands.Cog):
             db.commit()
             msg = f"Your account has been registered, here's 500 {CURRENCY_NAME} to get you started! <:Asami:610590675142049868>"
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
-        avatar = settings.BOT_AVATAR, description = msg)
+        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
@@ -87,8 +116,10 @@ class Economy(commands.Cog):
             else:
                 msg = f'{member.name} has {currency} {CURRENCY_NAME}. {CURRENCY_IMG}'
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
-        avatar = settings.BOT_AVATAR, description = msg)
+        user = ctx.author.display_name
+        avatar = ctx.author.avatar_url
+        eObj = await embed(ctx, title = 'Honest Bank', author = user,
+        avatar = avatar, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
@@ -134,8 +165,7 @@ class Economy(commands.Cog):
                             db.commit()
                             msg = f"Transfer complete!\nYour Balance: {currency_sender - amount} {CURRENCY_NAME}\n{member.name}'s Balance: {currency_recipient + amount} {CURRENCY_NAME}"
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', author = settings.BOT_NAME,
-        avatar = settings.BOT_AVATAR, description = msg)
+        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
