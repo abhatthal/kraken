@@ -1,6 +1,7 @@
 import discord
 import random
 import sqlite3
+import asyncio # await asyncio.sleep()
 from discord.ext import commands
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
@@ -11,13 +12,14 @@ CURRENCY_NAME = 'fish'
 CURRENCY_IMG = '🐟'
 STARTING_VALUE = 500
 
+WAIT = []
+
 class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
 
     @commands.command(description = "Admins Only: Change a user's balance")
-    @commands.has_role('GOD')
     async def set_balance(self, ctx, amount : int, member : discord.Member = None):
         # check member
         if member == None:
@@ -221,30 +223,40 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = "Free money! (Command still in development)")
+    @commands.command(description = 'Free money!')
     @commands.has_role('GOD')
     async def income(self, ctx):
-        # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
-        # check if user has an account
-        cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
-        account = cursor.fetchone()
-        if str(type(account)) == "<class 'NoneType'>":
-            msg = "You don't have an account! Use ``.make_account`` to make one"
-            footer = ''
+        footer = ''
+        # check if user can use this command
+        if ctx.author.id in WAIT:
+            msg = 'Sorry! Come back later.'
         else:
-            # add money to account
-            account = account[0]
-            amount_to_add = int(STARTING_VALUE / 5)
-            cursor.execute(f'UPDATE economy SET currency = {account + amount_to_add} WHERE member_id = {ctx.author.id}')
-            db.commit()
-            msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
-            footer = 'Come back tomorrow for more!'
+            # connect to database
+            db = sqlite3.connect(settings.DATABASE)
+            cursor = db.cursor()
+            # check if user has an account
+            cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
+            account = cursor.fetchone()
+            if str(type(account)) == "<class 'NoneType'>":
+                msg = "You don't have an account! Use ``.make_account`` to make one"
+            else:
+                # add money to account
+                account = account[0]
+                amount_to_add = int(STARTING_VALUE / 5)
+                cursor.execute(f'UPDATE economy SET currency = {account + amount_to_add} WHERE member_id = {ctx.author.id}')
+                db.commit()
+                msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
+                footer = 'Come back tomorrow for more!'
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = footer)
         if eObj is not False:
-            await ctx.send(embed = eObj)            
+            await ctx.send(embed = eObj)  
+        # set timer for user
+        if not ctx.author.id in WAIT:
+            WAIT.append(ctx.author.id)
+            await asyncio.sleep(86400) # 24 hours
+            WAIT.remove(ctx.author.id)
+
             
 
 def setup(bot):
