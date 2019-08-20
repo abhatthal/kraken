@@ -277,7 +277,7 @@ class Economy(commands.Cog):
         msg = ''
         footer = ''
         title = 'Honest Bank'
-        maintenance = True
+        maintenance = False
         if maintenance and not ('GOD' in [role.name for role in ctx.author.roles]):
             msg = f"Oof, there's no {CURRENCY_NAME} in the pond."
             footer = 'Command is under maintenance right now!'
@@ -301,10 +301,10 @@ class Economy(commands.Cog):
                     # update account
                     multiplier = choice(multipliers, p = weights)
                     winnings = bet * multiplier
-                    cursor.execute(f'UPDATE economy SET currency = {account_value + winnings - bet} WHERE member_id = {ctx.author.id}')
+                    cursor.execute(f'UPDATE economy SET currency = {int(account_value + winnings - bet)} WHERE member_id = {ctx.author.id}')
                     db.commit()
-                    msg = f'You won {winnings} {CURRENCY_NAME}!\nYour Balance: {account_value + winnings - bet} {CURRENCY_NAME}. {CURRENCY_IMG}'
-                    if winnings < bet:
+                    msg = f'You won {int(winnings)} {CURRENCY_NAME}!\nYour Balance: {int(account_value + winnings - bet)} {CURRENCY_NAME}. {CURRENCY_IMG}'
+                    if winnings <= bet:
                         footer = 'Better luck next time!'
                     elif multiplier != multipliers[-1]:
                         footer = 'Congratulations!'
@@ -321,8 +321,8 @@ class Economy(commands.Cog):
     async def probability(self, ctx):
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank ``.fish`` Probabilities', footer = 'Code is open-source: https://github.com/abhatthal/HonestBear')
-        for i in range(multipliers):
-            eObj.add_field(name = f'{multipliers[i]}x', value = f'{weights[i] * 100}%', inline = False)
+        for i in range(len(multipliers)):
+            eObj.add_field(name = f'{str(multipliers[i])}x', value = f"{str('%.3f'%(weights[i] * 100))}%", inline = True)
         if eObj is not False:
             await ctx.send(embed = eObj)
             
