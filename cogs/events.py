@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from time import gmtime, strftime
+from random import choice
 import logging
 import helper_files.settings as settings
 import sqlite3
@@ -57,6 +58,10 @@ class Events(commands.Cog):
 
             if 'no u' in message.content.lower():
                 await message.channel.send('NO U')
+
+            if 'uwu' in message.content.lower():
+                responses = ['urusai kono weebu yarou! >.<', 'damare!', 'kono baka', 'baka', 'uwu dattebayo']
+                await message.channel.send(choice(responses))
         
             # allow people to vote by in certain channels
             if message.channel.id in (settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL):
