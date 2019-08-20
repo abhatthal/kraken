@@ -65,6 +65,7 @@ class Member(commands.Cog):
                     'delete_account' : '(optional member)',
                     'check_balance' : '(optional member)',
                     'transfer' : '[member] [amount]',
+                    'fish' : '[bet]',
 
                     # Member
                     '_8ball' : '[question]',

@@ -1,5 +1,6 @@
 import discord
 import random
+from numpy.random import choice # for choosing from a given numerical ditribution
 import sqlite3
 import asyncio # await asyncio.sleep()
 import time # time.time() timestamp
@@ -13,6 +14,10 @@ import helper_files.settings as settings
 CURRENCY_NAME = 'fish'
 CURRENCY_IMG = '🐟'
 STARTING_VALUE = 500
+
+# payouts for .fish
+multipliers = [0, 0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 3, 4, 5, 10, 100, 1000]
+weights = [0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.09963, 0.09963, 0.09963, 0.001, 0.0001, 0.00001]
 
 class Economy(commands.Cog):
     def __init__(self, bot):
@@ -264,7 +269,62 @@ class Economy(commands.Cog):
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = footer)
         if eObj is not False:
-            await ctx.send(embed = eObj)  
+            await ctx.send(embed = eObj)
+
+
+    @commands.command(description = f'Gamble {CURRENCY_NAME} to get {CURRENCY_NAME}, nothing fishy here. >.>')
+    async def fish(self, ctx, bet : int):
+        msg = ''
+        footer = ''
+        title = 'Honest Bank'
+        maintenance = True
+        if maintenance and not ('GOD' in [role.name for role in ctx.author.roles]):
+            msg = f"Oof, there's no {CURRENCY_NAME} in the pond."
+            footer = 'Command is under maintenance right now!'
+        else:
+            # connect to database
+            db = sqlite3.connect(settings.DATABASE)
+            cursor = db.cursor()
+            # check if user has an account
+            cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
+            account = cursor.fetchone()
+            if type(account) != tuple:
+                msg = "You don't have an account! Use ``.make_account`` to make one"
+            else:
+                # check if amount is valid
+                account_value = account[0]
+                if bet <= 0:
+                    msg = f'Bet invalid, please bet a positive integer amount of {CURRENCY_NAME}'
+                elif bet > account_value:
+                    msg = f"You don't have that much {CURRENCY_NAME} to bet!"
+                else:
+                    # update account
+                    multiplier = choice(multipliers, p = weights)
+                    winnings = bet * multiplier
+                    cursor.execute(f'UPDATE economy SET currency = {account_value + winnings - bet} WHERE member_id = {ctx.author.id}')
+                    db.commit()
+                    msg = f'You won {winnings} {CURRENCY_NAME}!\nYour Balance: {account_value + winnings - bet} {CURRENCY_NAME}. {CURRENCY_IMG}'
+                    if winnings < bet:
+                        footer = 'Better luck next time!'
+                    elif multiplier != multipliers[-1]:
+                        footer = 'Congratulations!'
+                    else:
+                        title = '🎊 GRAND PRIZE WINNER!! 🎊'
+                        footer = 'So much fish...'
+        # send user message
+        eObj = await embed(ctx, title = title, description = msg, footer = footer)
+        if eObj is not False:
+            await ctx.send(embed = eObj)
+
+
+    @commands.command(description = "Returns .fish payouts and probabilities")
+    async def probability(self, ctx):
+        # send user message
+        eObj = await embed(ctx, title = 'Honest Bank ``.fish`` Probabilities', footer = 'Code is open-source: https://github.com/abhatthal/HonestBear')
+        for i in range(multipliers):
+            eObj.add_field(name = f'{multipliers[i]}x', value = f'{weights[i] * 100}%', inline = False)
+        if eObj is not False:
+            await ctx.send(embed = eObj)
             
 
 def setup(bot):
