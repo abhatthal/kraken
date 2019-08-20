@@ -158,7 +158,7 @@ class Member(commands.Cog):
 
 
     # Shamelessly stolen from Wall-E: https://github.com/CSSS/wall_e/blob/master/commands_to_load/Misc.py
-    @commands.command(description = '')
+    @commands.command(description = 'Poll a yes/no question or a question with at least two options')
     async def poll(self, ctx, *questions):
         name = ctx.author.display_name
         avatar = ctx.author.avatar_url
