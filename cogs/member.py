@@ -69,6 +69,7 @@ class Member(commands.Cog):
                     # Member
                     '_8ball' : '[question]',
                     'echo' : '[message]',
+                    'poll' : '["Question"] [Option A] [Option B] ...',
 
                     # Moderator
                     'clear' : '(optional amount)',
@@ -144,7 +145,7 @@ class Member(commands.Cog):
         id = self.bot.get_guild(ctx.guild.id)
         eObj = await embed(ctx, author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = f'Member Count: {id.member_count}')
         if eObj is not False:
-            await ctx.send(embed=eObj)
+            await ctx.send(embed = eObj)
         
         
     @commands.command(description = 'repeats what you say')
@@ -153,7 +154,59 @@ class Member(commands.Cog):
         avatar = ctx.author.avatar_url
         eObj = await embed(ctx, author = user, avatar = avatar, description = msg)
         if eObj is not False:
-            await ctx.send(embed=eObj)
+            await ctx.send(embed = eObj)
+
+
+    # Shamelessly stolen from Wall-E: https://github.com/CSSS/wall_e/blob/master/commands_to_load/Misc.py
+    @commands.command(description = '')
+    async def poll(self, ctx, *questions):
+        name = ctx.author.display_name
+        avatar = ctx.author.avatar_url
+        if len(questions) > 11:
+            eObj = await embed(ctx, title = 'Poll Error', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR,
+                               description = 'Please only submit a maximum of 10 options for a multi-option question.')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            return
+        elif len(questions) == 1:
+            eObj = await embed(ctx, title = 'Poll', author = name, avatar = avatar, description = questions[0])
+            if eObj is not False:
+                post = await ctx.send(embed = eObj)
+                await post.add_reaction(u"\U0001F44D")
+                await post.add_reaction(u"\U0001F44E")
+            return
+        if len(questions) == 2:
+            eObj = await embed(ctx, title = 'Poll Error', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR,
+                               description = 'Please submit at least 2 options for a multi-option question.')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            return
+        elif len(questions) == 0:
+            eObj = await embed(ctx, title = 'Poll Error', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR,
+                               description = 'Please submit a yes/no question or a question with at least two options')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            return
+        else:
+            questions = list(questions)
+            optionString = "\n"
+            numbersEmoji = [":zero:", ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:",
+                            ":nine:", ":keycap_ten:"]
+            numbersUnicode = [u"0\u20e3", u"1\u20e3", u"2\u20e3", u"3\u20e3", u"4\u20e3", u"5\u20e3", u"6\u20e3",
+                              u"7\u20e3", u"8\u20e3", u"9\u20e3", u"\U0001F51F"]
+            question = questions.pop(0)
+            options = 0
+            for m, n in zip(numbersEmoji, questions):
+                optionString += m + ": " + n + "\n"
+                options += 1
+
+            content = [['Options:', optionString]]
+            eObj = await embed(ctx, title = 'Poll:', author = name, avatar = avatar, description = question, content=content)
+            if eObj is not False:
+                pollPost = await ctx.send(embed = eObj)
+
+                for i in range(0, options):
+                    await pollPost.add_reaction(numbersUnicode[i])
 
 
 def setup(bot):
