@@ -21,12 +21,42 @@ multipliers = [0, 0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 3, 4, 5, 10, 100, 1
 weights = [0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.29889 / 5, 0.29889 / 5, 0.29889 / 5, 0.29889 / 5, 0.29889 / 5, 0.001, 0.0001, 0.00001]
 
 # Role to give to top 10 users
-top10 = 613578438707511326
+top10_ID = 613578438707511326
+numberone_ID = 613598305263288334
 
 class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
+    @commands.command(description = "manually updates economy roles")
+    async def update_roles(self, ctx, member : discord.Member = None):
+        if member == None:
+            member = ctx.author
+        # Roles 
+        top10 = get(ctx.guild.roles, id = top10_ID)
+        numberone = get(ctx.guild.roles, id = numberone_ID)
+        # connect to database
+        db = sqlite3.connect(settings.DATABASE)
+        cursor = db.cursor()
+        # sort by currency
+        cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
+        # fetch data
+        rows = cursor.fetchall()
+        for row in range(len(rows)):
+            if rows[row][0] == member.id:
+                rank = (row + 1)
+                break
+        # update roles
+        if rank == 1:
+            await member.add_roles(numberone)
+        else:
+            await member.remove_roles(numberone)
+        if rank <= 10:
+            await member.add_roles(top10)
+        else:
+            await member.remove_roles(top10)
+                
 
     @commands.command(description = "Admins Only: Change a user's balance")
     @commands.has_role('GOD')
@@ -53,6 +83,8 @@ class Economy(commands.Cog):
                 msg = f'Your Balance: {amount} {CURRENCY_NAME}'
             else:
                 msg = f"{member.name}'s Balance: {amount} {CURRENCY_NAME}"
+        # update roles
+        await ctx.invoke(self.bot.get_command('update_roles'), member)
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
@@ -90,6 +122,8 @@ class Economy(commands.Cog):
                     msg = f"Your account has been registered, here's {STARTING_VALUE} {CURRENCY_NAME} to get you started! {settings.ASAMI_EMOJI}"
                 else:
                     msg = f"{member.name}'s account has been registered.\nBalance: {STARTING_VALUE} {CURRENCY_NAME}"
+                # update roles
+                await ctx.invoke(self.bot.get_command('update_roles'), member)
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
@@ -98,6 +132,9 @@ class Economy(commands.Cog):
 
     @commands.command(description = f'Admins Only: Deletes an account and all of its {CURRENCY_NAME}')
     async def delete_account(self, ctx, member : discord.Member = None):
+        # Roles 
+        top10 = get(ctx.guild.roles, id = top10_ID)
+        numberone = get(ctx.guild.roles, id = numberone_ID)
         # check member
         if member == None:
             member = ctx.author
@@ -118,6 +155,9 @@ class Economy(commands.Cog):
                     msg = 'Your account has been deleted.'
                 else:
                     msg = f"{member.name}'s account has been deleted."
+                # delete roles
+                await member.remove_roles(numberone)
+                await member.remove_roles(top10)
                 # delete account
                 cursor.execute(f'DELETE FROM economy WHERE member_id = {member.id}')
                 db.commit()
@@ -210,6 +250,8 @@ class Economy(commands.Cog):
                             cursor.execute(f'UPDATE economy SET currency = {currency_recipient + amount} WHERE member_id = {member.id}')
                             db.commit()
                             msg = f"Transfer complete!\nYour Balance: {currency_sender - amount} {CURRENCY_NAME}\n{member.name}'s Balance: {currency_recipient + amount} {CURRENCY_NAME}"
+                            # update roles
+                            await ctx.invoke(self.bot.get_command('update_roles'), member)
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
@@ -280,6 +322,8 @@ class Economy(commands.Cog):
                     db.commit()
                     msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account_value + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
                     footer = 'Come back in a few hours!'
+                    # update roles
+                    await ctx.invoke(self.bot.get_command('update_roles'), member)
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
@@ -327,6 +371,8 @@ class Economy(commands.Cog):
                     else:
                         title = '🎊 GRAND PRIZE WINNER!! 🎊'
                         footer = 'So much fish...'
+                        # update roles
+                        await ctx.invoke(self.bot.get_command('update_roles'), member)
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
@@ -360,39 +406,6 @@ class Economy(commands.Cog):
         eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = 'Hahaha... ', author = user, avatar = avatar)
         if eObj is not False:
             await ctx.send(embed = eObj)
-
-
-    @set_balance.after_invoke
-    @make_account.after_invoke
-    @delete_account.after_invoke
-    @transfer.after_invoke
-    @income.after_invoke
-    @fish.after_invoke
-    async def top10_role_assign(self, ctx):
-        # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
-        # sort by currency
-        cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
-        # fetch data
-        rows = cursor.fetchall()
-        place = 0
-        row_index = 0
-        # top 10
-        # place <= 10
-        role = get(ctx.guild.roles, id = top10)
-        for row_index in range(len(rows)):
-            # try in case member wasn't found
-            try:
-                member = ctx.guild.get_member(rows[row_index][0])
-                if place <= 10:
-                    await member.add_roles(role)
-                else:
-                    await member.remove_roles(role)
-                place += 1                
-            except:
-                pass
-            row_index += 1
 
 
 def setup(bot):
