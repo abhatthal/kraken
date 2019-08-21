@@ -202,6 +202,8 @@ class Economy(commands.Cog):
             else:
                 msg = f'{member.name} has {currency} {CURRENCY_NAME}. {CURRENCY_IMG}'
             msg += '\nRank: ' + place
+        # update roles
+        await ctx.invoke(self.bot.get_command('update_roles'), member)
         # send user message
         user = member.display_name
         avatar = member.avatar_url
