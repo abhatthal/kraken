@@ -24,6 +24,7 @@ weights = [0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 
 top10_ID = 613578438707511326
 numberone_ID = 613598305263288334
 
+
 class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -85,7 +86,7 @@ class Economy(commands.Cog):
             else:
                 msg = f"{member.name}'s Balance: {amount} {CURRENCY_NAME}"
         # update roles
-        await ctx.invoke(self.bot.get_command('update_roles'), member)
+        await ctx.invoke(self.update_roles, member)
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
@@ -124,7 +125,7 @@ class Economy(commands.Cog):
                 else:
                     msg = f"{member.name}'s account has been registered.\nBalance: {STARTING_VALUE} {CURRENCY_NAME}"
                 # update roles
-                await ctx.invoke(self.bot.get_command('update_roles'), member)
+                await ctx.invoke(self.update_roles, member)
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
@@ -203,7 +204,7 @@ class Economy(commands.Cog):
                 msg = f'{member.name} has {currency} {CURRENCY_NAME}. {CURRENCY_IMG}'
             msg += '\nRank: ' + place
             # update roles
-            await ctx.invoke(self.bot.get_command('update_roles'), member)
+            await ctx.invoke(self.update_roles, member)
         # send user message
         user = member.display_name
         avatar = member.avatar_url
@@ -254,8 +255,8 @@ class Economy(commands.Cog):
                             db.commit()
                             msg = f"Transfer complete!\nYour Balance: {currency_sender - amount} {CURRENCY_NAME}\n{member.name}'s Balance: {currency_recipient + amount} {CURRENCY_NAME}"
                             # update roles
-                            await ctx.invoke(self.bot.get_command('update_roles'), member)
-                            await ctx.invoke(self.bot.get_command('update_roles'), ctx.author)
+                            await ctx.invoke(self.update_roles, member)
+                            await ctx.invoke(self.update_roles)
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
@@ -326,8 +327,7 @@ class Economy(commands.Cog):
                     db.commit()
                     msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account_value + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
                     footer = 'Come back in a few hours!'
-                    # update roles
-                    await ctx.invoke(self.bot.get_command('update_roles'), ctx.author)
+                await ctx.invoke(self.update_roles)
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
@@ -375,8 +375,8 @@ class Economy(commands.Cog):
                     else:
                         title = '🎊 GRAND PRIZE WINNER!! 🎊'
                         footer = 'So much fish...'
-                        # update roles
-                        await ctx.invoke(self.bot.get_command('update_roles'), ctx.author)
+                # update roles
+                await ctx.invoke(self.update_roles)
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
