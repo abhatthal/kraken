@@ -17,7 +17,7 @@ STARTING_VALUE = 500
 
 # payouts for .fish
 multipliers = [0, 0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 3, 4, 5, 10, 100, 1000]
-weights = [0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.09963, 0.09963, 0.09963, 0.001, 0.0001, 0.00001]
+weights = [0.7 / 6, 0.7 / 6, 0.7 / 6, 0.7 / 6, 0.7 / 6, 0.7 / 6, 0.29889 / 7, 0.29889 / 7, 0.29889 / 7, 0.29889 / 7, 0.29889 / 7, 0.29889 / 7, 0.29889 / 7, 0.001, 0.0001, 0.00001]
 
 class Economy(commands.Cog):
     def __init__(self, bot):
@@ -267,7 +267,9 @@ class Economy(commands.Cog):
                     msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account_value + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
                     footer = 'Come back in a few hours!'
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = footer)
+        user = ctx.author.display_name
+        avatar = ctx.author.avatar_url
+        eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = footer, author = user, avatar = avatar)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
@@ -312,7 +314,9 @@ class Economy(commands.Cog):
                         title = '🎊 GRAND PRIZE WINNER!! 🎊'
                         footer = 'So much fish...'
         # send user message
-        eObj = await embed(ctx, title = title, description = msg, footer = footer)
+        user = ctx.author.display_name
+        avatar = ctx.author.avatar_url
+        eObj = await embed(ctx, title = title, description = msg, footer = footer, author = user, avatar = avatar)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
