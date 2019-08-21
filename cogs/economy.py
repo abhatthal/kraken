@@ -6,6 +6,7 @@ import asyncio # await asyncio.sleep()
 import time # time.time() timestamp
 import datetime # datetime.timedelta
 from discord.ext import commands
+from discord.utils import get
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
 from helper_files.embed import embed
@@ -18,6 +19,9 @@ STARTING_VALUE = 500
 # payouts for .fish
 multipliers = [0, 0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 3, 4, 5, 10, 100, 1000]
 weights = [0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.7 / 8, 0.29889 / 5, 0.29889 / 5, 0.29889 / 5, 0.29889 / 5, 0.29889 / 5, 0.001, 0.0001, 0.00001]
+
+# Role to give to top 10 users
+top10 = 613578438707511326
 
 class Economy(commands.Cog):
     def __init__(self, bot):
@@ -356,7 +360,40 @@ class Economy(commands.Cog):
         eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = 'Hahaha... ', author = user, avatar = avatar)
         if eObj is not False:
             await ctx.send(embed = eObj)
-            
+
+
+    @set_balance.after_invoke
+    @make_account.after_invoke
+    @delete_account.after_invoke
+    @transfer.after_invoke
+    @income.after_invoke
+    @fish.after_invoke
+    async def top10_role_assign(self, ctx):
+        # connect to database
+        db = sqlite3.connect(settings.DATABASE)
+        cursor = db.cursor()
+        # sort by currency
+        cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
+        # fetch data
+        rows = cursor.fetchall()
+        place = 0
+        row_index = 0
+        # top 10
+        # place <= 10
+        role = get(ctx.guild.roles, id = top10)
+        for row_index in range(len(rows)):
+            # try in case member wasn't found
+            try:
+                member = ctx.guild.get_member(rows[row_index][0])
+                if place <= 10:
+                    await member.add_roles(role)
+                else:
+                    await member.remove_roles(role)
+                place += 1                
+            except:
+                pass
+            row_index += 1
+
 
 def setup(bot):
     bot.add_cog(Economy(bot))
