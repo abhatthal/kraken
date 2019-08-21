@@ -45,10 +45,11 @@ class Economy(commands.Cog):
         rows = cursor.fetchall()
         for row in range(len(rows)):
             if rows[row][0] == member.id:
-                rank = (row + 1)
+                rank = row
                 break
+        # await ctx.send(rank)
         # update roles
-        if rank == 1:
+        if rank == 0:
             await member.add_roles(numberone)
         else:
             await member.remove_roles(numberone)
@@ -252,6 +253,7 @@ class Economy(commands.Cog):
                             msg = f"Transfer complete!\nYour Balance: {currency_sender - amount} {CURRENCY_NAME}\n{member.name}'s Balance: {currency_recipient + amount} {CURRENCY_NAME}"
                             # update roles
                             await ctx.invoke(self.bot.get_command('update_roles'), member)
+                            await ctx.invoke(self.bot.get_command('update_roles'), ctx.author)
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
@@ -323,7 +325,7 @@ class Economy(commands.Cog):
                     msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account_value + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
                     footer = 'Come back in a few hours!'
                     # update roles
-                    await ctx.invoke(self.bot.get_command('update_roles'), member)
+                    await ctx.invoke(self.bot.get_command('update_roles'), ctx.author)
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
@@ -372,7 +374,7 @@ class Economy(commands.Cog):
                         title = '🎊 GRAND PRIZE WINNER!! 🎊'
                         footer = 'So much fish...'
                         # update roles
-                        await ctx.invoke(self.bot.get_command('update_roles'), member)
+                        await ctx.invoke(self.bot.get_command('update_roles'), ctx.author)
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
