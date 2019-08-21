@@ -351,11 +351,8 @@ class Economy(commands.Cog):
         member = ctx.guild.get_member(cursor.fetchone()[0])
         user = member.display_name
         avatar = member.avatar_url
-        # get how many users
-        cursor.execute(f'SELECT COUNT(*) FROM economy')
-        rank = cursor.fetchone()[0] - 1
         # send user message
-        msg = f"Haha, {member.name}#{member.discriminator} is the poorest toucan at rank {rank}\nLet's all point and laugh. ☝"
+        msg = f"Haha, {member.name}#{member.discriminator} is the poorest toucan.\nLet's all point and laugh. ☝"
         eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = 'Hahaha... ', author = user, avatar = avatar)
         if eObj is not False:
             await ctx.send(embed = eObj)
