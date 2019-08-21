@@ -143,10 +143,20 @@ class Economy(commands.Cog):
                 msg = f"{member.name} doesn't have an account!"
         else:
             currency = account[0]
+            # get rank
+            # sort by currency
+            cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
+            # fetch data
+            rows = cursor.fetchall()
+            place = 'Not Found'
+            for row in range(len(rows)):
+                if rows[row][0] == member.id:
+                    place = str(row + 1)
             if member.id == ctx.author.id:
                 msg = f'You have {currency} {CURRENCY_NAME}. {CURRENCY_IMG}'
             else:
                 msg = f'{member.name} has {currency} {CURRENCY_NAME}. {CURRENCY_IMG}'
+            msg += '\nRank: ' + place
         # send user message
         user = member.display_name
         avatar = member.avatar_url
