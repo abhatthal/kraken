@@ -126,12 +126,25 @@ class Moderator(commands.Cog):
             else:
                 await ctx.send('Error: No duration specified')
                 return
+            unban_time = time.ctime(time.time() + time_seconds)
             logger.info(f'[TEMPBAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             eObj = await embed(ctx, colour = 0xFF0000, author = f'[TEMPBAN] {member}' ,
-                    avatar = member.avatar_url, description = 'Reason: ' + str(reason), footer = f'Banned until: {time.ctime(time.time() + time_seconds)}')
+                    avatar = member.avatar_url, description = 'Reason: ' + str(reason), footer = f'Banned until: {unban_time}')
             if eObj is not False:
                 await ctx.send(embed = eObj)
                 await channel.send(embed = eObj)
+            # backup data in case of server outage
+            # connect to database
+            db = sqlite3.connect(settings.DATABASE)
+            cursor = db.cursor()
+            # get tempban_id (number of global tempbans + 1)
+            cursor.execute('SELECT COUNT(*) FROM tempbans')
+            tempban_id = cursor.fetchone()[0] + 1
+            # insert data
+            cursor.execute('''
+            INSERT INTO tempbans(member_id, tempban_id, tempban, date)
+            VALUES(?, ?, ?, ?)''', (member.id, tempban_id, str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
+            db.commit()
             # ban and unban after time
             await member.ban(reason = reason)
             await asyncio.sleep(time_seconds)

@@ -29,7 +29,8 @@ class Events(commands.Cog):
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS tempbans(
             member_id INTEGER,
-            tempban_id INTEGER, 
+            tempban_id INTEGER,
+            reason TEXT,
             unban_time INTEGER
             )
         ''')
