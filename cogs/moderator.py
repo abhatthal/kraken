@@ -8,6 +8,7 @@ import logging
 import helper_files.settings as settings
 import sqlite3
 import datetime
+import asyncio # await asyncio.sleep()
 logger = logging.getLogger('HonestBear')
 
 
@@ -95,7 +96,45 @@ class Moderator(commands.Cog):
         else:
             await ctx.send(f"You're not allowed to unban anybirdie! {settings.ASAMI_EMOJI}")
 
+
+    @commands.command(description = 'bans a member for a specified amount of time')
+    async def tempban(self, ctx, time : str, member : discord.Member):
+        if member.id == self.bot.user.id:
+            await ctx.send('no u')
+        elif member.id == ctx.author.id:
+            await ctx.send("Please don't ban yourself")
+        elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+            channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
+            msg = ''
+            if time[:-1].isnumeric():
+                if time[-1].isalpha():
+                    if time[-1].lower() == 's':
+                        time_seconds = int(time[:-1])
+                    elif time[-1].lower() == 'm':
+                        time_seconds = int(time[:-1]) * 60
+                    elif time[-1].lower() == 'h':
+                        time_seconds = int(time[:-1]) * 60 * 60
+                    elif time[-1].lower() == 'd':
+                        time_seconds = int(time[:-1]) * 60 * 60 * 24
+                    else:
+                        await ctx.send('Error: Time unit not recognized')
+                        return
+                else:
+                    time_seconds = int(time)
+            else:
+                await ctx.send('Error: No time specified')
+                return
+            eObj = await embed(ctx, colour = 0xFF0000, author = f'[TEMPBAN] {member}' ,
+                    avatar = member.avatar_url, description = 'Reason: ' + str(reason), footer = f'Banned until: {time.ctime(time.time() + time_seconds)}')
+                if eObj is not False:
+                    await ctx.send(embed = eObj)
+                    await channel.send(embed = eObj)
+                    await member.ban(reason = reason)
+            await ctx.guild.ban(member)
+            await asyncio.sleep(time_seconds)
+            await ctx.guild.unban(member)
     
+
     @commands.command(description = 'give a user an infraction')
     # @commands.has_role('mod')
     async def warn(self, ctx, member : discord.Member, *, reason = None):

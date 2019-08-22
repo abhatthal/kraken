@@ -23,6 +23,7 @@ class Events(commands.Cog):
             member_id INTEGER,
             infraction_id INTEGER, 
             infraction TEXT,
+            temp_ban INTEGER,
             date DATE
             )
             ''')

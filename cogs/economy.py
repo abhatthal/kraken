@@ -2,7 +2,6 @@ import discord
 import random
 from numpy.random import choice # for choosing from a given numerical ditribution
 import sqlite3
-import asyncio # await asyncio.sleep()
 import time # time.time() timestamp
 import datetime # datetime.timedelta
 from discord.ext import commands
@@ -34,30 +33,34 @@ class Economy(commands.Cog):
     async def update_roles(self, ctx, member : discord.Member = None):
         if member == None:
             member = ctx.author
-        # Roles 
-        top10 = get(ctx.guild.roles, id = top10_ID)
-        numberone = get(ctx.guild.roles, id = numberone_ID)
-        # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
-        # sort by currency
-        cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
-        # fetch data
-        rows = cursor.fetchall()
-        for row in range(len(rows)):
-            if rows[row][0] == member.id:
-                rank = row
-                break
-        # await ctx.send(rank)
-        # update roles
-        if rank == 0:
-            await member.add_roles(numberone)
-        else:
-            await member.remove_roles(numberone)
-        if rank <= 10:
-            await member.add_roles(top10)
-        else:
-            await member.remove_roles(top10)
+        # try block in case roles not in server
+        try:
+            # Roles
+            top10 = get(ctx.guild.roles, id = top10_ID)
+            numberone = get(ctx.guild.roles, id = numberone_ID)
+            # connect to database
+            db = sqlite3.connect(settings.DATABASE)
+            cursor = db.cursor()
+            # sort by currency
+            cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
+            # fetch data
+            rows = cursor.fetchall()
+            for row in range(len(rows)):
+                if rows[row][0] == member.id:
+                    rank = row
+                    break
+            # await ctx.send(rank)
+            # update roles
+            if rank == 0:
+                await member.add_roles(numberone)
+            else:
+                await member.remove_roles(numberone)
+            if rank <= 10:
+                await member.add_roles(top10)
+            else:
+                await member.remove_roles(top10)
+        except:
+            pass
                 
 
     @commands.command(description = "Admins Only: Change a user's balance")
@@ -327,6 +330,7 @@ class Economy(commands.Cog):
                     db.commit()
                     msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account_value + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
                     footer = 'Come back in a few hours!'
+                # update roles
                 await ctx.invoke(self.update_roles)
         # send user message
         user = ctx.author.display_name
@@ -367,7 +371,7 @@ class Economy(commands.Cog):
                     winnings = bet * multiplier
                     cursor.execute(f'UPDATE economy SET currency = {int(account_value + winnings - bet)} WHERE member_id = {ctx.author.id}')
                     db.commit()
-                    msg = f'You won {int(winnings)} {CURRENCY_NAME}!\nYour Balance: {int(account_value + winnings - bet)} {CURRENCY_NAME}. {CURRENCY_IMG}'
+                    msg = f'You bought {bet} {CURRENCY_NAME} worth of bait.\nYou caught {int(winnings)} {CURRENCY_NAME}!\nYour Balance: {int(account_value + winnings - bet)} {CURRENCY_NAME}. {CURRENCY_IMG}'
                     if winnings <= bet:
                         footer = 'Better luck next time!'
                     elif multiplier != multipliers[-1]:
