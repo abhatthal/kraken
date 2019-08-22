@@ -78,6 +78,7 @@ class Member(commands.Cog):
                     'kick' : '[member] (optional reason)',
                     'ban' : '[member] (optional reason)',
                     'unban' : '[member]',
+                    'tempban' : '[member] [duration] (optional reason)',
                     'warn' : '[member] (optional reason)',
                     'infractions' : '[member]',
                     'clear_infractions' : '[member]',

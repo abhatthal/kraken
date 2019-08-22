@@ -8,6 +8,7 @@ import logging
 import helper_files.settings as settings
 import sqlite3
 import datetime
+import time
 import asyncio # await asyncio.sleep()
 logger = logging.getLogger('HonestBear')
 
@@ -46,7 +47,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"Hey, don't kick anybirdie! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = 'Ban a user from the server')
+    @commands.command(description = 'Bans a member from the server')
     # @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason = None):
         if member.id == self.bot.user.id:
@@ -66,7 +67,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"Hey, don't ban anybirdie! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = 'Unban a user from the server')
+    @commands.command(description = 'Unbans a user from the server')
     # @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
         if member == '<@608911590515015701>' or member == f'{settings.BOT_NAME}#9253':
@@ -97,8 +98,8 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to unban anybirdie! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = 'bans a member for a specified amount of time')
-    async def tempban(self, ctx, time : str, member : discord.Member):
+    @commands.command(description = 'Temporarily bans a member from the server')
+    async def tempban(self, ctx, member : discord.Member, duration, *, reason = None):
         if member.id == self.bot.user.id:
             await ctx.send('no u')
         elif member.id == ctx.author.id:
@@ -106,34 +107,42 @@ class Moderator(commands.Cog):
         elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             msg = ''
-            if time[:-1].isnumeric():
-                if time[-1].isalpha():
-                    if time[-1].lower() == 's':
-                        time_seconds = int(time[:-1])
-                    elif time[-1].lower() == 'm':
-                        time_seconds = int(time[:-1]) * 60
-                    elif time[-1].lower() == 'h':
-                        time_seconds = int(time[:-1]) * 60 * 60
-                    elif time[-1].lower() == 'd':
-                        time_seconds = int(time[:-1]) * 60 * 60 * 24
+            
+            if duration[:-1].isnumeric():
+                if duration[-1].isalpha():
+                    if duration[-1].lower() == 's':
+                        time_seconds = int(duration[:-1])
+                    elif duration[-1].lower() == 'm':
+                        time_seconds = int(duration[:-1]) * 60
+                    elif duration[-1].lower() == 'h':
+                        time_seconds = int(duration[:-1]) * 60 * 60
+                    elif duration[-1].lower() == 'd':
+                        time_seconds = int(duration[:-1]) * 60 * 60 * 24
                     else:
-                        await ctx.send('Error: Time unit not recognized')
+                        await ctx.send('Error: time unit not recognized')
                         return
                 else:
-                    time_seconds = int(time)
+                    time_seconds = int(duration)
             else:
-                await ctx.send('Error: No time specified')
+                await ctx.send('Error: No duration specified')
                 return
+            logger.info(f'[TEMPBAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             eObj = await embed(ctx, colour = 0xFF0000, author = f'[TEMPBAN] {member}' ,
                     avatar = member.avatar_url, description = 'Reason: ' + str(reason), footer = f'Banned until: {time.ctime(time.time() + time_seconds)}')
-                if eObj is not False:
-                    await ctx.send(embed = eObj)
-                    await channel.send(embed = eObj)
-                    await member.ban(reason = reason)
-            await ctx.guild.ban(member)
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+                await channel.send(embed = eObj)
+            # ban and unban after time
+            await member.ban(reason = reason)
             await asyncio.sleep(time_seconds)
-            await ctx.guild.unban(member)
-    
+            logger.info(f'[UNBAN] {member}\n Moderator: {settings.BOT_NAME}')
+            eObj = await embed(ctx, colour = 0x05A000, author = f'[UNBAN] {member}')
+            if eObj is not False:
+                await channel.send(embed = eObj)
+                await ctx.guild.unban(member)
+        else:
+            await ctx.send(f"You're not allowed to ban anybirdie! {settings.ASAMI_EMOJI}")
+                
 
     @commands.command(description = 'give a user an infraction')
     # @commands.has_role('mod')
