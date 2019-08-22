@@ -23,10 +23,16 @@ class Events(commands.Cog):
             member_id INTEGER,
             infraction_id INTEGER, 
             infraction TEXT,
-            temp_ban INTEGER,
             date DATE
             )
             ''')
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS tempbans(
+            member_id INTEGER,
+            tempban_id INTEGER, 
+            unban_time INTEGER
+            )
+        ''')
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS economy(
             member_id INTEGER,
