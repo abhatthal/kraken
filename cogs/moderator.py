@@ -127,7 +127,7 @@ class Moderator(commands.Cog):
                 await ctx.send('Error: No duration specified')
                 return
             unban_time = time.ctime(time.time() + time_seconds)
-            logger.info(f'[TEMPBAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
+            logger.info(f'[TEMPBAN] {member}\n Moderator: {ctx.author}\n Reason: {str(reason)}\n')
             eObj = await embed(ctx, colour = 0xFF0000, author = f'[TEMPBAN] {member}' ,
                     avatar = member.avatar_url, description = 'Reason: ' + str(reason), footer = f'Banned until: {unban_time}')
             if eObj is not False:
@@ -142,8 +142,8 @@ class Moderator(commands.Cog):
             tempban_id = cursor.fetchone()[0] + 1
             # insert data
             cursor.execute('''
-            INSERT INTO tempbans(member_id, tempban_id, tempban, date)
-            VALUES(?, ?, ?, ?)''', (member.id, tempban_id, str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
+            INSERT INTO tempbans(member_id, tempban_id, reason, unban_time)
+            VALUES(?, ?, ?, ?)''', (member.id, tempban_id, str(reason), unban_time))
             db.commit()
             # ban and unban after time
             await member.ban(reason = reason)
