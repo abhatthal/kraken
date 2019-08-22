@@ -108,10 +108,13 @@ class Member(commands.Cog):
                     await ctx.send(embed = eObj)
 
 
-
     @commands.command(description = 'returns bot latency')
     async def ping(self, ctx):
-        eObj = await embed(ctx, description = f'Pong! {round(self.bot.latency * 1000)}ms', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR)
+        responses = [
+            'Heads!',
+            'Tails!'
+        ]
+        eObj = await embed(ctx, title = 'Coin Flip', description = random.choice(responses), author = settings.BOT_NAME, avatar = settings.BOT_AVATAR)
         if eObj is not False:
             await ctx.send(embed = eObj)
     
@@ -149,7 +152,15 @@ class Member(commands.Cog):
         eObj = await embed(ctx, author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = f'Member Count: {id.member_count}')
         if eObj is not False:
             await ctx.send(embed = eObj)
-        
+
+
+    @commands.command(aliases = ['flip_a_coin'], description = 'Heads or Tails?')
+    async def flipacoin(self, ctx):
+        id = self.bot.get_guild(ctx.guild.id)
+        eObj = await embed(ctx, author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = f'Member Count: {id.member_count}')
+        if eObj is not False:
+            await ctx.send(embed = eObj)
+
         
     @commands.command(description = 'repeats what you say')
     async def echo(self, ctx, *, msg : str):

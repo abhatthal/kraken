@@ -55,7 +55,7 @@ class Economy(commands.Cog):
                 await member.add_roles(numberone)
             else:
                 await member.remove_roles(numberone)
-            if rank <= 10:
+            if rank < 10:
                 await member.add_roles(top10)
             else:
                 await member.remove_roles(top10)
@@ -174,8 +174,8 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = f'see how many {CURRENCY_NAME} you or someone else have')
-    async def check_balance(self, ctx, member : discord.Member = None):
+    @commands.command(aliases=['check_balance'], description = f'see how many {CURRENCY_NAME} you or someone else have')
+    async def balance(self, ctx, member : discord.Member = None):
         # check member
         if member == None:
             member = ctx.author
