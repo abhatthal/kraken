@@ -126,10 +126,10 @@ class Moderator(commands.Cog):
             else:
                 await ctx.send('Error: No duration specified')
                 return
-            unban_time = time.ctime(time.time() + time_seconds)
+            unban_time = time.time() + time_seconds
             logger.info(f'[TEMPBAN] {member}\n Moderator: {ctx.author}\n Reason: {str(reason)}\n')
             eObj = await embed(ctx, colour = 0xFF0000, author = f'[TEMPBAN] {member}' ,
-                    avatar = member.avatar_url, description = 'Reason: ' + str(reason), footer = f'Banned until: {unban_time}')
+                    avatar = member.avatar_url, description = 'Reason: ' + str(reason), footer = f'Banned until: {time.ctime(unban_time)}')
             if eObj is not False:
                 await ctx.send(embed = eObj)
                 await channel.send(embed = eObj)
@@ -153,7 +153,7 @@ class Moderator(commands.Cog):
             if eObj is not False:
                 await channel.send(embed = eObj)
                 await ctx.guild.unban(member)
-                cursor.execute(f'DELETE FROM tempbans WHERE member_id = {row[0]}')
+                cursor.execute(f'DELETE FROM tempbans WHERE member_id = {member.id}')
                 db.commit()
         else:
             await ctx.send(f"You're not allowed to ban anybirdie! {settings.ASAMI_EMOJI}")
