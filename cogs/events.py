@@ -46,7 +46,7 @@ class Events(commands.Cog):
 
         # On startup, continue tempbans (in case of server outage)
         channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
-        cursor.execute('SELECT member_id, unban_time FROM tempbans ORDER BY currency ASC')
+        cursor.execute('SELECT member_id, unban_time FROM tempbans ORDER BY unban_time ASC')
         all_rows = cursor.fetchall()
         for row in all_rows:
             some_member = discord.Object(id = int(row[0]))
@@ -55,13 +55,14 @@ class Events(commands.Cog):
                 time_to_wait = 0
             await asyncio.sleep(time_to_wait)
             logger.info(f'[UNBAN] {some_member.name}\n Moderator: {settings.BOT_NAME}')
-                # eObj = await embed(ctx, colour = 0x05A000, author = f'[UNBAN] {some_member.name}')
-                eObj = discord.Embed(title = '', type = 'rich')
-                eObj.set_author(name = f'[UNBAN] {some_member.name}')
-                eObj.colour = 0x05A000
-                if eObj is not False:
-                    await channel.send(embed = eObj)
-                    await guild.unban(some_member)
+            eObj = discord.Embed(title = '', type = 'rich')
+            eObj.set_author(name = f'[UNBAN] {some_member.name}')
+            eObj.colour = 0x05A000
+            if eObj is not False:
+                await channel.send(embed = eObj)
+                await guild.unban(some_member)
+                cursor.execute(f'DELETE FROM tempbans WHERE member_id = {row[0]}')
+                db.commit()
 
         logger.info('Bot Online')
         print('Bot Online')

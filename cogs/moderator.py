@@ -153,6 +153,8 @@ class Moderator(commands.Cog):
             if eObj is not False:
                 await channel.send(embed = eObj)
                 await ctx.guild.unban(member)
+                cursor.execute(f'DELETE FROM tempbans WHERE member_id = {row[0]}')
+                db.commit()
         else:
             await ctx.send(f"You're not allowed to ban anybirdie! {settings.ASAMI_EMOJI}")
                 
