@@ -140,7 +140,12 @@ class Member(commands.Cog):
             'Outlook not so good.',
             'Very doubtful.'
         ]
-        await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
+        # await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
+        user = ctx.author.display_name
+        avatar = ctx.author.avatar_url
+        eObj = await embed(ctx, author = user, avatar = avatar, description = random.choice(responses))
+        if eObj is not False:
+            await ctx.send(embed = eObj)
 
 
     @commands.command(description = 'returns how many members are on the server')
