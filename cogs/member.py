@@ -141,9 +141,7 @@ class Member(commands.Cog):
             'Very doubtful.'
         ]
         # await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
-        user = ctx.author.display_name
-        avatar = ctx.author.avatar_url
-        eObj = await embed(ctx, author = user, avatar = avatar, description = random.choice(responses))
+        eObj = await embed(ctx, author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = random.choice(responses))
         if eObj is not False:
             await ctx.send(embed = eObj)
 
