@@ -399,22 +399,5 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = "Find the poorest toucan")
-    async def who_is_poorest(self, ctx):
-        # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
-        # get poorest user
-        cursor.execute(f'SELECT member_id FROM economy ORDER BY currency ASC')
-        member = ctx.guild.get_member(cursor.fetchone()[0])
-        user = member.display_name
-        avatar = member.avatar_url
-        # send user message
-        msg = f"Haha, {member.name}#{member.discriminator} is the poorest toucan.\nLet's all point and laugh. ☝"
-        eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = 'Hahaha... ', author = user, avatar = avatar)
-        if eObj is not False:
-            await ctx.send(embed = eObj)
-
-
 def setup(bot):
     bot.add_cog(Economy(bot))
