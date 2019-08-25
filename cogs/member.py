@@ -46,10 +46,7 @@ class Member(commands.Cog):
                 }
                 thumbnail = thumbnails.get(cog_name)
                 if not thumbnail:
-                    thumbnail = ''
-
-                # send an embed for each cog
-                eObj = await embed(ctx, title = f'{cog_name} Plugin Commands', thumbnail = thumbnail)   
+                    thumbnail = ''  
 
                 # determine command usage
                 usage = {
@@ -93,16 +90,19 @@ class Member(commands.Cog):
                 }
 
                 # print all commands and their corresponding descriptions for that cog
+                content = []
                 for command in cog_commands:
                     if command.name != 'help':
                         usage_string = usage.get(command.name)
                         if not usage_string:
                             usage_string = ''
                         if command.name == '_8ball':
-                            eObj.add_field(name = f'{settings.COMMAND_PREFIX}{command.name[1:]} {usage_string}', value = command.description, inline = False)
+                            content.append((f'{settings.COMMAND_PREFIX}{command.name[1:]} {usage_string}', command.description))
                         else:
-                            eObj.add_field(name = f'{settings.COMMAND_PREFIX}{command.name} {usage_string}', value = command.description, inline = False)
-                        
+                            content.append((f'{settings.COMMAND_PREFIX}{command.name} {usage_string}', command.description))
+
+                # send an embed for each cog
+                eObj = await embed(ctx, title = f'{cog_name} Plugin Commands', thumbnail = thumbnail, content = content) 
                 # only send embed if no parsing errors
                 if eObj is not False:
                     await ctx.send(embed = eObj)

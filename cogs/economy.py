@@ -277,18 +277,18 @@ class Economy(commands.Cog):
         rows = cursor.fetchall()
         place = 1
         row_index = 0
-        # top 10
-        eObj = await embed(ctx, title = f'{CURRENCY_IMG} Honest Bank Leaderboard {CURRENCY_IMG}')
+        content = []
         while place <= 10 and row_index < len(rows):
             # try in case member wasn't found
             try:
                 member = ctx.guild.get_member(rows[row_index][0])
-                eObj.add_field(name = f'{place}. {member.name}', value = f'```{rows[row_index][1]} {CURRENCY_NAME.capitalize()}```', inline = True)
+                content.append((f'{place}. {member.name}', f'```{rows[row_index][1]} {CURRENCY_NAME.capitalize()}```'))
                 place += 1
             except:
                 pass
             row_index += 1
         # send user message
+        eObj = await embed(ctx, title = f'{CURRENCY_IMG} Honest Bank Leaderboard {CURRENCY_IMG}', content = content)
         if eObj is not False:
             await ctx.send(embed = eObj)
 

@@ -4,8 +4,8 @@ import discord
 # import json # noqa, flake8 F401
 
 
-async def embed(ctx, title='', content='', description='', author='', colour=0x3b745b, link='', thumbnail='',
-                avatar='', footer=''):
+async def embed(ctx, title = '', content = '', description = '', author = '', colour = 0x3b745b, link = '', thumbnail = '',
+                avatar = '', footer = ''):
     """
     title:<str> Title of the embed 99% of the time it'll be the command name
     content:<array[tuples]> Array of tuples. Tuple per field of the embed. Field name at index 0 and value at index 1.
@@ -46,14 +46,14 @@ async def embed(ctx, title='', content='', description='', author='', colour=0x3
         await ctx.send("Embed Error: footer too big")
         return False
 
-    embObj = discord.Embed(title=title, type='rich')
+    embObj = discord.Embed(title = title, type = 'rich')
     embObj.description = description
-    embObj.set_author(name=author, icon_url=avatar)
+    embObj.set_author(name = author, icon_url = avatar)
     embObj.colour = colour
-    embObj.set_thumbnail(url=thumbnail)
-    embObj.set_footer(text=footer)
+    embObj.set_thumbnail(url = thumbnail)
+    embObj.set_footer(text = footer)
     # embObj.url = link
     # parse content to add fields
     for x in content:
-        embObj.add_field(name=x[0], value=x[1], inline=False)
+        embObj.add_field(name = x[0], value = x[1], inline = False)
     return embObj
