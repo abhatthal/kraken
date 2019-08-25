@@ -15,9 +15,6 @@ class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    logger.info('Bot Online')
-    print('Bot Online')
-
     @commands.Cog.listener()
     async def on_ready(self):
         # connect to SQL database
@@ -48,6 +45,9 @@ class Events(commands.Cog):
             )
             ''')            
         db.commit()
+
+        logger.info('Bot Online')
+        print('Bot Online')
 
         # On startup, continue tempbans (in case of server outage)
         cursor.execute('SELECT member_id, unban_time, guild_id FROM tempbans ORDER BY unban_time ASC')
