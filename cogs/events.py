@@ -74,9 +74,9 @@ class Events(commands.Cog):
             if eObj is not False:
                 # in the event that the user was manually unbanned, just remove from the tempban table
                 try:
+                    await guild.unban(user)
                     logger.info(f'[UNBAN] {user}\n Moderator: {settings.BOT_NAME}')
                     await logging_channel.send(embed = eObj)
-                    await main_guild.unban(user)
                 except:
                     pass
                 cursor.execute(f'DELETE FROM tempbans WHERE member_id = {row[0]}')
