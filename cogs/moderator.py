@@ -142,8 +142,8 @@ class Moderator(commands.Cog):
             tempban_id = cursor.fetchone()[0] + 1
             # insert data
             cursor.execute('''
-            INSERT INTO tempbans(member_id, tempban_id, reason, unban_time)
-            VALUES(?, ?, ?, ?)''', (member.id, tempban_id, str(reason), unban_time))
+            INSERT INTO tempbans(member_id, tempban_id, guild_id, reason, unban_time)
+            VALUES(?, ?, ?, ?)''', (member.id, tempban_id, ctx.guild.id, str(reason), unban_time))
             db.commit()
             # ban and unban after time
             await member.ban(reason = reason)

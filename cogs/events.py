@@ -15,6 +15,8 @@ class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    logger.info('Bot Online')
+    print('Bot Online')
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -33,6 +35,7 @@ class Events(commands.Cog):
         CREATE TABLE IF NOT EXISTS tempbans(
             member_id INTEGER,
             tempban_id INTEGER,
+            guild_id INTEGER,
             reason TEXT,
             unban_time INTEGER
             )
@@ -46,20 +49,17 @@ class Events(commands.Cog):
             ''')            
         db.commit()
 
-        logger.info('Bot Online')
-        print('Bot Online')
-
         # On startup, continue tempbans (in case of server outage)
-        channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
-        main_guild = self.bot.get_guild(settings.MAIN_GUILD)
-        # support_guild = self.bot.get_guild(settings.SUPPORT_GUILD)
-
-        banned_users = await main_guild.bans()
-        cursor.execute('SELECT member_id, unban_time FROM tempbans ORDER BY unban_time ASC')
+        cursor.execute('SELECT member_id, unban_time, guild_id FROM tempbans ORDER BY unban_time ASC')
         all_rows = cursor.fetchall()
 
+        logging_channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
+
         for row in all_rows:
-            # get banned member
+            # get guild and its banned members
+            guild = self.bot.get_guild(row[2])
+            banned_users = await guild.bans()
+            # get banned member from guild by id
             for ban_entry in banned_users:
                 user = ban_entry.user
                 if user.id == row[0]:
@@ -75,7 +75,7 @@ class Events(commands.Cog):
                 # in the event that the user was manually unbanned, just remove from the tempban table
                 try:
                     logger.info(f'[UNBAN] {user}\n Moderator: {settings.BOT_NAME}')
-                    await channel.send(embed = eObj)
+                    await logging_channel.send(embed = eObj)
                     await main_guild.unban(user)
                 except:
                     pass
