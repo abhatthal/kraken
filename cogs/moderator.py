@@ -4,6 +4,7 @@ from discord.utils import get
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
 from helper_files.embed import embed
+from helper_files.listOfRoles import getListOfUserPerms
 import logging
 import helper_files.settings as settings
 import sqlite3
@@ -19,22 +20,22 @@ class Moderator(commands.Cog):
     
 
     @commands.command(description = 'Clears messages in a particular channel')
-    @commands.has_permissions(manage_messages = True)
     async def clear(self, ctx, amount=10):
-        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        user_perms = await getListOfUserPerms(ctx)
+        if 'manage_messages' in user_perms:
             await ctx.channel.purge(limit = amount + 1)
         else:
             await ctx.send(f'Sorry, only mods can clear messages! {settings.ASAMI_EMOJI}')
 
 
     @commands.command(description = 'kick a user from the server')
-    # @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member : discord.Member, *, reason = None):
+        user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('Ouch ;-;')
         elif member.id == ctx.author.id:
             await ctx.send('Why are you hitting yourself?')
-        elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        elif 'kick_members' in user_perms:
             logger.info(f'[KICK] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             eObj = await embed(ctx, colour = 0xFF0000, author = f'[KICK] {member}' ,
@@ -48,13 +49,13 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = 'Bans a member from the server')
-    # @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason = None):
+        user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
         elif member.id == ctx.author.id:
             await ctx.send("Please don't ban yourself")
-        elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        elif 'ban_members' in user_perms:
             logger.info(f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             eObj = await embed(ctx, colour = 0xFF0000, author = f'[BAN] {member}' ,
@@ -68,13 +69,13 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = 'Unbans a user from the server')
-    # @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
+        user_perms = await getListOfUserPerms(ctx)
         if member == '<@608911590515015701>' or member == f'{settings.BOT_NAME}#9253':
             await ctx.send("Wait, am I banned? >.<")
         elif str(ctx.author.id) in member or str(ctx.author) == member:
             await ctx.send("You can't unban yourself silly")
-        elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        elif 'ban_members' in user_perms:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             banned_users = await ctx.guild.bans()
             # Check if member is valid
@@ -100,11 +101,12 @@ class Moderator(commands.Cog):
 
     @commands.command(description = 'Temporarily bans a member from the server')
     async def tempban(self, ctx, member : discord.Member, duration, *, reason = None):
+        user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
         elif member.id == ctx.author.id:
             await ctx.send("Please don't ban yourself")
-        elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        elif 'ban_members' in user_perms:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             msg = ''
             
@@ -160,13 +162,13 @@ class Moderator(commands.Cog):
                 
 
     @commands.command(description = 'give a user an infraction')
-    # @commands.has_role('mod')
     async def warn(self, ctx, member : discord.Member, *, reason = None):
+        user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
         elif member.id == ctx.author.id:
             await ctx.send("You can't warn yourself")
-        elif 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        elif 'ban_members' in user_perms:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             logger.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = f'[WARN] {member}' ,
@@ -190,9 +192,11 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = "returns all a user's infractions")
-    # @commands.has_role('mod')
-    async def infractions(self, ctx, member : discord.Member):
-        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles] or ctx.author.id == member.id:
+    async def infractions(self, ctx, member : discord.Member = None):
+        user_perms = await getListOfUserPerms(ctx)
+        if member == None:
+            member = ctx.author
+        if 'ban_members' in user_perms or ctx.author.id == member.id:
             # connect to database
             db = sqlite3.connect(settings.DATABASE)
             cursor = db.cursor()
@@ -214,9 +218,9 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = "removes all of a user's infractions")
-    # @commands.has_role('mod')
     async def clear_infractions(self, ctx, member : discord.Member):
-        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        user_perms = await getListOfUserPerms(ctx)
+        if 'ban_members' in user_perms:
             # connect to database
             db = sqlite3.connect(settings.DATABASE)
             cursor = db.cursor()
@@ -233,9 +237,9 @@ class Moderator(commands.Cog):
 
         
     @commands.command(description = "removes a specific user infraction")
-    # @commands.has_role('mod')
     async def clear_infraction(self, ctx, infraction_id : int):
-        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        user_perms = await getListOfUserPerms(ctx)
+        if 'ban_members' in user_perms:
             # connect to database
             db = sqlite3.connect(settings.DATABASE)
             cursor = db.cursor()
@@ -263,8 +267,9 @@ class Moderator(commands.Cog):
 
     @commands.command(description = 'gives a user the Bluecan role')
     async def give_bluecan(self, ctx, member : discord.Member):
-        bluecan = get(ctx.guild.roles, id = 606911719217823745)
-        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        user_perms = await getListOfUserPerms(ctx)
+        if 'manage_roles' in user_perms:
+            bluecan = get(ctx.guild.roles, name = 'Bluecan')
             eObj = await embed(ctx, title = 'Congrats!', author = f'{member}' ,
                 avatar = member.avatar_url, description = "You're a bluecan now!")
             if eObj is not False:
@@ -276,8 +281,9 @@ class Moderator(commands.Cog):
 
     @commands.command(description = "removes a user's Bluecan role")
     async def remove_bluecan(self, ctx, member : discord.Member):
-        bluecan = get(ctx.guild.roles, id = 606911719217823745)
-        if 'mod' in [role.name for role in ctx.author.roles] or 'GOD' in [role.name for role in ctx.author.roles]:
+        user_perms = await getListOfUserPerms(ctx)
+        if 'manage_roles' in user_perms:
+            bluecan = get(ctx.guild.roles, name = 'Bluecan')
             eObj = await embed(ctx, title = 'Sorry!', author = f'{member}' ,
                 avatar = member.avatar_url, description = 'Your bluecan role has been removed.')
             if eObj is not False:

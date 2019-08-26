@@ -77,7 +77,7 @@ class Member(commands.Cog):
                     'unban' : '[member]',
                     'tempban' : '[member] [duration] (optional reason)',
                     'warn' : '[member] (optional reason)',
-                    'infractions' : '[member]',
+                    'infractions' : '(optional member)',
                     'clear_infractions' : '[member]',
                     'clear_infraction' : '[infraction id]',
                     'give_bluecan' : '[member]',
