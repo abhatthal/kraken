@@ -19,7 +19,7 @@ class Member(commands.Cog):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         ignore = ['events.py']
         if extension == None:
-            if not 'mod' in user_roles or not 'GOD' in user_roles:
+            if not 'mod' in user_roles and not 'GOD' in user_roles:
                 ignore.append('moderator.py')
             if not 'GOD' in user_roles:
                 ignore.append('admin.py')

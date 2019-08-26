@@ -70,7 +70,7 @@ class Economy(commands.Cog):
         run = True
         if member == None:
             member = ctx.author
-        elif not 'GOD' in user_roles:
+        if not 'GOD' in user_roles:
             run = False
             msg = f"You don't have permission to set balances! {settings.ASAMI_EMOJI}"
         if run:
@@ -108,7 +108,7 @@ class Economy(commands.Cog):
         run = True
         if member == None:
             member = ctx.author
-        elif not 'GOD' in user_roles:
+        if not 'GOD' in user_roles:
             run = False
             msg = f"You don't have permission to make bank accounts for others! {settings.ASAMI_EMOJI}"
         if run:
@@ -150,7 +150,7 @@ class Economy(commands.Cog):
         # check member
         if member == None:
             member = ctx.author
-        elif 'GOD' in user_roles:
+        if 'GOD' in user_roles:
             # connect to database
             db = sqlite3.connect(settings.DATABASE)
             cursor = db.cursor()
@@ -410,7 +410,7 @@ class Economy(commands.Cog):
 
     async def cog_check(self, ctx):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        return 'mod' in user_roles or 'GOD' in user_roles or ctx.channel in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
+        return 'mod' in user_roles or 'GOD' in user_roles or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
 
 
 def setup(bot):
