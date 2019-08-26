@@ -16,11 +16,12 @@ class Member(commands.Cog):
     @commands.command(pass_context = True)
     async def help(self, ctx, extension = None):
         # only show relevant cogs
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         ignore = ['events.py']
         if extension == None:
-            if not ('mod' in [role.name for role in ctx.author.roles]) and not ('GOD' in [role.name for role in ctx.author.roles]):
+            if not 'mod' in user_roles or not 'GOD' in user_roles:
                 ignore.append('moderator.py')
-            if not ('GOD' in [role.name for role in ctx.author.roles]):
+            if not 'GOD' in user_roles:
                 ignore.append('admin.py')
         else:
             for filename in os.listdir('./cogs'):
@@ -141,7 +142,7 @@ class Member(commands.Cog):
             'Very doubtful.'
         ]
         # await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
-        eObj = await embed(ctx, author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = random.choice(responses))
+        eObj = await embed(ctx, title = '8Ball', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = random.choice(responses))
         if eObj is not False:
             await ctx.send(embed = eObj)
 

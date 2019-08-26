@@ -64,32 +64,37 @@ class Economy(commands.Cog):
                 
 
     @commands.command(description = "Admins Only: Change a user's balance")
-    @commands.has_role('GOD')
     async def set_balance(self, ctx, amount : int, member : discord.Member = None):
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         # check member
+        run = True
         if member == None:
             member = ctx.author
-        # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
-        # check if user already has an account
-        cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
-        account = cursor.fetchone()[0]
-        if account < 1:
-            if member == ctx.author:
-                msg = "You don't have an account!"
+        elif not 'GOD' in user_roles:
+            run = False
+            msg = f"You don't have permission to set balances! {settings.ASAMI_EMOJI}"
+        if run:
+            # connect to database
+            db = sqlite3.connect(settings.DATABASE)
+            cursor = db.cursor()
+            # check if user already has an account
+            cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
+            account = cursor.fetchone()[0]
+            if account < 1:
+                if member == ctx.author:
+                    msg = "You don't have an account!"
+                else:
+                    msg = f"{member.name} doesn't have an account!"
             else:
-                msg = f"{member.name} doesn't have an account!"
-        else:
-            # set funds
-            cursor.execute(f'UPDATE economy SET currency = {amount} WHERE member_id = {member.id}')
-            db.commit()
-            if member == ctx.author:
-                msg = f'Your Balance: {amount} {CURRENCY_NAME}'
-            else:
-                msg = f"{member.name}'s Balance: {amount} {CURRENCY_NAME}"
-        # update roles
-        await ctx.invoke(self.update_roles, member)
+                # set funds
+                cursor.execute(f'UPDATE economy SET currency = {amount} WHERE member_id = {member.id}')
+                db.commit()
+                if member == ctx.author:
+                    msg = f'Your Balance: {amount} {CURRENCY_NAME}'
+                else:
+                    msg = f"{member.name}'s Balance: {amount} {CURRENCY_NAME}"
+            # update roles
+            await ctx.invoke(self.update_roles, member)
         # send user message
         eObj = await embed(ctx, title = 'Honest Bank', description = msg)
         if eObj is not False:
@@ -98,11 +103,12 @@ class Economy(commands.Cog):
 
     @commands.command(description = f'Make yourself a bank account to keep your {CURRENCY_NAME}. Admins can add an optional member.')
     async def make_account(self, ctx, member : discord.Member = None):
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         # check member
         run = True
         if member == None:
             member = ctx.author
-        elif not ('GOD' in [role.name for role in ctx.author.roles]):
+        elif not 'GOD' in user_roles:
             run = False
             msg = f"You don't have permission to make bank accounts for others! {settings.ASAMI_EMOJI}"
         if run:
@@ -137,13 +143,14 @@ class Economy(commands.Cog):
 
     @commands.command(description = f'Admins Only: Deletes an account and all of its {CURRENCY_NAME}')
     async def delete_account(self, ctx, member : discord.Member = None):
-        # Roles 
+        # Roles
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         top10 = get(ctx.guild.roles, id = top10_ID)
         numberone = get(ctx.guild.roles, id = numberone_ID)
         # check member
         if member == None:
             member = ctx.author
-        if 'GOD' in [role.name for role in ctx.author.roles]:
+        elif 'GOD' in user_roles:
             # connect to database
             db = sqlite3.connect(settings.DATABASE)
             cursor = db.cursor()
@@ -298,7 +305,8 @@ class Economy(commands.Cog):
         msg = ''
         footer = ''
         maintenance = False
-        if maintenance and not ('GOD' in [role.name for role in ctx.author.roles]):
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        if maintenance and not 'GOD' in user_roles:
             msg = 'The economy collapsed, we are trying to bail out.'
             footer = 'Command is under maintenance right now!'
         else:
@@ -346,7 +354,8 @@ class Economy(commands.Cog):
         footer = ''
         title = 'Honest Bank'
         maintenance = False
-        if maintenance and not ('GOD' in [role.name for role in ctx.author.roles]):
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        if maintenance and not 'GOD' in user_roles:
             msg = f"Oof, there's no {CURRENCY_NAME} in the pond."
             footer = 'Command is under maintenance right now!'
         else:
@@ -397,6 +406,11 @@ class Economy(commands.Cog):
             eObj.add_field(name = f'{str(multipliers[i])}x', value = f"{str('%.3f'%(weights[i] * 100))}%", inline = True)
         if eObj is not False:
             await ctx.send(embed = eObj)
+
+
+    async def cog_check(self, ctx):
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        return 'mod' in user_roles or 'GOD' in user_roles or ctx.channel in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
 
 
 def setup(bot):

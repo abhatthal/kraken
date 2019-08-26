@@ -12,12 +12,10 @@ class Admin(commands.Cog):
         self.bot = bot
 
     @commands.command(description = 'bot speaks in specified channel')
-    @commands.has_role('GOD')
     async def sayin(self, ctx, channel : discord.TextChannel, *, msg : str):
         await channel.send(msg)
 
     @commands.command(description = 'loads an extension')
-    @commands.has_role('GOD')
     async def load(self, ctx, extension):
         self.bot.load_extension(f'cogs.{extension}')
         msg = f'[LOAD] cogs.{extension}\n'
@@ -26,7 +24,6 @@ class Admin(commands.Cog):
     
     
     @commands.command(description = 'unloads an extension')
-    @commands.has_role('GOD')
     async def unload(self, ctx, extension):
         if extension == 'admin':
             raise commands.CommandError('Unloading admin is a REALLY bad idea')
@@ -37,7 +34,6 @@ class Admin(commands.Cog):
     
     
     @commands.command(description = 'reloads extensions')
-    @commands.has_role('GOD')
     async def reload(self, ctx, *extensions):
         if len(extensions) == 0:
             raise commands.CommandError('Must pass at least one extension')
@@ -65,13 +61,17 @@ class Admin(commands.Cog):
 
 
     @commands.command(description = 'bot goes offline')
-    @commands.has_role('GOD')
     async def shutdown(self, ctx):
         db = sqlite3.connect(settings.DATABASE)
         db.close()
         logger.info(f'{ctx.author} : Shut Down')
         await ctx.send("Shutting down!")
         await self.bot.logout()
+
+
+    async def cog_check(self, ctx):
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        return 'GOD' in user_roles
 
 
 def setup(bot):
