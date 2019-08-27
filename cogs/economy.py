@@ -108,7 +108,7 @@ class Economy(commands.Cog):
         run = True
         if member == None:
             member = ctx.author
-        if not 'GOD' in user_roles:
+        if not 'GOD' in user_roles and member != ctx.author:
             run = False
             msg = f"You don't have permission to make bank accounts for others! {settings.ASAMI_EMOJI}"
         if run:
