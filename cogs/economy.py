@@ -136,7 +136,10 @@ class Economy(commands.Cog):
                 # update roles
                 await ctx.invoke(self.update_roles, member)
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
+        user = member.display_name
+        avatar = member.avatar_url
+        eObj = await embed(ctx, title = 'Honest Bank', author = user,
+        avatar = avatar, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
@@ -268,7 +271,10 @@ class Economy(commands.Cog):
                             await ctx.invoke(self.update_roles, member)
                             await ctx.invoke(self.update_roles)
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
+        user = ctx.author.display_name
+        avatar = ctx.author.avatar_url
+        eObj = await embed(ctx, title = 'Honest Bank', author = user,
+        avatar = avatar, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
