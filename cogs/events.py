@@ -93,25 +93,31 @@ class Events(commands.Cog):
     async def on_message(self, message):
         # If a message is sent not in #debate and is not sent by the bot
         if message.channel.id != settings.DEBATE_CHANNEL and self.bot.user.id != message.author.id:
+            bot_messages = []
             if 'aww man' in message.content.lower() or 'aw man' in message.content.lower():
-                await message.channel.send('So we back in the mine')
+                bot_messages.append(await message.channel.send('So we back in the mine'))
             elif 'creeper' in message.content.lower():
-                await message.channel.send('aww man')
+                bot_messages.append(await message.channel.send('aww man'))
 
             if 'owo' in message.content.lower():
-                await message.channel.send("OwO What's this?")
+                bot_messages.append(await message.channel.send("OwO What's this?"))
 
             if 'no u' in message.content.lower():
-                await message.channel.send('NO U')
+                bot_messages.append(await message.channel.send('NO U'))
 
             if 'uwu' in message.content.lower():
                 responses = ['urusai!', 'baka', 'uwu dattebayo']
-                await message.channel.send(choice(responses))
+                bot_messages.append(await message.channel.send(choice(responses)))
+
+            # delete all messages that were sent after a period of time
+            for bot_message in bot_messages:
+                await bot_message.delete(delay = 5)
         
             # allow people to vote by in certain channels
             if message.channel.id in (settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL):
                 await message.add_reaction('✅')
                 await message.add_reaction('❌')
+
 
 def setup(bot):
     bot.add_cog(Events(bot))
