@@ -141,7 +141,8 @@ class Moderator(commands.Cog):
             cursor = await db.cursor()
             # get tempban_id (number of global tempbans + 1)
             await cursor.execute('SELECT COUNT(*) FROM tempbans')
-            tempban_id = cursor.fetchone()[0] + 1
+            tempban_id = await cursor.fetchone()
+            tempban_id = tempban_id[0] + 1
             # insert data
             await cursor.execute('''
             INSERT INTO tempbans(member_id, tempban_id, guild_id, reason, unban_time)
@@ -183,8 +184,12 @@ class Moderator(commands.Cog):
                 db = await aiosqlite3.connect(settings.DATABASE)
                 cursor = await db.cursor()
                 # get infraction_id (number of global infractions + 1)
-                await cursor.execute('SELECT COUNT(*) FROM infractions')
-                infraction_id = cursor.fetchone()[0] + 1
+                await cursor.execute('SELECT infraction_id FROM infractions ORDER BY infraction_id DESC')
+                infraction_id = await cursor.fetchone()
+                if not infraction_id:
+                    infraction_id = 0
+                else:
+                    infraction_id = infraction_id[0] + 1
                 # insert data
                 await cursor.execute('''
                 INSERT INTO infractions(member_id, infraction_id, infraction, date)
@@ -208,7 +213,7 @@ class Moderator(commands.Cog):
             cursor = await db.cursor()
             # fetch data
             await cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE member_id = {member.id}')
-            all_rows = cursor.fetchall()
+            all_rows = await cursor.fetchall()
             msg = ''
             for row in all_rows:
                 msg += f'{row[0]} #{row[1]} {row[2]}\n'
@@ -257,11 +262,12 @@ class Moderator(commands.Cog):
             cursor = await db.cursor()
             # get member
             await cursor.execute((f'SELECT member_id FROM infractions WHERE infraction_id = {infraction_id}'))
-            member_id = int(cursor.fetchone()[0])
+            member_id = await cursor.fetchone()
+            member_id = int(member_id[0])
             member = ctx.guild.get_member(member_id)
             # get infraction data
             await cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE infraction_id = {infraction_id}')
-            all_rows = cursor.fetchall()
+            all_rows = await cursor.fetchall()
             msg = ''
             for row in all_rows:
                 msg += f'{row[0]} #{row[1]} {row[2]}\n'

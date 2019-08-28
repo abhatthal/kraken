@@ -81,7 +81,8 @@ class Economy(commands.Cog):
             cursor = await db.cursor()
             # check if user already has an account
             await cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
-            account = await cursor.fetchone()[0]
+            account = await cursor.fetchone()
+            account = account[0]
             if account < 1:
                 if member == ctx.author:
                     msg = "You don't have an account!"
@@ -122,7 +123,8 @@ class Economy(commands.Cog):
             cursor = await db.cursor()
             # check if user already has an account
             await cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
-            account = await cursor.fetchone()[0]
+            account = await cursor.fetchone()
+            account = account[0]
             if account >= 1:
                 if member == ctx.author:
                     msg = 'You already have an account!'
@@ -167,7 +169,8 @@ class Economy(commands.Cog):
             cursor = await db.cursor()
             # check if user has an account
             await cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
-            account = await cursor.fetchone()[0]
+            account = await cursor.fetchone()
+            account = account[0]
             if account < 1:
                 if member == ctx.author:
                     msg = "You don't have an account! Use ``.make_account`` to make one."
