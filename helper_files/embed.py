@@ -5,7 +5,7 @@ import discord
 
 
 async def embed(ctx, title = '', content = '', description = '', author = '', colour = 0x3b745b, link = '', thumbnail = '',
-                avatar = '', footer = ''):
+                avatar = '', footer = '', inline = False):
     """
     title:<str> Title of the embed 99% of the time it'll be the command name
     content:<array[tuples]> Array of tuples. Tuple per field of the embed. Field name at index 0 and value at index 1.
@@ -55,5 +55,5 @@ async def embed(ctx, title = '', content = '', description = '', author = '', co
     # embObj.url = link
     # parse content to add fields
     for x in content:
-        embObj.add_field(name = x[0], value = x[1], inline = False)
+        embObj.add_field(name = x[0], value = x[1], inline = inline)
     return embObj

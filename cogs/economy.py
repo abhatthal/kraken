@@ -324,7 +324,7 @@ class Economy(commands.Cog):
                 pass
             row_index += 1
         # send user message
-        eObj = await embed(ctx, title = f'{CURRENCY_IMG} Honest Bank Leaderboard {CURRENCY_IMG}', content = content)
+        eObj = await embed(ctx, inline = True, title = f'{CURRENCY_IMG} Honest Bank Leaderboard {CURRENCY_IMG}', content = content)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
@@ -436,16 +436,22 @@ class Economy(commands.Cog):
     @commands.command(description = "Returns .fish payouts and probabilities")
     async def probability(self, ctx):
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank ``.fish`` Probabilities', footer = 'Code is open-source: https://github.com/abhatthal/HonestBear')
+        eObj = await embed(ctx, inline = True, title = 'Honest Bank ``.fish`` Probabilities', footer = 'Code is open-source: https://github.com/abhatthal/HonestBear')
+        content = []
         for i in range(len(multipliers)):
-            eObj.add_field(name = f'{str(multipliers[i])}x', value = f"{str('%.3f'%(weights[i] * 100))}%", inline = True)
+            # eObj.add_field(name = f'{str(multipliers[i])}x', value = f"{str('%.3f'%(weights[i] * 100))}%", inline = True)
+            content.append((f'{str(multipliers[i])}x', f"{str('%.3f'%(weights[i] * 100))}%"))
         if eObj is not False:
             await ctx.send(embed = eObj)
 
 
     async def cog_check(self, ctx):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        return 'mod' in user_roles or 'GOD' in user_roles or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
+        maintenance = False
+        if maintenance:
+            return 'GOD' in user_roles
+        else:
+            return 'mod' in user_roles or 'GOD' in user_roles or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
 
 
 def setup(bot):
