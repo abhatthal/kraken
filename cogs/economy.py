@@ -436,11 +436,11 @@ class Economy(commands.Cog):
     @commands.command(description = "Returns .fish payouts and probabilities")
     async def probability(self, ctx):
         # send user message
-        eObj = await embed(ctx, inline = True, title = 'Honest Bank ``.fish`` Probabilities', footer = 'Code is open-source: https://github.com/abhatthal/HonestBear')
-        content = []
+        eObj = await embed(ctx, title = 'Honest Bank ``.fish`` Probabilities', footer = 'Code is open-source: https://github.com/abhatthal/HonestBear')
+        # content = []
         for i in range(len(multipliers)):
-            # eObj.add_field(name = f'{str(multipliers[i])}x', value = f"{str('%.3f'%(weights[i] * 100))}%", inline = True)
-            content.append((f'{str(multipliers[i])}x', f"{str('%.3f'%(weights[i] * 100))}%"))
+            eObj.add_field(name = f'{str(multipliers[i])}x', value = f"{str('%.3f'%(weights[i] * 100))}%", inline = True)
+            # content.append((f'{str(multipliers[i])}x', f"{str('%.3f'%(weights[i] * 100))}%"))
         if eObj is not False:
             await ctx.send(embed = eObj)
 
