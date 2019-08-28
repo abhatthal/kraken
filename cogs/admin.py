@@ -10,15 +10,17 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
     @commands.command(description = 'bot speaks in specified channel')
     async def sayin(self, ctx, channel : discord.TextChannel, *, msg : str):
         await channel.send(msg)
+
 
     @commands.command(description = 'loads an extension')
     async def load(self, ctx, extension):
         self.bot.load_extension(f'cogs.{extension}')
         msg = f'[LOAD] cogs.{extension}\n'
-        logger.info(msg)
+        logger.info(f'{ctx.author.name}#{ctx.author.discriminator}: {msg}')
         await ctx.send(msg)
     
     
@@ -28,7 +30,7 @@ class Admin(commands.Cog):
             raise commands.CommandError('Unloading admin is a REALLY bad idea')
         self.bot.unload_extension(f'cogs.{extension}')
         msg = f'[UNLOAD] cogs.{extension}\n'
-        logger.info(msg)
+        logger.info(f'{ctx.author.name}#{ctx.author.discriminator}: {msg}')
         await ctx.send(msg)
     
     
@@ -45,7 +47,7 @@ class Admin(commands.Cog):
                     except:
                         self.bot.load_extension(f'cogs.{filename[:-3]}')
                     msg = f'[RELOAD] cogs.{filename[:-3]}\n'
-                    logger.info(msg)
+                    logger.info(f'{ctx.author.name}#{ctx.author.discriminator}: {msg}')
                     await ctx.send(msg)
         else:
             for extension in extensions:
@@ -55,13 +57,13 @@ class Admin(commands.Cog):
                 except:
                     self.bot.load_extension(f'cogs.{extension}')
                 msg = f'[RELOAD] cogs.{extension}\n'
-                logger.info(msg)
+                logger.info(f'{ctx.author.name}#{ctx.author.discriminator}: {msg}')
                 await ctx.send(msg)
 
 
     @commands.command(description = 'bot goes offline')
     async def shutdown(self, ctx):
-        logger.info(f'{ctx.author} : Shut Down')
+        logger.info(f'{ctx.author.name}#{ctx.author.discriminator}: Shut Down')
         await ctx.send("Shutting down!")
         await self.bot.logout()
 
