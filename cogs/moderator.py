@@ -7,7 +7,7 @@ from helper_files.embed import embed
 from helper_files.listOfRoles import getListOfUserPerms
 import logging
 import helper_files.settings as settings
-import sqlite3
+import aiosqlite3
 import datetime
 import time
 import asyncio # await asyncio.sleep()
@@ -20,7 +20,7 @@ class Moderator(commands.Cog):
     
 
     @commands.command(description = 'Clears messages in a particular channel')
-    async def clear(self, ctx, amount=10):
+    async def clear(self, ctx, amount = 10):
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_messages' in user_perms:
             await ctx.channel.purge(limit = amount + 1)
@@ -137,26 +137,29 @@ class Moderator(commands.Cog):
                 await channel.send(embed = eObj)
             # backup data in case of server outage
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # get tempban_id (number of global tempbans + 1)
-            cursor.execute('SELECT COUNT(*) FROM tempbans')
+            await cursor.execute('SELECT COUNT(*) FROM tempbans')
             tempban_id = cursor.fetchone()[0] + 1
             # insert data
-            cursor.execute('''
+            await cursor.execute('''
             INSERT INTO tempbans(member_id, tempban_id, guild_id, reason, unban_time)
             VALUES(?, ?, ?, ?, ?)''', (member.id, tempban_id, ctx.guild.id, str(reason), unban_time))
-            db.commit()
+            await db.commit()
             # ban and unban after time
             await member.ban(reason = reason)
             await asyncio.sleep(time_seconds)
             logger.info(f'[UNBAN] {member}\n Moderator: {settings.BOT_NAME}')
+            await ctx.guild.unban(member)
+            await cursor.execute(f'DELETE FROM tempbans WHERE member_id = {member.id}')
+            await db.commit()
+            # close connection
+            await cursor.close()
+            await db.close()   
             eObj = await embed(ctx, colour = 0x05A000, author = f'[UNBAN] {member}')
             if eObj is not False:
                 await channel.send(embed = eObj)
-                await ctx.guild.unban(member)
-                cursor.execute(f'DELETE FROM tempbans WHERE member_id = {member.id}')
-                db.commit()
         else:
             await ctx.send(f"You're not allowed to ban anybirdie! {settings.ASAMI_EMOJI}")
                 
@@ -177,16 +180,19 @@ class Moderator(commands.Cog):
                 await ctx.send(embed = eObj)
                 await channel.send(embed = eObj)
                 # connect to database
-                db = sqlite3.connect(settings.DATABASE)
-                cursor = db.cursor()
+                db = await aiosqlite3.connect(settings.DATABASE)
+                cursor = await db.cursor()
                 # get infraction_id (number of global infractions + 1)
-                cursor.execute('SELECT COUNT(*) FROM infractions')
+                await cursor.execute('SELECT COUNT(*) FROM infractions')
                 infraction_id = cursor.fetchone()[0] + 1
                 # insert data
-                cursor.execute('''
+                await cursor.execute('''
                 INSERT INTO infractions(member_id, infraction_id, infraction, date)
                 VALUES(?, ?, ?, ?)''', (member.id, infraction_id, str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
-                db.commit()
+                await db.commit()
+                # close connection
+                await cursor.close()
+                await db.close()   
         else:
             await ctx.send(f"You're not allowed to warn anybirdie! {settings.ASAMI_EMOJI}")
 
@@ -198,10 +204,10 @@ class Moderator(commands.Cog):
             member = ctx.author
         if 'ban_members' in user_perms or ctx.author.id == member.id:
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # fetch data
-            cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE member_id = {member.id}')
+            await cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE member_id = {member.id}')
             all_rows = cursor.fetchall()
             msg = ''
             for row in all_rows:
@@ -213,6 +219,9 @@ class Moderator(commands.Cog):
                 avatar = member.avatar_url, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
+            # close connection
+            await cursor.close()
+            await db.close()   
         else:
             await ctx.send(f"You're not allowed to view infractions! {settings.ASAMI_EMOJI}")
 
@@ -222,12 +231,15 @@ class Moderator(commands.Cog):
         user_perms = await getListOfUserPerms(ctx)
         if 'ban_members' in user_perms:
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # clear infractions
-            cursor.execute(f'DELETE FROM infractions WHERE member_id = {member.id}')
-            db.commit()
-            # return data
+            await cursor.execute(f'DELETE FROM infractions WHERE member_id = {member.id}')
+            await db.commit()
+            # close connection
+            await cursor.close()
+            await db.close()   
+            # send message
             eObj = await embed(ctx, title = 'All Infractions Cleared', author = f'{member}' ,
                 avatar = member.avatar_url)
             if eObj is not False:
@@ -241,21 +253,24 @@ class Moderator(commands.Cog):
         user_perms = await getListOfUserPerms(ctx)
         if 'ban_members' in user_perms:
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # get member
-            cursor.execute((f'SELECT member_id FROM infractions WHERE infraction_id = {infraction_id}'))
+            await cursor.execute((f'SELECT member_id FROM infractions WHERE infraction_id = {infraction_id}'))
             member_id = int(cursor.fetchone()[0])
             member = ctx.guild.get_member(member_id)
             # get infraction data
-            cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE infraction_id = {infraction_id}')
+            await cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE infraction_id = {infraction_id}')
             all_rows = cursor.fetchall()
             msg = ''
             for row in all_rows:
                 msg += f'{row[0]} #{row[1]} {row[2]}\n'
             # clear infraction
-            cursor.execute(f'DELETE FROM infractions WHERE infraction_id = {infraction_id}')
-            db.commit()
+            await cursor.execute(f'DELETE FROM infractions WHERE infraction_id = {infraction_id}')
+            await db.commit()
+            # close connection
+            await cursor.close()
+            await db.close()   
             # return data
             eObj = await embed(ctx, title = f'Infraction #{infraction_id} Cleared', author = f'{member}' ,
                 avatar = member.avatar_url, description = msg)

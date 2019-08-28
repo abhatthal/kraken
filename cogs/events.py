@@ -6,7 +6,7 @@ from time import gmtime, strftime
 from random import choice
 import logging
 import helper_files.settings as settings
-import sqlite3
+import aiosqlite3
 import asyncio # await asyncio.sleep()
 logger = logging.getLogger('HonestBear')
 
@@ -18,9 +18,9 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         # connect to SQL database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
-        cursor.execute('''
+        db = await aiosqlite3.connect(settings.DATABASE)
+        cursor = await db.cursor()
+        await cursor.execute('''
         CREATE TABLE IF NOT EXISTS infractions(
             member_id INTEGER,
             infraction_id INTEGER, 
@@ -28,7 +28,7 @@ class Events(commands.Cog):
             date DATE
             )
             ''')
-        cursor.execute('''
+        await cursor.execute('''
         CREATE TABLE IF NOT EXISTS tempbans(
             member_id INTEGER,
             tempban_id INTEGER,
@@ -37,21 +37,21 @@ class Events(commands.Cog):
             unban_time INTEGER
             )
         ''')
-        cursor.execute('''
+        await cursor.execute('''
         CREATE TABLE IF NOT EXISTS economy(
             member_id INTEGER,
             currency INTEGER,
             wait_time INTEGER
             )
             ''')            
-        db.commit()
+        await db.commit()
 
         logger.info('Bot Online')
         print('Bot Online')
 
         # On startup, continue tempbans (in case of server outage)
-        cursor.execute('SELECT member_id, unban_time, guild_id FROM tempbans ORDER BY unban_time ASC')
-        all_rows = cursor.fetchall()
+        await cursor.execute('SELECT member_id, unban_time, guild_id FROM tempbans ORDER BY unban_time ASC')
+        all_rows = await cursor.fetchall()
 
         logging_channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
 
@@ -79,8 +79,11 @@ class Events(commands.Cog):
                     await logging_channel.send(embed = eObj)
                 except:
                     pass
-                cursor.execute(f'DELETE FROM tempbans WHERE member_id = {row[0]}')
-                db.commit()
+                await cursor.execute(f'DELETE FROM tempbans WHERE member_id = {row[0]}')
+                await db.commit()
+        # close connection
+        await cursor.close()
+        await db.close()        
 
 
     @commands.Cog.listener()
@@ -108,6 +111,9 @@ class Events(commands.Cog):
             if 'uwu' in message.content.lower():
                 responses = ['urusai!', 'baka', 'uwu dattebayo']
                 bot_messages.append(await message.channel.send(choice(responses)))
+
+            if 'omae wa mo shindeiru' in message.content.lower() or 'お前はもう死んでいる' in message.content.lower():
+                bot_messages.append(await message.channel.send('NANI?!'))
 
             # delete all messages that were sent after a period of time
             for bot_message in bot_messages:

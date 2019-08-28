@@ -1,7 +1,7 @@
 import discord
 import random
 from numpy.random import choice # for choosing from a given numerical ditribution
-import sqlite3
+import aiosqlite3
 import time # time.time() timestamp
 import datetime # datetime.timedelta
 from discord.ext import commands
@@ -39,17 +39,19 @@ class Economy(commands.Cog):
             top10 = get(ctx.guild.roles, id = top10_ID)
             numberone = get(ctx.guild.roles, id = numberone_ID)
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # sort by currency
-            cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
+            await cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
             # fetch data
-            rows = cursor.fetchall()
+            rows = await cursor.fetchall()
             for row in range(len(rows)):
                 if rows[row][0] == member.id:
                     rank = row
                     break
-            # await ctx.send(rank)
+            # close connection
+            await cursor.close()
+            await db.close()
             # update roles
             if rank == 0:
                 await member.add_roles(numberone)
@@ -75,11 +77,11 @@ class Economy(commands.Cog):
             msg = f"You don't have permission to set balances! {settings.ASAMI_EMOJI}"
         if run:
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # check if user already has an account
-            cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
-            account = cursor.fetchone()[0]
+            await cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
+            account = await cursor.fetchone()[0]
             if account < 1:
                 if member == ctx.author:
                     msg = "You don't have an account!"
@@ -87,8 +89,11 @@ class Economy(commands.Cog):
                     msg = f"{member.name} doesn't have an account!"
             else:
                 # set funds
-                cursor.execute(f'UPDATE economy SET currency = {amount} WHERE member_id = {member.id}')
-                db.commit()
+                await cursor.execute(f'UPDATE economy SET currency = {amount} WHERE member_id = {member.id}')
+                await db.commit()
+                # close connection
+                await cursor.close()
+                await db.close()
                 if member == ctx.author:
                     msg = f'Your Balance: {amount} {CURRENCY_NAME}'
                 else:
@@ -113,11 +118,11 @@ class Economy(commands.Cog):
             msg = f"You don't have permission to make bank accounts for others! {settings.ASAMI_EMOJI}"
         if run:
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # check if user already has an account
-            cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
-            account = cursor.fetchone()[0]
+            await cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
+            account = await cursor.fetchone()[0]
             if account >= 1:
                 if member == ctx.author:
                     msg = 'You already have an account!'
@@ -125,10 +130,13 @@ class Economy(commands.Cog):
                     msg = f'{member.name} already has an account!'
             else:
                 # make an account
-                cursor.execute('''
+                await cursor.execute('''
                 INSERT INTO economy(member_id, currency)
                 VALUES(?, ?)''', (member.id, STARTING_VALUE))
-                db.commit()
+                await db.commit()
+                # close connection
+                await cursor.close()
+                await db.close()
                 if member == ctx.author:
                     msg = f"Your account has been registered, here's {STARTING_VALUE} {CURRENCY_NAME} to get you started! {settings.ASAMI_EMOJI}"
                 else:
@@ -155,11 +163,11 @@ class Economy(commands.Cog):
             member = ctx.author
         if 'GOD' in user_roles:
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # check if user has an account
-            cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
-            account = cursor.fetchone()[0]
+            await cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
+            account = await cursor.fetchone()[0]
             if account < 1:
                 if member == ctx.author:
                     msg = "You don't have an account! Use ``.make_account`` to make one."
@@ -174,8 +182,11 @@ class Economy(commands.Cog):
                 await member.remove_roles(numberone)
                 await member.remove_roles(top10)
                 # delete account
-                cursor.execute(f'DELETE FROM economy WHERE member_id = {member.id}')
-                db.commit()
+                await cursor.execute(f'DELETE FROM economy WHERE member_id = {member.id}')
+                await db.commit()
+                # close connection
+                await cursor.close()
+                await db.close()
         else:
             msg = f"You don't have permission to delete bank accounts! {settings.ASAMI_EMOJI}"
         # send user message
@@ -190,11 +201,11 @@ class Economy(commands.Cog):
         if member == None:
             member = ctx.author
         # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
+        db = await aiosqlite3.connect(settings.DATABASE)
+        cursor = await db.cursor()
         # get user account
-        cursor.execute(f'SELECT currency FROM economy WHERE member_id = {member.id}')
-        account = cursor.fetchone()
+        await cursor.execute(f'SELECT currency FROM economy WHERE member_id = {member.id}')
+        account = await cursor.fetchone()
         if str(type(account)) == "<class 'NoneType'>":
             if member.id == ctx.author.id:
                 msg = "You don't have an account! Use ``.make_account`` to make one."
@@ -204,9 +215,9 @@ class Economy(commands.Cog):
             currency = account[0]
             # get rank
             # sort by currency
-            cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
+            await cursor.execute(f'SELECT member_id FROM economy ORDER BY currency DESC')
             # fetch data
-            rows = cursor.fetchall()
+            rows = await cursor.fetchall()
             place = 'Not Found'
             for row in range(len(rows)):
                 if rows[row][0] == member.id:
@@ -216,6 +227,9 @@ class Economy(commands.Cog):
             else:
                 msg = f'{member.name} has {currency} {CURRENCY_NAME}. {CURRENCY_IMG}'
             msg += '\nRank: ' + place
+            # close connection
+            await cursor.close()
+            await db.close()
             # update roles
             await ctx.invoke(self.update_roles, member)
         # send user message
@@ -230,8 +244,8 @@ class Economy(commands.Cog):
     @commands.command(description = f'give some {CURRENCY_NAME}')
     async def transfer(self, ctx, member : discord.Member, amount : int):
         # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
+        db = await aiosqlite3.connect(settings.DATABASE)
+        cursor = await db.cursor()
         msg = ''
         # check if amount is valid
         if amount <= 0:
@@ -242,8 +256,8 @@ class Economy(commands.Cog):
                 msg = "You can't transfer funds to yourself"
             else:
                 # get sender account
-                cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
-                account = cursor.fetchone()
+                await cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
+                account = await cursor.fetchone()
                 if str(type(account)) == "<class 'NoneType'>":
                     if msg == '':
                         msg = "You don't have an account! Use ``.make_account`` to make one"
@@ -254,22 +268,25 @@ class Economy(commands.Cog):
                             msg = 'You have insufficient funds!'
                     else:
                         # get recipient account
-                        cursor.execute(f'SELECT currency FROM economy WHERE member_id = {member.id}')
-                        account = cursor.fetchone()
+                        await cursor.execute(f'SELECT currency FROM economy WHERE member_id = {member.id}')
+                        account = await cursor.fetchone()
                         if str(type(account)) == "<class 'NoneType'>":
                             if msg == '':
                                 msg = f"{member.name} doesn't have an account!"
                         else:
                             currency_recipient = account[0]
                             # decrease sender account by amount to transfer
-                            cursor.execute(f'UPDATE economy SET currency = {currency_sender - amount} WHERE member_id = {ctx.author.id}')
+                            await cursor.execute(f'UPDATE economy SET currency = {currency_sender - amount} WHERE member_id = {ctx.author.id}')
                             # increase recipient account by amount to transfer
-                            cursor.execute(f'UPDATE economy SET currency = {currency_recipient + amount} WHERE member_id = {member.id}')
-                            db.commit()
+                            await cursor.execute(f'UPDATE economy SET currency = {currency_recipient + amount} WHERE member_id = {member.id}')
+                            await db.commit()
                             msg = f"Transfer complete!\nYour Balance: {currency_sender - amount} {CURRENCY_NAME}\n{member.name}'s Balance: {currency_recipient + amount} {CURRENCY_NAME}"
                             # update roles
                             await ctx.invoke(self.update_roles, member)
                             await ctx.invoke(self.update_roles)
+        # close connection
+        await cursor.close()
+        await db.close()
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
@@ -282,12 +299,15 @@ class Economy(commands.Cog):
     @commands.command(description = 'Returns top ten richest toucans')
     async def leaderboard(self, ctx):
         # connect to database
-        db = sqlite3.connect(settings.DATABASE)
-        cursor = db.cursor()
+        db = await aiosqlite3.connect(settings.DATABASE)
+        cursor = await db.cursor()
         # sort by currency
-        cursor.execute(f'SELECT member_id, currency FROM economy ORDER BY currency DESC')
+        await cursor.execute(f'SELECT member_id, currency FROM economy ORDER BY currency DESC')
         # fetch data
-        rows = cursor.fetchall()
+        rows = await cursor.fetchall()
+        # close connection
+        await cursor.close()
+        await db.close()
         place = 1
         row_index = 0
         content = []
@@ -317,11 +337,11 @@ class Economy(commands.Cog):
             footer = 'Command is under maintenance right now!'
         else:
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # check if user has an account
-            cursor.execute(f'SELECT wait_time, currency FROM economy WHERE member_id = {ctx.author.id}')
-            account = cursor.fetchone()
+            await cursor.execute(f'SELECT wait_time, currency FROM economy WHERE member_id = {ctx.author.id}')
+            account = await cursor.fetchone()
             if type(account) != tuple:
                 msg = "You don't have an account! Use ``.make_account`` to make one"
             else:
@@ -338,14 +358,17 @@ class Economy(commands.Cog):
                     account_value = account[1]
                     base = int(STARTING_VALUE / 50)
                     amount_to_add = random.randrange(base, (10 * base) + 1, base)
-                    cursor.execute(f'UPDATE economy SET currency = {account_value + amount_to_add} WHERE member_id = {ctx.author.id}')
+                    await cursor.execute(f'UPDATE economy SET currency = {account_value + amount_to_add} WHERE member_id = {ctx.author.id}')
                     # set timer
-                    cursor.execute(f'UPDATE economy SET wait_time = {int(time.time()) + (random.randint(1, 3) * 60 * 60)} WHERE member_id = {ctx.author.id}')
-                    db.commit()
+                    await cursor.execute(f'UPDATE economy SET wait_time = {int(time.time()) + (random.randint(1, 3) * 60 * 60)} WHERE member_id = {ctx.author.id}')
+                    await db.commit()
                     msg = f'Success! You gained {amount_to_add} {CURRENCY_NAME}.\nYour Balance: {account_value + amount_to_add} {CURRENCY_NAME}. {CURRENCY_IMG}'
                     footer = 'Come back in a few hours!'
-                # update roles
-                await ctx.invoke(self.update_roles)
+                    # update roles
+                    await ctx.invoke(self.update_roles)
+            # close connection
+            await cursor.close()
+            await db.close()
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
@@ -366,11 +389,11 @@ class Economy(commands.Cog):
             footer = 'Command is under maintenance right now!'
         else:
             # connect to database
-            db = sqlite3.connect(settings.DATABASE)
-            cursor = db.cursor()
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
             # check if user has an account
-            cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
-            account = cursor.fetchone()
+            await cursor.execute(f'SELECT currency FROM economy WHERE member_id = {ctx.author.id}')
+            account = await cursor.fetchone()
             if type(account) != tuple:
                 msg = "You don't have an account! Use ``.make_account`` to make one"
             else:
@@ -384,8 +407,8 @@ class Economy(commands.Cog):
                     # update account
                     multiplier = choice(multipliers, p = weights)
                     winnings = bet * multiplier
-                    cursor.execute(f'UPDATE economy SET currency = {int(account_value + winnings - bet)} WHERE member_id = {ctx.author.id}')
-                    db.commit()
+                    await cursor.execute(f'UPDATE economy SET currency = {int(account_value + winnings - bet)} WHERE member_id = {ctx.author.id}')
+                    await db.commit()
                     msg = f'You bought {bet} {CURRENCY_NAME} worth of bait.\nYou caught {int(winnings)} {CURRENCY_NAME}!\nYour Balance: {int(account_value + winnings - bet)} {CURRENCY_NAME}. {CURRENCY_IMG}'
                     if winnings <= bet:
                         footer = 'Better luck next time!'
@@ -396,6 +419,9 @@ class Economy(commands.Cog):
                         footer = 'So much fish...'
                 # update roles
                 await ctx.invoke(self.update_roles)
+            # close connection
+            await cursor.close()
+            await db.close()
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url

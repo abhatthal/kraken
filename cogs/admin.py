@@ -3,7 +3,6 @@ from discord.ext import commands
 from os import listdir
 import logging
 import helper_files.settings as settings
-import sqlite3
 logger = logging.getLogger('HonestBear')
 
 
@@ -62,8 +61,6 @@ class Admin(commands.Cog):
 
     @commands.command(description = 'bot goes offline')
     async def shutdown(self, ctx):
-        db = sqlite3.connect(settings.DATABASE)
-        db.close()
         logger.info(f'{ctx.author} : Shut Down')
         await ctx.send("Shutting down!")
         await self.bot.logout()
