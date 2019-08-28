@@ -447,11 +447,7 @@ class Economy(commands.Cog):
 
     async def cog_check(self, ctx):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        maintenance = False
-        if maintenance:
-            return 'GOD' in user_roles
-        else:
-            return 'mod' in user_roles or 'GOD' in user_roles or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
+        return 'mod' in user_roles or 'GOD' in user_roles or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
 
 
 def setup(bot):
