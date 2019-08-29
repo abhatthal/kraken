@@ -59,12 +59,12 @@ class Member(commands.Cog):
 
                     # Economy
                     'update_roles' : '(optional member)',
-                    'set_balance' : '[amount] (optional member)',
+                    'set_balance' : '[count] (optional member)',
                     'make_account' : '(optional member)',
                     'delete_account' : '(optional member)',
                     'check_balance' : '(optional member)',
-                    'transfer' : '[member] [amount]',
-                    'fish' : '[bet]',
+                    'transfer' : '[member] [count]',
+                    'fish' : '[count]',
 
                     # Member
                     '_8ball' : '[question]',
@@ -72,7 +72,7 @@ class Member(commands.Cog):
                     'poll' : '["question"] [option A] [option B] ...',
 
                     # Moderator
-                    'clear' : '(optional amount)',
+                    'clear' : '(optional member) (optional count)',
                     'kick' : '[member] (optional reason)',
                     'ban' : '[member] (optional reason)',
                     'unban' : '[member]',
@@ -85,8 +85,8 @@ class Member(commands.Cog):
                     'remove_bluecan' : '[member]',
 
                     # Music
-                    'join' : '[member]',
-                    'play' : '[search or url]',
+                    'join' : '[channel]',
+                    'play' : '[search] or [url]',
                     'volume' : '[number]'
                 }
 

@@ -11,6 +11,7 @@ import aiosqlite3
 import datetime
 import time
 import asyncio # await asyncio.sleep()
+import typing # for clear command typing.Union
 logger = logging.getLogger('HonestBear')
 
 
@@ -20,10 +21,33 @@ class Moderator(commands.Cog):
     
 
     @commands.command(description = 'Clears messages in a particular channel')
-    async def clear(self, ctx, amount = 10):
+    async def clear(self, ctx, arg1 : typing.Union[discord.Member, int] = None, amount = 10):
+        member = None
+        if type(arg1) == int:
+            amount = arg1
+        else:
+            member = arg1
+
+        def is_member(m):
+            return m.author == member
+
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_messages' in user_perms:
-            await ctx.channel.purge(limit = amount + 1)
+            if member:
+                await ctx.channel.purge(limit = amount + 1, check = is_member)
+            else:
+                await ctx.channel.purge(limit = amount + 1)
+
+            msg = f'I have deleted {amount} message'
+            if amount == 1:
+                msg = msg + '!'
+            else:
+                msg = msg + 's!'
+
+            eObj = await embed(ctx, author = msg, avatar = settings.BOT_AVATAR)
+            if eObj is not False:
+                bot_message = await ctx.send(embed = eObj)
+                await bot_message.delete(delay = 5)                
         else:
             await ctx.send(f'Sorry, only mods can clear messages! {settings.ASAMI_EMOJI}')
 
@@ -60,10 +84,19 @@ class Moderator(commands.Cog):
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             eObj = await embed(ctx, colour = 0xFF0000, author = f'[BAN] {member}' ,
                 avatar = member.avatar_url, description = 'Reason: ' + str(reason))
+            # connect to database
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
+            # clear infractions and economy
+            await cursor.execute(f'DELETE FROM infractions WHERE member_id = {member.id}')
+            await cursor.execute(f'DELETE FROM economy WHERE member_id = {member.id}')
+            await db.commit()
+            # ban member
+            await member.ban(reason = reason)
+
             if eObj is not False:
                 await ctx.send(embed = eObj)
                 await channel.send(embed = eObj)
-                await member.ban(reason = reason)
         else:
             await ctx.send(f"Hey, don't ban anybirdie! {settings.ASAMI_EMOJI}")
 
