@@ -94,32 +94,35 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        ctx = await self.bot.get_context(message)
         if self.bot.user.id != message.author.id:
             # Auto Moderation
             for word in settings.BLACKLIST:
                 if word in message.content.lower():
-                    await message.channel.send("BAD WORD REEEE")
+                    await ctx.send(f'<@{message.author.id}>: BAD WORD REEEE')
+                    warn = self.bot.get_command('warn')
+                    await ctx.invoke(warn, member = message.author, reason = 'Bad word usage')
 
             # Event Messages outside of Debate
             if message.channel.id != settings.DEBATE_CHANNEL:
                 bot_messages = []
                 if 'aww man' in message.content.lower() or 'aw man' in message.content.lower():
-                    bot_messages.append(await message.channel.send('So we back in the mine'))
+                    bot_messages.append(await ctx.send('So we back in the mine'))
                 elif 'creeper' in message.content.lower():
-                    bot_messages.append(await message.channel.send('aww man'))
+                    bot_messages.append(await ctx.send('aww man'))
 
                 if 'owo' in message.content.lower():
-                    bot_messages.append(await message.channel.send("OwO What's this?"))
+                    bot_messages.append(await ctx.send("OwO What's this?"))
 
                 if 'no u' in message.content.lower():
-                    bot_messages.append(await message.channel.send('NO U'))
+                    bot_messages.append(await ctx.send('NO U'))
 
                 if 'uwu' in message.content.lower():
                     responses = ['urusai!', 'baka', 'uwu dattebayo']
-                    bot_messages.append(await message.channel.send(choice(responses)))
+                    bot_messages.append(await ctx.send(choice(responses)))
 
                 if 'omae wa mo shindeiru' in message.content.lower() or 'お前はもう死んでいる' in message.content.lower():
-                    bot_messages.append(await message.channel.send('NANI?!'))
+                    bot_messages.append(await ctx.send('NANI?!'))
 
                 # Event Messages are temporary
                 for bot_message in bot_messages:

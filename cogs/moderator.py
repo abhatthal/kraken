@@ -199,13 +199,9 @@ class Moderator(commands.Cog):
                 
 
     @commands.command(description = 'give a user an infraction')
-    async def warn(self, ctx, member : discord.Member, *, reason = None):
-        user_perms = await getListOfUserPerms(ctx)
-        if member.id == self.bot.user.id:
-            await ctx.send('no u')
-        elif member.id == ctx.author.id:
-            await ctx.send("You can't warn yourself")
-        elif 'ban_members' in user_perms:
+    async def warn(self, ctx, member : discord.Member, *, reason = None, automod = False):
+        # the actual warning
+        def do_warn():
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             logger.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = f'[WARN] {member}' ,
@@ -230,9 +226,21 @@ class Moderator(commands.Cog):
                 await db.commit()
                 # close connection
                 await cursor.close()
-                await db.close()   
+                await db.close()
+        # check if automoderation warn
+        if automod:
+            do_warn()
+        # otherwise check if user has permissions
         else:
-            await ctx.send(f"You're not allowed to warn anybirdie! {settings.ASAMI_EMOJI}")
+            user_perms = await getListOfUserPerms(ctx)
+            if member.id == self.bot.user.id:
+                await ctx.send('no u')
+            elif member.id == ctx.author.id:
+                await ctx.send("You can't warn yourself")
+            elif 'ban_members' in user_perms:
+                
+            else:
+                await ctx.send(f"You're not allowed to warn anybirdie! {settings.ASAMI_EMOJI}")
 
 
     @commands.command(description = "returns all a user's infractions")
