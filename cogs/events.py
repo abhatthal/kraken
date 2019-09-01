@@ -94,7 +94,8 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if self.bot.user.id != message.author.id:
+        # Don't read bot messages
+        if not message.author.bot:
             ctx = await self.bot.get_context(message)
             # Event Messages outside of Debate
             if message.channel.id != settings.DEBATE_CHANNEL:
