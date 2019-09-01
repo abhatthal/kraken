@@ -220,7 +220,7 @@ class Moderator(commands.Cog):
             # close connection
             await cursor.close()
             await db.close()   
-            eObj = await embed(ctx, colour = 0x05A000, author = f'[UNBAN] {member}')
+            eObj = await embed(ctx, author = f'[UNBAN] {member}')
             if eObj is not False:
                 await channel.send(embed = eObj)
         else:
