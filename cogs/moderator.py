@@ -53,37 +53,56 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = 'kick a user from the server')
-    async def kick(self, ctx, member : discord.Member, *, reason = None):
+    async def kick(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('Ouch ;-;')
         elif member.id == ctx.author.id:
             await ctx.send('Why are you hitting yourself?')
         elif 'kick_members' in user_perms:
-            logger.info(f'[KICK] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
-            eObj = await embed(ctx, colour = 0xFF0000, author = f'[KICK] {member}' ,
-                avatar = member.avatar_url, description = 'Reason: ' + str(reason))
+            # embed to send user
+            eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been kicked',
+                avatar = member.avatar_url, description = f'**Reason: **{reason}')
+            # embed for logging channel
+            content = [('User', f'<@{member.id}>'), ('Moderator', f'<@{ctx.author.id}>'), ('Reason', reason)]
+            eObj_log = await embed(ctx, colour = 0xF04848, author = f'[KICK] {member}' ,
+                avatar = member.avatar_url, content = content, inline = True)
+            # log warning
+            logger.info(f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}')
+            # send embeds if valid
             if eObj is not False:
                 await ctx.send(embed = eObj)
-                await channel.send(embed = eObj)
-                await member.kick(reason = reason)
+            if eObj_log is not False:
+                await channel.send(embed = eObj_log)
+            await member.kick(reason = reason)
         else:
             await ctx.send(f"Hey, don't kick anybirdie! {settings.ASAMI_EMOJI}")
 
 
     @commands.command(description = 'Bans a member from the server')
-    async def ban(self, ctx, member : discord.Member, *, reason = None):
+    async def ban(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
         elif member.id == ctx.author.id:
             await ctx.send("Please don't ban yourself")
         elif 'ban_members' in user_perms:
-            logger.info(f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
-            eObj = await embed(ctx, colour = 0xFF0000, author = f'[BAN] {member}' ,
-                avatar = member.avatar_url, description = 'Reason: ' + str(reason))
+            # embed to send user
+            eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been banned',
+                avatar = member.avatar_url, description = f'**Reason: **{reason}')
+            # embed for logging channel
+            content = [('User', f'<@{member.id}>'), ('Moderator', f'<@{ctx.author.id}>'), ('Reason', reason)]
+            eObj_log = await embed(ctx, colour = 0xF04848, author = f'[BAN] {member}' ,
+                avatar = member.avatar_url, content = content, inline = True)
+            # log warning
+            logger.info(f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}')
+            # send embeds if valid
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            if eObj_log is not False:
+                await channel.send(embed = eObj_log)
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
@@ -93,10 +112,6 @@ class Moderator(commands.Cog):
             await db.commit()
             # ban member
             await member.ban(reason = reason)
-
-            if eObj is not False:
-                await ctx.send(embed = eObj)
-                await channel.send(embed = eObj)
         else:
             await ctx.send(f"Hey, don't ban anybirdie! {settings.ASAMI_EMOJI}")
 
@@ -133,7 +148,7 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = 'Temporarily bans a member from the server')
-    async def tempban(self, ctx, member : discord.Member, duration, *, reason = None, automod = False):
+    async def tempban(self, ctx, member : discord.Member, duration, *, reason = 'Unspecified', automod = False):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
@@ -212,7 +227,7 @@ class Moderator(commands.Cog):
                 
 
     @commands.command(description = 'give a user an infraction')
-    async def warn(self, ctx, member : discord.Member, *, reason = None, automod = False, message = None):
+    async def warn(self, ctx, member : discord.Member, *, reason = 'Unspecified', automod = False, message = None):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
