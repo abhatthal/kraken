@@ -142,10 +142,13 @@ class Events(commands.Cog):
                         break
 
                 # Check for external links
-                if not message_deleted and ('www.' in message.content.lower() or 'http://' in message.content.lower()):
-                    await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
-                    await message.delete()
-                    message_deleted = True
+                exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL, \
+                settings.ART_CHANNEL, settings.FANART_CHANNEL, settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL]
+                if not message.channel.id in exceptions:
+                    if not message_deleted and ('www.' in message.content.lower() or 'http' in message.content.lower()):
+                        await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
+                        await message.delete()
+                        message_deleted = True
 
                 # Check for server invites
                 elif 'discord.gg/' in message.content.lower():
