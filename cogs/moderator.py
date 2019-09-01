@@ -208,29 +208,43 @@ class Moderator(commands.Cog):
         elif 'ban_members' in user_perms or automod:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             logger.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
-            eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = f'[WARN] {member}' ,
+            content = []
+            # embed to send user
+            eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = member,
                 avatar = member.avatar_url, description = str(reason), footer = 'Moderator Warning')
+            # embed for logging channel
+            eObj2 = await embed(ctx, colour = 0xFFA000, author = f'[WARN] {member}' ,
+                avatar = member.avatar_url, content = content)
+                content.append(('User', member))
+                if automod:
+                    mod_name = settings.BOT_NAME
+                else:
+                    mod_name = ctx.author
+                content.append(('Moderator', mod_name))
+                content.append(('Reason', reason))
+            # send if valid
             if eObj is not False:
                 await ctx.send(embed = eObj)
-                await channel.send(embed = eObj)
-                # connect to database
-                db = await aiosqlite3.connect(settings.DATABASE)
-                cursor = await db.cursor()
-                # get infraction_id (number of global infractions + 1)
-                await cursor.execute('SELECT infraction_id FROM infractions ORDER BY infraction_id DESC')
-                infraction_id = await cursor.fetchone()
-                if not infraction_id:
-                    infraction_id = 0
-                else:
-                    infraction_id = infraction_id[0] + 1
-                # insert data
-                await cursor.execute('''
-                INSERT INTO infractions(member_id, infraction_id, infraction, date)
-                VALUES(?, ?, ?, ?)''', (member.id, infraction_id, str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
-                await db.commit()
-                # close connection
-                await cursor.close()
-                await db.close()   
+            if eObj2 is not False:
+                await channel.send(embed = eObj2)
+            # connect to database
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
+            # get infraction_id (number of global infractions + 1)
+            await cursor.execute('SELECT infraction_id FROM infractions ORDER BY infraction_id DESC')
+            infraction_id = await cursor.fetchone()
+            if not infraction_id:
+                infraction_id = 0
+            else:
+                infraction_id = infraction_id[0] + 1
+            # insert data
+            await cursor.execute('''
+            INSERT INTO infractions(member_id, infraction_id, infraction, date)
+            VALUES(?, ?, ?, ?)''', (member.id, infraction_id, str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
+            await db.commit()
+            # close connection
+            await cursor.close()
+            await db.close()   
         else:
             await ctx.send(f"You're not allowed to warn anybirdie! {settings.ASAMI_EMOJI}")
 
