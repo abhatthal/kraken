@@ -215,13 +215,13 @@ class Moderator(commands.Cog):
             # embed for logging channel
             eObj2 = await embed(ctx, colour = 0xFFA000, author = f'[WARN] {member}' ,
                 avatar = member.avatar_url, content = content)
-                content.append(('User', member))
-                if automod:
-                    mod_name = settings.BOT_NAME
-                else:
-                    mod_name = ctx.author
-                content.append(('Moderator', mod_name))
-                content.append(('Reason', reason))
+            content.append(('User', member))
+            if automod:
+                mod_name = settings.BOT_NAME
+            else:
+                mod_name = ctx.author
+            content.append(('Moderator', mod_name))
+            content.append(('Reason', reason))
             # send if valid
             if eObj is not False:
                 await ctx.send(embed = eObj)
