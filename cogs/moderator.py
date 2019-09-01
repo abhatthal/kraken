@@ -81,23 +81,24 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = 'Bans a member from the server')
-    async def ban(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
+    async def ban(self, ctx, member : discord.Member, *, reason = 'Unspecified', automod = False):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
-        elif member.id == ctx.author.id:
+        elif member.id == ctx.author.id and not automod:
             await ctx.send("Please don't ban yourself")
-        elif 'ban_members' in user_perms:
+        elif 'ban_members' in user_perms or automod:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
+            mod_name = f'<@{self.bot.user.id}>' if automod else f'<@{ctx.author.id}>'
             # embed to send user
             eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been banned',
                 avatar = member.avatar_url, description = f'**Reason: **{reason}')
             # embed for logging channel
-            content = [('User', f'<@{member.id}>'), ('Moderator', f'<@{ctx.author.id}>'), ('Reason', reason)]
+            content = [('User', f'<@{member.id}>'), ('Moderator', mod_name), ('Reason', reason)]
             eObj_log = await embed(ctx, colour = 0xF04848, author = f'[BAN] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             # log warning
-            logger.info(f'[BAN] {member}\n Moderator: {ctx.author}\n Reason: {reason}')
+            logger.info(f'[BAN] {member}\n Moderator: {mod_name}\n Reason: {reason}')
             # send embeds if valid
             if eObj is not False:
                 await ctx.send(embed = eObj)
@@ -136,7 +137,7 @@ class Moderator(commands.Cog):
                 user = ban_entry.user
                 if (user.name, user.discriminator) == (member_name, member_discriminator):
                     logger.info(f'[UNBAN] {member}\n Moderator: {ctx.author}')
-                    eObj = await embed(ctx, colour = 0x05A000, author = f'[UNBAN] {member}')
+                    eObj = await embed(ctx, author = f'[UNBAN] {member}')
                     if eObj is not False:
                         await ctx.send(embed = eObj)
                         await channel.send(embed = eObj)
@@ -272,8 +273,11 @@ class Moderator(commands.Cog):
             await cursor.execute(f'SELECT COUNT(*) FROM infractions WHERE member_id = {member.id}')
             infraction_count = await cursor.fetchone()
             # tempban for 24 hours if 3 or more infractions
-            if infraction_count >= 3:
-                await ctx.invoke(self.tempban, member, reason = 'Too many infractions', duration = '24h')         
+            infraction_count = infraction_count[0]
+            # if infraction_count >= 5:
+                # await ctx.invoke(self.ban, member, reason = 'Too many infractions', automod = True)
+            if infraction_count == 3:
+                await ctx.invoke(self.tempban, member, reason = 'Too many infractions', duration = '24h', automod = True)        
             # close connection
             await cursor.close()
             await db.close()   

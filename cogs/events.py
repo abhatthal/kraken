@@ -129,27 +129,29 @@ class Events(commands.Cog):
             # Auto Moderation
             message_deleted = False
             warn = self.bot.get_command('warn')
+            user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+            # rules don't apply to mods
+            if not 'mod' in user_roles and not 'GOD' in user_roles:
+                # Check for bad words
+                for word in settings.BLACKLIST:
+                    if word in message.content.lower():
+                        await message.delete()
+                        message_deleted = True
+                        await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
+                        # at most one 'Bad word usage' warning per message
+                        break
 
-            # Check for bad words
-            for word in settings.BLACKLIST:
-                if word in message.content.lower():
+                # Check for external links
+                if not message_deleted and ('www.' in message.content.lower() or 'http://' in message.content.lower()):
+                    await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
                     await message.delete()
                     message_deleted = True
-                    await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
-                    # at most one 'Bad word usage' warning per message
-                    break
 
-            # Check for external links
-            if not message_deleted and ('www.' in message.content.lower() or 'http://' in message.content.lower()):
-                await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
-                await message.delete()
-                message_deleted = True
-
-            # Check for server invites
-            elif 'discord.gg/' in message.content.lower():
-                await ctx.invoke(warn, member = message.author, reason = 'Posted an invite', automod = True, message = message.content)
-                await message.delete()
-                message_deleted = True
+                # Check for server invites
+                elif 'discord.gg/' in message.content.lower():
+                    await ctx.invoke(warn, member = message.author, reason = 'Posted an invite', automod = True, message = message.content)
+                    await message.delete()
+                    message_deleted = True
 
 
 def setup(bot):
