@@ -100,7 +100,9 @@ class Events(commands.Cog):
             for word in settings.BLACKLIST:
                 if word in message.content.lower():
                     warn = self.bot.get_command('warn')
-                    await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True)
+                    await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
+                    # at most one 'Bad word usage' warning per message
+                    break
 
             # Event Messages outside of Debate
             if message.channel.id != settings.DEBATE_CHANNEL:

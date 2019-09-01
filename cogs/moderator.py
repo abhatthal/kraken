@@ -199,7 +199,7 @@ class Moderator(commands.Cog):
                 
 
     @commands.command(description = 'give a user an infraction')
-    async def warn(self, ctx, member : discord.Member, *, reason = None, automod = False):
+    async def warn(self, ctx, member : discord.Member, *, reason = None, automod = False, message = None):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
@@ -208,25 +208,22 @@ class Moderator(commands.Cog):
         elif 'ban_members' in user_perms or automod:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             logger.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
-            content = []
             # embed to send user
             eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = member,
                 avatar = member.avatar_url, description = str(reason), footer = 'Moderator Warning')
             # embed for logging channel
-            eObj2 = await embed(ctx, colour = 0xFFA000, author = f'[WARN] {member}' ,
-                avatar = member.avatar_url, content = content)
-            content.append(('User', member))
-            if automod:
-                mod_name = settings.BOT_NAME
-            else:
-                mod_name = ctx.author
-            content.append(('Moderator', mod_name))
-            content.append(('Reason', reason))
+            mod_name = settings.BOT_NAME if automod else ctx.author
+            content = [('User', f'<@{member.id}>'), ('Moderator', str(mod_name)), ('Reason', reason)]
+            if automod and message:
+                content.append(('Channel', f'#{ctx.channel.name}'))
+                content.append(('Message', message))
+            eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[WARN] {member}' ,
+                avatar = member.avatar_url, content = content, inline = True)
             # send if valid
             if eObj is not False:
                 await ctx.send(embed = eObj)
-            if eObj2 is not False:
-                await channel.send(embed = eObj2)
+            if eObj_log is not False:
+                await channel.send(embed = eObj_log)
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
