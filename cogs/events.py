@@ -141,8 +141,8 @@ class Events(commands.Cog):
                         break
 
                 # Check for external links
-                exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL,
-                settings.ART_CHANNEL, settings.FANART_CHANNEL, settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL]
+                exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL, settings.ART_CHANNEL,
+                settings.FANART_CHANNEL, settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL, settings.PROPER_CHANNEL]
                 if not message.channel.id in exceptions and ('www.' in message.content.lower() or 'http' in message.content.lower()):
                     await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
                     await message.delete()
