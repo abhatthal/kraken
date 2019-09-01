@@ -1,5 +1,6 @@
 import sqlite3 # maintain infractions in infractions.db
 import logging # maintain logs in bot.log
+import json # to read blacklist
 
 logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctime)s %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
 
@@ -30,3 +31,7 @@ ECONOMY_CHANNEL = 612898538447306752
 
 # Custom Emojis
 ASAMI_EMOJI = '<:Asami:610219714140045376>'
+
+# Blacklist
+with open('blacklist.json', 'r') as f:
+    BLACKLIST = json.load(f)

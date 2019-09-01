@@ -94,35 +94,41 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        # If a message is sent not in #debate and is not sent by the bot
-        if message.channel.id != settings.DEBATE_CHANNEL and self.bot.user.id != message.author.id:
-            bot_messages = []
-            if 'aww man' in message.content.lower() or 'aw man' in message.content.lower():
-                bot_messages.append(await message.channel.send('So we back in the mine'))
-            elif 'creeper' in message.content.lower():
-                bot_messages.append(await message.channel.send('aww man'))
+        if self.bot.user.id != message.author.id:
+            # Auto Moderation
+            for word in settings.BLACKLIST:
+                if word in message.content.lower():
+                    await ctx.send("BAD WORD REEEE")
 
-            if 'owo' in message.content.lower():
-                bot_messages.append(await message.channel.send("OwO What's this?"))
+            # Event Messages outside of Debate
+            if message.channel.id != settings.DEBATE_CHANNEL:
+                bot_messages = []
+                if 'aww man' in message.content.lower() or 'aw man' in message.content.lower():
+                    bot_messages.append(await message.channel.send('So we back in the mine'))
+                elif 'creeper' in message.content.lower():
+                    bot_messages.append(await message.channel.send('aww man'))
 
-            if 'no u' in message.content.lower():
-                bot_messages.append(await message.channel.send('NO U'))
+                if 'owo' in message.content.lower():
+                    bot_messages.append(await message.channel.send("OwO What's this?"))
 
-            if 'uwu' in message.content.lower():
-                responses = ['urusai!', 'baka', 'uwu dattebayo']
-                bot_messages.append(await message.channel.send(choice(responses)))
+                if 'no u' in message.content.lower():
+                    bot_messages.append(await message.channel.send('NO U'))
 
-            if 'omae wa mo shindeiru' in message.content.lower() or 'お前はもう死んでいる' in message.content.lower():
-                bot_messages.append(await message.channel.send('NANI?!'))
+                if 'uwu' in message.content.lower():
+                    responses = ['urusai!', 'baka', 'uwu dattebayo']
+                    bot_messages.append(await message.channel.send(choice(responses)))
 
-            # delete all messages that were sent after a period of time
-            for bot_message in bot_messages:
-                await bot_message.delete(delay = 5)
-        
-            # allow people to vote by in certain channels
-            if message.channel.id in (settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL):
-                await message.add_reaction('✅')
-                await message.add_reaction('❌')
+                if 'omae wa mo shindeiru' in message.content.lower() or 'お前はもう死んでいる' in message.content.lower():
+                    bot_messages.append(await message.channel.send('NANI?!'))
+
+                # Event Messages are temporary
+                for bot_message in bot_messages:
+                    await bot_message.delete(delay = 5)
+            
+                # Suggestions Voting
+                if message.channel.id in (settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL):
+                    await message.add_reaction('✅')
+                    await message.add_reaction('❌')
 
 
 def setup(bot):
