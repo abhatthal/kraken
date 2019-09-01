@@ -127,7 +127,6 @@ class Events(commands.Cog):
                     await message.add_reaction('❌')
 
             # Auto Moderation
-            message_deleted = False
             warn = self.bot.get_command('warn')
             user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
             # rules don't apply to mods
@@ -136,25 +135,21 @@ class Events(commands.Cog):
                 for word in settings.BLACKLIST:
                     if word in message.content.lower():
                         await message.delete()
-                        message_deleted = True
                         await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
                         # at most one 'Bad word usage' warning per message
                         break
 
                 # Check for external links
-                exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL, \
+                exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL,
                 settings.ART_CHANNEL, settings.FANART_CHANNEL, settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL]
-                if not message.channel.id in exceptions:
-                    if not message_deleted and ('www.' in message.content.lower() or 'http' in message.content.lower()):
-                        await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
-                        await message.delete()
-                        message_deleted = True
+                if not message.channel.id in exceptions and ('www.' in message.content.lower() or 'http' in message.content.lower()):
+                    await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
+                    await message.delete()
 
                 # Check for server invites
                 elif 'discord.gg/' in message.content.lower():
                     await ctx.invoke(warn, member = message.author, reason = 'Posted an invite', automod = True, message = message.content)
                     await message.delete()
-                    message_deleted = True
 
 
 def setup(bot):
