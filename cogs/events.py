@@ -127,13 +127,29 @@ class Events(commands.Cog):
                     await message.add_reaction('❌')
 
             # Auto Moderation
+            message_deleted = False
+            warn = self.bot.get_command('warn')
+
+            # Check for bad words
             for word in settings.BLACKLIST:
                 if word in message.content.lower():
                     await message.delete()
-                    warn = self.bot.get_command('warn')
+                    message_deleted = True
                     await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
                     # at most one 'Bad word usage' warning per message
                     break
+
+            # Check for external links
+            if not message_deleted and ('www.' in message.content.lower() or 'http://' in message.content.lower()):
+                await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
+                await message.delete()
+                message_deleted = True
+
+            # Check for server invites
+            elif 'discord.gg/' in message.content.lower():
+                await ctx.invoke(warn, member = message.author, reason = 'Posted an invite', automod = True, message = message.content)
+                await message.delete()
+                message_deleted = True
 
 
 def setup(bot):

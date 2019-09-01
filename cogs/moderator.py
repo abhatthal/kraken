@@ -133,26 +133,28 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = 'Temporarily bans a member from the server')
-    async def tempban(self, ctx, member : discord.Member, duration, *, reason = None):
+    async def tempban(self, ctx, member : discord.Member, duration, *, reason = None, automod = False):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
-        elif member.id == ctx.author.id:
+        elif member.id == ctx.author.id and not automod:
             await ctx.send("Please don't ban yourself")
-        elif 'ban_members' in user_perms:
-            channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
-            msg = ''
-            
+        elif 'ban_members' in user_perms or automod:
+            unit = ''
             if duration[:-1].isnumeric():
                 if duration[-1].isalpha():
                     if duration[-1].lower() == 's':
                         time_seconds = int(duration[:-1])
+                        unit = 'seconds'
                     elif duration[-1].lower() == 'm':
                         time_seconds = int(duration[:-1]) * 60
+                        unit = 'minutes'
                     elif duration[-1].lower() == 'h':
                         time_seconds = int(duration[:-1]) * 60 * 60
+                        unit = 'hours'
                     elif duration[-1].lower() == 'd':
                         time_seconds = int(duration[:-1]) * 60 * 60 * 24
+                        unit = 'days'
                     else:
                         await ctx.send('Error: time unit not recognized')
                         return
@@ -162,12 +164,23 @@ class Moderator(commands.Cog):
                 await ctx.send('Error: No duration specified')
                 return
             unban_time = time.time() + time_seconds
-            logger.info(f'[TEMPBAN] {member}\n Moderator: {ctx.author}\n Reason: {str(reason)}\n')
-            eObj = await embed(ctx, colour = 0xFF0000, author = f'[TEMPBAN] {member}' ,
-                    avatar = member.avatar_url, description = 'Reason: ' + str(reason), footer = f'Banned until: {time.ctime(unban_time)}')
+            channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
+            # embed to send user
+            duration = f'{duration[:-1]} {unit}'
+            eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been banned for {duration}',
+                avatar = member.avatar_url, description = f'**Reason: **{reason}')
+            # embed for logging channel
+            mod_name = f'<@{self.bot.user.id}>' if automod else f'<@{ctx.author.id}>'
+            content = [('User', f'<@{member.id}>'), ('Moderator', str(mod_name)), ('Reason', reason), ('Duration', duration)]
+            eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[BAN] {member}' ,
+                avatar = member.avatar_url, content = content, inline = True)
+            # log warning
+            logger.info(f'[BAN] {member}\n Moderator: {mod_name}\n Reason: {reason}\n Duration: {duration}')
+            # send embeds if valid
             if eObj is not False:
                 await ctx.send(embed = eObj)
-                await channel.send(embed = eObj)
+            if eObj_log is not False:
+                await channel.send(embed = eObj_log)
             # backup data in case of server outage
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
@@ -209,9 +222,9 @@ class Moderator(commands.Cog):
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             # embed to send user
             eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been warned',
-                avatar = member.avatar_url, description = f'**REASON: **{reason}')
+                avatar = member.avatar_url, description = f'**Reason: **{reason}')
             # embed for logging channel
-            mod_name = f'<@{self.bot.user.id}>' if automod else ctx.author
+            mod_name = f'<@{self.bot.user.id}>' if automod else f'<@{ctx.author.id}>'
             content = [('User', f'<@{member.id}>'), ('Moderator', str(mod_name)), ('Reason', reason)]
             if automod and message:
                 content.append(('Channel', f'<#{ctx.channel.id}>'))
@@ -240,6 +253,12 @@ class Moderator(commands.Cog):
             INSERT INTO infractions(member_id, infraction_id, infraction, date)
             VALUES(?, ?, ?, ?)''', (member.id, infraction_id, str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
             await db.commit()
+            # Check how many infractions member has now
+            await cursor.execute(f'SELECT COUNT(*) FROM infractions WHERE member_id = {member.id}')
+            infraction_count = await cursor.fetchone()
+            # tempban for 24 hours if 3 or more infractions
+            if infraction_count >= 3:
+                await ctx.invoke(self.tempban, member, reason = 'Too many infractions', duration = '24h')         
             # close connection
             await cursor.close()
             await db.close()   
