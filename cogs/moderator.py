@@ -203,7 +203,7 @@ class Moderator(commands.Cog):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
             await ctx.send('no u')
-        elif member.id == ctx.author.id or automod:
+        elif member.id == ctx.author.id and not automod:
             await ctx.send("You can't warn yourself")
         elif 'ban_members' in user_perms or automod:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
