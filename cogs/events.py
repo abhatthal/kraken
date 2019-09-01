@@ -94,16 +94,8 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        ctx = await self.bot.get_context(message)
         if self.bot.user.id != message.author.id:
-            # Auto Moderation
-            for word in settings.BLACKLIST:
-                if word in message.content.lower():
-                    warn = self.bot.get_command('warn')
-                    await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
-                    # at most one 'Bad word usage' warning per message
-                    break
-
+            ctx = await self.bot.get_context(message)
             # Event Messages outside of Debate
             if message.channel.id != settings.DEBATE_CHANNEL:
                 bot_messages = []
@@ -133,6 +125,15 @@ class Events(commands.Cog):
                 if message.channel.id in (settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL):
                     await message.add_reaction('✅')
                     await message.add_reaction('❌')
+
+            # Auto Moderation
+            for word in settings.BLACKLIST:
+                if word in message.content.lower():
+                    await message.delete()
+                    warn = self.bot.get_command('warn')
+                    await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
+                    # at most one 'Bad word usage' warning per message
+                    break
 
 
 def setup(bot):

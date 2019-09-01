@@ -207,19 +207,20 @@ class Moderator(commands.Cog):
             await ctx.send("You can't warn yourself")
         elif 'ban_members' in user_perms or automod:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
-            logger.info(f'[WARN] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             # embed to send user
-            eObj = await embed(ctx, colour = 0xFFA000, title = 'ATTENTION:', author = member,
-                avatar = member.avatar_url, description = str(reason), footer = 'Moderator Warning')
+            eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been warned',
+                avatar = member.avatar_url, description = f'**REASON: **{reason}')
             # embed for logging channel
-            mod_name = settings.BOT_NAME if automod else ctx.author
+            mod_name = f'<@{self.bot.user.id}>' if automod else ctx.author
             content = [('User', f'<@{member.id}>'), ('Moderator', str(mod_name)), ('Reason', reason)]
             if automod and message:
-                content.append(('Channel', f'#{ctx.channel.name}'))
+                content.append(('Channel', f'<#{ctx.channel.id}>'))
                 content.append(('Message', message))
             eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[WARN] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
-            # send if valid
+            # log warning
+            logger.info(f'[WARN] {member}\n Moderator: {mod_name}\n Reason: {reason}\n')
+            # send embeds if valid
             if eObj is not False:
                 await ctx.send(embed = eObj)
             if eObj_log is not False:
