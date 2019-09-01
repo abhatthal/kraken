@@ -101,7 +101,7 @@ class Events(commands.Cog):
                 if word in message.content.lower():
                     await ctx.send(f'<@{message.author.id}>: BAD WORD REEEE')
                     warn = self.bot.get_command('warn')
-                    await ctx.invoke(warn, member = message.author, reason = 'Bad word usage')
+                    await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True)
 
             # Event Messages outside of Debate
             if message.channel.id != settings.DEBATE_CHANNEL:
