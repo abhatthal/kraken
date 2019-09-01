@@ -238,7 +238,7 @@ class Moderator(commands.Cog):
             elif member.id == ctx.author.id:
                 await ctx.send("You can't warn yourself")
             elif 'ban_members' in user_perms:
-                
+                do_warn()
             else:
                 await ctx.send(f"You're not allowed to warn anybirdie! {settings.ASAMI_EMOJI}")
 
