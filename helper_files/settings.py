@@ -35,3 +35,4 @@ ASAMI_EMOJI = '<:Asami:610219714140045376>'
 # Blacklist
 with open('blacklist.json', 'r') as f:
     BLACKLIST = json.load(f)
+    f.close()

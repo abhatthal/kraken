@@ -98,7 +98,7 @@ class Events(commands.Cog):
             # Auto Moderation
             for word in settings.BLACKLIST:
                 if word in message.content.lower():
-                    await ctx.send("BAD WORD REEEE")
+                    await message.channel.send("BAD WORD REEEE")
 
             # Event Messages outside of Debate
             if message.channel.id != settings.DEBATE_CHANNEL:
