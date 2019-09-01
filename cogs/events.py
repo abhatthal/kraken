@@ -25,7 +25,7 @@ class Events(commands.Cog):
             member_id INTEGER,
             infraction_id INTEGER, 
             infraction TEXT,
-            date DATE
+            warn_time INTEGER
             )
             ''')
         await cursor.execute('''

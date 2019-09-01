@@ -266,8 +266,8 @@ class Moderator(commands.Cog):
                 infraction_id = infraction_id[0] + 1
             # insert data
             await cursor.execute('''
-            INSERT INTO infractions(member_id, infraction_id, infraction, date)
-            VALUES(?, ?, ?, ?)''', (member.id, infraction_id, str(reason), str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))))
+            INSERT INTO infractions(member_id, infraction_id, infraction, warn_time)
+            VALUES(?, ?, ?, ?)''', ( member.id, infraction_id, str(reason), time.time() ))
             await db.commit()
             # Check how many infractions member has now
             await cursor.execute(f'SELECT COUNT(*) FROM infractions WHERE member_id = {member.id}')
@@ -276,7 +276,7 @@ class Moderator(commands.Cog):
             infraction_count = infraction_count[0]
             # if infraction_count >= 5:
                 # await ctx.invoke(self.ban, member, reason = 'Too many infractions', automod = True)
-            if infraction_count == 3:
+            if infraction_count == 4:
                 await ctx.invoke(self.tempban, member, reason = 'Too many infractions', duration = '24h', automod = True)        
             # close connection
             await cursor.close()
@@ -295,11 +295,11 @@ class Moderator(commands.Cog):
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
             # fetch data
-            await cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE member_id = {member.id}')
+            await cursor.execute(f'SELECT warn_time, infraction_id, infraction FROM infractions WHERE member_id = {member.id}')
             all_rows = await cursor.fetchall()
             msg = ''
             for row in all_rows:
-                msg += f'{row[0]} #{row[1]} {row[2]}\n'
+                msg += f"{datetime.datetime.utcfromtimestamp(row[0]).strftime('%Y-%m-%d %H:%M:%S')} UTC #{row[1]} {row[2]}\n"
             if msg == '':
                 msg = f'No infractions! {settings.ASAMI_EMOJI}'
             # return data
@@ -349,11 +349,11 @@ class Moderator(commands.Cog):
             member_id = int(member_id[0])
             member = ctx.guild.get_member(member_id)
             # get infraction data
-            await cursor.execute(f'SELECT date, infraction_id, infraction FROM infractions WHERE infraction_id = {infraction_id}')
+            await cursor.execute(f'SELECT warn_time, infraction_id, infraction FROM infractions WHERE infraction_id = {infraction_id}')
             all_rows = await cursor.fetchall()
             msg = ''
             for row in all_rows:
-                msg += f'{row[0]} #{row[1]} {row[2]}\n'
+                msg += f"{datetime.datetime.utcfromtimestamp(row[0]).strftime('%Y-%m-%d %H:%M:%S')} UTC #{row[1]} {row[2]}\n"
             # clear infraction
             await cursor.execute(f'DELETE FROM infractions WHERE infraction_id = {infraction_id}')
             await db.commit()
