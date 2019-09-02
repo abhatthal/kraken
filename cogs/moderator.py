@@ -187,7 +187,7 @@ class Moderator(commands.Cog):
                 avatar = member.avatar_url, description = f'**Reason: **{reason}')
             # embed for logging channel
             mod_name = f'<@{self.bot.user.id}>' if automod else f'<@{ctx.author.id}>'
-            content = [('User', f'<@{member.id}>'), ('Moderator', str(mod_name)), ('Reason', reason), ('Duration', duration)]
+            content = [('User', f'<@{member.id}>'), ('Moderator', str(mod_name)), ('Reason', reason), ('Duration', duration, False)]
             eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[BAN] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             # log warning
@@ -243,8 +243,8 @@ class Moderator(commands.Cog):
             mod_name = f'<@{self.bot.user.id}>' if automod else f'<@{ctx.author.id}>'
             content = [('User', f'<@{member.id}>'), ('Moderator', str(mod_name)), ('Reason', reason)]
             if automod and message:
-                content.append(('Channel', f'<#{ctx.channel.id}>'))
-                content.append(('Message', message))
+                content.append(('Channel', f'<#{ctx.channel.id}>', False))
+                content.append(('Message', message, False))
             eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[WARN] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             # log warning
@@ -272,7 +272,7 @@ class Moderator(commands.Cog):
             # Check how many infractions member has now
             await cursor.execute(f'SELECT COUNT(*) FROM infractions WHERE member_id = {member.id}')
             infraction_count = await cursor.fetchone()
-            # tempban for 24 hours if 3 or more infractions
+            # tempban for 24 hours if 4 or more infractions
             infraction_count = infraction_count[0]
             # if infraction_count >= 5:
                 # await ctx.invoke(self.ban, member, reason = 'Too many infractions', automod = True)

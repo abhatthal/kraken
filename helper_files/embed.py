@@ -8,15 +8,16 @@ async def embed(ctx, title = '', content = '', description = '', author = '', co
                 avatar = '', footer = '', inline = False):
     """
     title:<str> Title of the embed 99% of the time it'll be the command name
-    content:<array[tuples]> Array of tuples. Tuple per field of the embed. Field name at index 0 and value at index 1.
+    content:<array[tuples]> Array of tuples. Tuple per field of the embed. Field name at index 0 and value at index 1. Optional inline specification at index 2.
     description:<str> Appears under the title.
     author:<str> Used to indicate user who invoked the command or the bot itself when it makes sense like with the
         echo command.
     colour:<0x......> Used to set the coloured strip on the left side of the embed
-    link: <deprecated>
+    link:<deprecated>
     thumbnail:<str> Url to image to be used in the embed. Thumbnail appears top right corner of the embed.
     avatar:<str> Used to set avatar next to author's name. Must be url.
     footer:<str> Used for whatever.
+    inline:<bool> Specify default inline for each field from content.
     """
     # these are put in place cause of the limits on embed described here
     # https://discordapp.com/developers/docs/resources/channel#embed-limits
@@ -55,5 +56,8 @@ async def embed(ctx, title = '', content = '', description = '', author = '', co
     # embObj.url = link
     # parse content to add fields
     for x in content:
-        embObj.add_field(name = x[0], value = x[1], inline = inline)
+        if len(x) == 3:
+            embObj.add_field(name = x[0], value = x[1], inline = x[2])
+        else:
+            embObj.add_field(name = x[0], value = x[1], inline = inline)
     return embObj
