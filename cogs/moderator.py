@@ -310,15 +310,15 @@ class Moderator(commands.Cog):
             else:
                 msg = msg + f'Infractions in last hour: {recent_infractions}\n'
             # return data
-            eObj = await embed(ctx, title = 'INFRACTIONS:', author = member,
-                avatar = member.avatar_url, description = msg, footer = 'More than 3 infractions within an hour incurs a temporary ban')
+            eObj = await embed(ctx, title = 'Infractions:', author = member,
+                avatar = member.avatar_url, description = msg, footer = 'More than 3 infractions in 1 hour = 24 hour ban')
             if eObj is not False:
                 await ctx.send(embed = eObj)
             # close connection
             await cursor.close()
             await db.close()   
         else:
-            await ctx.send(f"You're not allowed to view infractions! {settings.ASAMI_EMOJI}")
+            await ctx.send(f"You're not allowed to view their infractions! {settings.ASAMI_EMOJI}")
 
 
     @commands.command(description = "removes all of a user's infractions")
