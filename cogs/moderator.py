@@ -308,7 +308,7 @@ class Moderator(commands.Cog):
             if msg == '':
                 msg = f'No infractions! {settings.ASAMI_EMOJI}'
             else:
-                msg = msg + f'Infractions in last hour: {recent_infractions}\n'
+                msg = f'Infractions in last hour: {recent_infractions}\n' + msg
             # return data
             eObj = await embed(ctx, title = 'Infractions:', author = member,
                 avatar = member.avatar_url, description = msg, footer = 'More than 3 infractions in 1 hour = 24 hour ban')
