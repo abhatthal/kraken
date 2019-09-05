@@ -70,7 +70,7 @@ class Events(commands.Cog):
             await asyncio.sleep(time_to_wait)
             eObj = discord.Embed(title = '', type = 'rich')
             eObj.set_author(name = f'[UNBAN] {user}')
-            eObj.colour = 0x05A000
+            eObj.colour = 0x3b745b
             if eObj is not False:
                 # in the event that the user was manually unbanned, just remove from the tempban table
                 try:

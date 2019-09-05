@@ -270,13 +270,15 @@ class Moderator(commands.Cog):
             VALUES(?, ?, ?, ?)''', ( member.id, infraction_id, str(reason), time.time() ))
             await db.commit()
             # Check how many infractions member has now
-            await cursor.execute(f'SELECT COUNT(*) FROM infractions WHERE member_id = {member.id}')
-            infraction_count = await cursor.fetchone()
-            # tempban for 24 hours if 4 or more infractions
-            infraction_count = infraction_count[0]
-            # if infraction_count >= 5:
+            await cursor.execute(f'SELECT warn_time FROM infractions WHERE member_id = {member.id}')
+            all_rows = await cursor.fetchall()
+            recent_infractions = 0
+            for row in all_rows:
+                if time.time() - row[0] <= 60 * 60:
+                    recent_infractions += 1
+            # if recent_infractions >= 5:
                 # await ctx.invoke(self.ban, member, reason = 'Too many infractions', automod = True)
-            if infraction_count == 4:
+            if recent_infractions >= 4:
                 await ctx.invoke(self.tempban, member, reason = 'Too many infractions', duration = '24h', automod = True)        
             # close connection
             await cursor.close()
@@ -298,13 +300,18 @@ class Moderator(commands.Cog):
             await cursor.execute(f'SELECT warn_time, infraction_id, infraction FROM infractions WHERE member_id = {member.id}')
             all_rows = await cursor.fetchall()
             msg = ''
+            recent_infractions = 0
             for row in all_rows:
                 msg += f"{datetime.datetime.utcfromtimestamp(row[0]).strftime('%Y-%m-%d %H:%M:%S')} UTC #{row[1]} {row[2]}\n"
+                if time.time() - row[0] <= 60 * 60:
+                    recent_infractions += 1
             if msg == '':
                 msg = f'No infractions! {settings.ASAMI_EMOJI}'
+            else:
+                msg = msg + f'Infractions in last hour: {recent_infractions}\n'
             # return data
             eObj = await embed(ctx, title = 'INFRACTIONS:', author = member,
-                avatar = member.avatar_url, description = msg)
+                avatar = member.avatar_url, description = msg, footer = 'More than 3 infractions within an hour incurs a temporary ban')
             if eObj is not False:
                 await ctx.send(embed = eObj)
             # close connection
