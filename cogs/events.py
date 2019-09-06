@@ -133,14 +133,16 @@ class Events(commands.Cog):
             # rules don't apply to mods
             if not 'mod' in user_roles and not 'GOD' in user_roles:
                 # Check for bad words
-                extensions = ['', 's']
-                for word in settings.BLACKLIST:
-                    for extension in extensions:
-                        if word + extension in message.content.lower().split(' '):
-                            await message.delete()
-                            await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
-                            # at most one 'Bad word usage' warning per message
-                            break
+                suffixes = ['', 's', ',', '.']
+                prefixes = ['']
+                for bad_word in settings.BLACKLIST:
+                    for suffix in suffixes:
+                        for prefix in prefixes:
+                            if prefix + bad_word + suffix in message.content.lower().split(' '):
+                                await message.delete()
+                                await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
+                                # at most one 'Bad word usage' warning per message
+                                break
 
                 # Check for external links
                 exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL, settings.ART_CHANNEL,
