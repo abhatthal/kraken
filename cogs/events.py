@@ -133,24 +133,29 @@ class Events(commands.Cog):
             # rules don't apply to mods
             if not 'mod' in user_roles and not 'GOD' in user_roles:
                 # Check for bad words
+                extensions = ['', 's']
                 for word in settings.BLACKLIST:
-                    if word in message.content.lower():
-                        await message.delete()
-                        await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
-                        # at most one 'Bad word usage' warning per message
-                        break
+                    for extension in extensions:
+                        if word + extension in message.content.lower().split(' '):
+                            await message.delete()
+                            await ctx.invoke(warn, member = message.author, reason = 'Bad word usage', automod = True, message = message.content)
+                            # at most one 'Bad word usage' warning per message
+                            break
 
                 # Check for external links
                 exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL, settings.ART_CHANNEL,
                 settings.FANART_CHANNEL, settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL, settings.PROPER_CHANNEL]
-                if not message.channel.id in exceptions and ('www.' in message.content.lower() or 'http' in message.content.lower()):
-                    await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
-                    await message.delete()
+                link_identitifers = ['www.', '.com', '.net', '.org', '.ca', 'http://', 'https://']
+                if not message.channel.id in exceptions:
+                    for link_identifier in link_identifiers:
+                        if link_identifier in message.content.lower():
+                            await message.delete()
+                            await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
 
                 # Check for server invites
                 elif 'discord.gg/' in message.content.lower():
-                    await ctx.invoke(warn, member = message.author, reason = 'Posted an invite', automod = True, message = message.content)
                     await message.delete()
+                    await ctx.invoke(warn, member = message.author, reason = 'Posted an invite', automod = True, message = message.content)
 
 
 def setup(bot):
