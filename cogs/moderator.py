@@ -322,7 +322,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to view their infractions! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(aliases = ['clear'], description = "removes all of a user's infractions")
+    @commands.command(description = "removes all of a user's infractions")
     async def clear_infractions(self, ctx, member : discord.Member):
         user_perms = await getListOfUserPerms(ctx)
         if 'ban_members' in user_perms:
@@ -425,7 +425,29 @@ class Moderator(commands.Cog):
                 avatar = member.avatar_url, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
+            # log infraction clear
+            logger.info(f'[BAN WORD] {member}\n Word: {word}\n Moderator: {ctx.author}\n')
+        else:
+            await ctx.send(f"You can't ban words! {settings.ASAMI_EMOJI}")
 
+
+    @commands.command(description = "Removes a word from blacklist")
+    async def unban_word(self, ctx, word):
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        if 'mod' in user_roles or 'GOD' in user_roles:
+            if word in settings.BLACKLIST:
+                settings.BLACKLIST.remove(word)
+                with open('blacklist.json', 'w') as f:
+                    json.dump(settings.BLACKLIST, f)
+                    f.close()
+                msg = f'The word, "{word}" has been unbanned.'
+            else:
+                msg = 'Oops! That word was not banned.'
+            eObj = await embed(ctx, title = 'Word Unban', author = member,
+                avatar = member.avatar_url, description = msg)
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            logger.info(f'[UNBAN WORD] {member}\n Word: {word}\n Moderator: {ctx.author}\n')
         else:
             await ctx.send(f"You can't ban words! {settings.ASAMI_EMOJI}")
 
