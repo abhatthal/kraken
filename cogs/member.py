@@ -4,7 +4,7 @@ import os
 from discord.ext import commands
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
-import requests
+import aiohttp
 import json
 from helper_files.embed import embed
 import helper_files.settings as settings
@@ -241,10 +241,14 @@ class Member(commands.Cog):
 
     @commands.command(description = "Get a random joke")
     async def joke(self, ctx):
-        joke = requests.get('https://icanhazdadjoke.com)
-        joke = joke.json()
+        headers = {'Accept':'application/json'}
+        async with aiohttp.ClientSession(headers = headers) as cs:
+            async with cs.get('https://icanhazdadjoke.com') as r:
+                res = await r.json()
+
+        await ctx.send(res['slideshow']['author'])
         eObj = await embed(ctx, title = 'Joke', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR,
-        description = joke['joke'], footer = 'Ha!')
+        description = res['joke'], footer = 'Ha!')
         if eObj is not False:
             await ctx.send(embed = eObj)
 
