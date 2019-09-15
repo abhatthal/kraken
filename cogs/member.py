@@ -4,6 +4,8 @@ import os
 from discord.ext import commands
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
+import requests
+import json
 from helper_files.embed import embed
 import helper_files.settings as settings
 
@@ -233,6 +235,16 @@ class Member(commands.Cog):
             msg += word + '\n'
         eObj = await embed(ctx, title = 'Bad Words', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = msg, 
             footer = 'Saying any of the above words will result in a warning.')
+        if eObj is not False:
+            await ctx.send(embed = eObj)
+
+
+    @commands.command(description = "Get a random joke")
+    async def joke(self, ctx):
+        joke = requests.get('https://official-joke-api.appspot.com/random_joke')
+        joke = joke.json()
+        msg = f'{joke['setup']}\n{joke['punchline']}' 
+        eObj = await embed(ctx, title = 'Joke', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
