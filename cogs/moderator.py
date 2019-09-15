@@ -429,7 +429,7 @@ class Moderator(commands.Cog):
                 avatar = avatar, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
-            # log infraction clear
+            # log that word was banned
             logger.info(f'[BAN WORD] {word}\n Moderator: {ctx.author}\n')
         else:
             await ctx.send(f"You can't ban words! {settings.ASAMI_EMOJI}")
@@ -454,6 +454,7 @@ class Moderator(commands.Cog):
                 avatar = avatar, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
+            # log that word was unbanned
             logger.info(f'[UNBAN WORD] {word}\n Moderator: {ctx.author}\n')
         else:
             await ctx.send(f"You can't unban words! {settings.ASAMI_EMOJI}")
