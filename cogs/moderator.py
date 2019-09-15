@@ -410,7 +410,8 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = "Adds a word to blacklist")
-    async def ban_word(self, ctx, word):
+    async def ban_word(self, ctx, word : str):
+        word = word.lower()
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         if 'mod' in user_roles or 'GOD' in user_roles:
             if not word in settings.BLACKLIST:
@@ -418,7 +419,7 @@ class Moderator(commands.Cog):
                 with open('blacklist.json', 'w') as f:
                     json.dump(settings.BLACKLIST, f)
                     f.close()
-                msg = f'The word, "{word}" has been banned.'
+                msg = f'The word "{word}" has been banned.'
             else:
                 msg = 'Oops! That word is already banned.'
             eObj = await embed(ctx, title = 'Word Ban', author = member,
@@ -432,7 +433,8 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = "Removes a word from blacklist")
-    async def unban_word(self, ctx, word):
+    async def unban_word(self, ctx, word : str):
+        word = word.lower()
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         if 'mod' in user_roles or 'GOD' in user_roles:
             if word in settings.BLACKLIST:
@@ -440,7 +442,7 @@ class Moderator(commands.Cog):
                 with open('blacklist.json', 'w') as f:
                     json.dump(settings.BLACKLIST, f)
                     f.close()
-                msg = f'The word, "{word}" has been unbanned.'
+                msg = f'The word "{word}" has been unbanned.'
             else:
                 msg = 'Oops! That word was not banned.'
             eObj = await embed(ctx, title = 'Word Unban', author = member,
@@ -449,7 +451,7 @@ class Moderator(commands.Cog):
                 await ctx.send(embed = eObj)
             logger.info(f'[UNBAN WORD] {member}\n Word: {word}\n Moderator: {ctx.author}\n')
         else:
-            await ctx.send(f"You can't ban words! {settings.ASAMI_EMOJI}")
+            await ctx.send(f"You can't unban words! {settings.ASAMI_EMOJI}")
 
 
 def setup(bot):
