@@ -83,6 +83,8 @@ class Member(commands.Cog):
                     'clear_infraction' : '[infraction id]',
                     'give_bluecan' : '[member]',
                     'remove_bluecan' : '[member]',
+                    'ban_word' : '[word]',
+                    'unban_word' : '[word]',
 
                     # Music
                     'join' : '[channel]',
