@@ -322,7 +322,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to view their infractions! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = "removes all of a user's infractions")
+    @commands.command(aliases = ['clearinfractions'], description = "removes all of a user's infractions")
     async def clear_infractions(self, ctx, member : discord.Member):
         user_perms = await getListOfUserPerms(ctx)
         if 'ban_members' in user_perms:
@@ -346,7 +346,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to clear infractions! {settings.ASAMI_EMOJI}")
 
         
-    @commands.command(description = "removes a specific user infraction")
+    @commands.command(aliases = ['clearinfraction'], description = "removes a specific user infraction")
     async def clear_infraction(self, ctx, infraction_id : int):
         user_perms = await getListOfUserPerms(ctx)
         if 'ban_members' in user_perms:
@@ -381,7 +381,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to clear infractions! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = 'gives a user the Bluecan role')
+    @commands.command(aliases = ['givebluecan'], description = 'gives a user the Bluecan role')
     async def give_bluecan(self, ctx, member : discord.Member):
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_roles' in user_perms:
@@ -395,7 +395,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You can't turn toucans into bluecans! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = "removes a user's Bluecan role")
+    @commands.command(aliases = ['removebluecan'], description = "removes a user's Bluecan role")
     async def remove_bluecan(self, ctx, member : discord.Member):
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_roles' in user_perms:
@@ -409,7 +409,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You can't turn bluecans into toucans! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = "Adds a word to blacklist")
+    @commands.command(aliases = ['banword'], description = "Adds a word to blacklist")
     async def ban_word(self, ctx, word : str):
         word = word.lower()
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
@@ -434,7 +434,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You can't ban words! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = "Removes a word from blacklist")
+    @commands.command(aliases = ['unbanword'], description = "Removes a word from blacklist")
     async def unban_word(self, ctx, word : str):
         word = word.lower()
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
