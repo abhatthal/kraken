@@ -37,6 +37,7 @@ MEMES_CHANNEL = 606929708440879154
 
 # Custom Emojis
 ASAMI_EMOJI = '<:Asami:610219714140045376>'
+KASH_DAB_EMOJI = '<:kash_dab:620410299933261844>'
 
 # Blacklist
 with open('blacklist.json', 'r') as f:
