@@ -218,7 +218,7 @@ class Member(commands.Cog):
                 options += 1
 
             content = [['Options:', optionString]]
-            eObj = await embed(ctx, title = 'Poll:', author = name, avatar = avatar, description = question, content=content)
+            eObj = await embed(ctx, title = 'Poll', author = name, avatar = avatar, description = question, content = content)
             if eObj is not False:
                 pollPost = await ctx.send(embed = eObj)
 
