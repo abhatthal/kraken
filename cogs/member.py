@@ -245,8 +245,7 @@ class Member(commands.Cog):
         async with aiohttp.ClientSession(headers = headers) as cs:
             async with cs.get('https://icanhazdadjoke.com') as r:
                 res = await r.json()
-
-        await ctx.send(res['slideshow']['author'])
+                
         eObj = await embed(ctx, title = 'Joke', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR,
         description = res['joke'], footer = 'Ha!')
         if eObj is not False:
