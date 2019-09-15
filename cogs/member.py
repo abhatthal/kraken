@@ -69,7 +69,7 @@ class Member(commands.Cog):
                     # Member
                     '_8ball' : '[question]',
                     'echo' : '[message]',
-                    'poll' : '["question"] [option A] [option B] ...',
+                    'poll' : '"[question]" ("[option A]" "[option B]" (additional options) ...)',
 
                     # Moderator
                     'clear' : '(optional member) (optional count)',
