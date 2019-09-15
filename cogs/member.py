@@ -244,7 +244,7 @@ class Member(commands.Cog):
         joke = requests.get('https://official-joke-api.appspot.com/random_joke')
         joke = joke.json()
         eObj = await embed(ctx, title = 'Joke', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR,
-        description = joke['setup'] + '\n' + joke['punchline'], footer = 'Haha! ' + settings.KASH_DAB_EMOJI)
+        description = joke['setup'] + '\n' + joke['punchline'], footer = 'Hahaha!')
         if eObj is not False:
             await ctx.send(embed = eObj)
 
