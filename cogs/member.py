@@ -224,5 +224,16 @@ class Member(commands.Cog):
                     await pollPost.add_reaction(numbersUnicode[i])
 
 
+    @commands.command(description = "See all the words you can't say")
+    async def bad_words(self, ctx):
+        msg = ''
+        for word in settings.BLACKLIST:
+            msg += word + '\n'
+        eObj = await embed(ctx, title = 'Bad Words', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = msg, 
+            footer = 'Saying any of the above words or attempting to bypass the filter will result in a warning.')
+        if eObj is not False:
+            await ctx.send(embed = eObj)
+
+
 def setup(bot):
     bot.add_cog(Member(bot))
