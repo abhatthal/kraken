@@ -368,7 +368,7 @@ class Moderator(commands.Cog):
             await cursor.execute(f'DELETE FROM infractions WHERE infraction_id = {infraction_id}')
             await db.commit()
             # close connection
-            await cursor.close()
+            await cursor.close()``
             await db.close()
             # log infraction clear
             logger.info(f'[CLEAR] {member}\n Infraction: #{infraction_id}\n Moderator: {ctx.author}\n')
@@ -400,7 +400,7 @@ class Moderator(commands.Cog):
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_roles' in user_perms:
             bluecan = get(ctx.guild.roles, name = 'Bluecan')
-            eObj = await embed(ctx, title = 'Sorry!', author = f'{member}' ,
+            eObj = await embed(ctx, title = 'Sorry!', author = member,
                 avatar = member.avatar_url, description = 'Your bluecan role has been removed.')
             if eObj is not False:
                 await ctx.send(embed = eObj)
@@ -411,16 +411,23 @@ class Moderator(commands.Cog):
 
     @commands.command(description = "Adds a word to blacklist")
     async def ban_word(self, ctx, word):
-        user_perms = await getListOfUserPerms(ctx)
-        if 'manage_roles' in user_perms:
-            bluecan = get(ctx.guild.roles, name = 'Bluecan')
-            eObj = await embed(ctx, title = 'Sorry!', author = f'{member}' ,
-                avatar = member.avatar_url, description = 'Your bluecan role has been removed.')
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        if 'mod' in user_roles or 'GOD' in user_roles:
+            if not word in settings.BLACKLIST:
+                settings.BLACKLIST.append(word)
+                with open('blacklist.json', 'w') as f:
+                    json.dump(settings.BLACKLIST, f)
+                    f.close()
+                msg = f'The word, "{word}" has been banned.'
+            else:
+                msg = 'Oops! That word is already banned.'
+            eObj = await embed(ctx, title = 'Word Ban', author = member,
+                avatar = member.avatar_url, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
-            await member.remove_roles(bluecan)
+
         else:
-            await ctx.send(f"You can't turn bluecans into toucans! {settings.ASAMI_EMOJI}")
+            await ctx.send(f"You can't ban words! {settings.ASAMI_EMOJI}")
 
 
 def setup(bot):
