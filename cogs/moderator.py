@@ -7,6 +7,7 @@ from helper_files.embed import embed
 from helper_files.listOfRoles import getListOfUserPerms
 import logging
 import helper_files.settings as settings
+import json
 import aiosqlite3
 import datetime
 import time
@@ -321,7 +322,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to view their infractions! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = "removes all of a user's infractions")
+    @commands.command(aliases = ['clear'], description = "removes all of a user's infractions")
     async def clear_infractions(self, ctx, member : discord.Member):
         user_perms = await getListOfUserPerms(ctx)
         if 'ban_members' in user_perms:
@@ -333,7 +334,9 @@ class Moderator(commands.Cog):
             await db.commit()
             # close connection
             await cursor.close()
-            await db.close()   
+            await db.close()
+            # log infraction clear
+            logger.info(f'[CLEAR ALL] {member}\n Moderator: {ctx.author}\n')
             # send message
             eObj = await embed(ctx, title = 'All Infractions Cleared', author = f'{member}' ,
                 avatar = member.avatar_url)
@@ -366,7 +369,9 @@ class Moderator(commands.Cog):
             await db.commit()
             # close connection
             await cursor.close()
-            await db.close()   
+            await db.close()
+            # log infraction clear
+            logger.info(f'[CLEAR] {member}\n Infraction: #{infraction_id}\n Moderator: {ctx.author}\n')
             # return data
             eObj = await embed(ctx, title = f'Infraction #{infraction_id} Cleared', author = f'{member}' ,
                 avatar = member.avatar_url, description = msg)
@@ -392,6 +397,20 @@ class Moderator(commands.Cog):
 
     @commands.command(description = "removes a user's Bluecan role")
     async def remove_bluecan(self, ctx, member : discord.Member):
+        user_perms = await getListOfUserPerms(ctx)
+        if 'manage_roles' in user_perms:
+            bluecan = get(ctx.guild.roles, name = 'Bluecan')
+            eObj = await embed(ctx, title = 'Sorry!', author = f'{member}' ,
+                avatar = member.avatar_url, description = 'Your bluecan role has been removed.')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            await member.remove_roles(bluecan)
+        else:
+            await ctx.send(f"You can't turn bluecans into toucans! {settings.ASAMI_EMOJI}")
+
+
+    @commands.command(description = "Adds a word to blacklist")
+    async def ban_word(self, ctx, word):
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_roles' in user_perms:
             bluecan = get(ctx.guild.roles, name = 'Bluecan')
