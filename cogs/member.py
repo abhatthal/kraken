@@ -232,7 +232,7 @@ class Member(commands.Cog):
         for word in settings.BLACKLIST:
             msg += word + '\n'
         eObj = await embed(ctx, title = 'Bad Words', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = msg, 
-            footer = 'Saying any of the above words or attempting to bypass the filter will result in a warning.')
+            footer = 'Saying any of the above words will result in a warning.')
         if eObj is not False:
             await ctx.send(embed = eObj)
 
