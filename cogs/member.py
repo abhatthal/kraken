@@ -227,7 +227,7 @@ class Member(commands.Cog):
 
 
     @commands.command(description = "See all the words you can't say")
-    async def bad_words(self, ctx):
+    async def badwords(self, ctx):
         msg = ''
         for word in settings.BLACKLIST:
             msg += word + '\n'
