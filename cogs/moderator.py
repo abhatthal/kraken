@@ -368,7 +368,7 @@ class Moderator(commands.Cog):
             await cursor.execute(f'DELETE FROM infractions WHERE infraction_id = {infraction_id}')
             await db.commit()
             # close connection
-            await cursor.close()``
+            await cursor.close()
             await db.close()
             # log infraction clear
             logger.info(f'[CLEAR] {member}\n Infraction: #{infraction_id}\n Moderator: {ctx.author}\n')
@@ -422,8 +422,10 @@ class Moderator(commands.Cog):
                 msg = f'The word "{word}" has been banned.'
             else:
                 msg = 'Oops! That word is already banned.'
-            eObj = await embed(ctx, title = 'Word Ban', author = member,
-                avatar = member.avatar_url, description = msg)
+            user = ctx.author.display_name
+            avatar = ctx.author.avatar_url
+            eObj = await embed(ctx, title = 'Word Ban', author = user,
+                avatar = avatar, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
             # log infraction clear
@@ -445,8 +447,10 @@ class Moderator(commands.Cog):
                 msg = f'The word "{word}" has been unbanned.'
             else:
                 msg = 'Oops! That word was not banned.'
-            eObj = await embed(ctx, title = 'Word Unban', author = member,
-                avatar = member.avatar_url, description = msg)
+            user = ctx.author.display_name
+            avatar = ctx.author.avatar_url
+            eObj = await embed(ctx, title = 'Word Unban', author = user,
+                avatar = avatar, description = msg)
             if eObj is not False:
                 await ctx.send(embed = eObj)
             logger.info(f'[UNBAN WORD] {member}\n Word: {word}\n Moderator: {ctx.author}\n')
