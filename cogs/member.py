@@ -62,7 +62,7 @@ class Member(commands.Cog):
                     'set_balance' : '[count] (optional member)',
                     'make_account' : '(optional member)',
                     'delete_account' : '(optional member)',
-                    'check_balance' : '(optional member)',
+                    'balance' : '(optional member)',
                     'transfer' : '[member] [count]',
                     'fish' : '[count]',
 
