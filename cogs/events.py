@@ -134,8 +134,8 @@ class Events(commands.Cog):
             # rules don't apply to mods
             if not 'mod' in user_roles and not 'GOD' in user_roles:
                 # Check for bad words
-                suffixes = ['', 's', ',', '.']
-                prefixes = ['']
+                suffixes = ['', 's', 'z', ',', '.', '!', '?']
+                prefixes = ['', ',']
                 for bad_word in settings.BLACKLIST:
                     for suffix in suffixes:
                         for prefix in prefixes:
