@@ -247,7 +247,7 @@ class Member(commands.Cog):
                 res = await r.json()
 
         eObj = await embed(ctx, title = 'Joke', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR,
-        description = res['joke'], footer = 'Ha!')
+            description = res['joke'], footer = 'Ha!')
         if eObj is not False:
             await ctx.send(embed = eObj)
 
