@@ -416,6 +416,7 @@ class Moderator(commands.Cog):
         if 'mod' in user_roles or 'GOD' in user_roles:
             if not word in settings.BLACKLIST:
                 settings.BLACKLIST.append(word)
+                settings.BLACKLIST.sort()
                 with open('blacklist.json', 'w') as f:
                     json.dump(settings.BLACKLIST, f)
                     f.close()
