@@ -146,7 +146,8 @@ class Events(commands.Cog):
                                 break
 
                 exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL, settings.ART_CHANNEL,
-                settings.FANART_CHANNEL, settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL, settings.PROPER_CHANNEL]
+                settings.FANART_CHANNEL, settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL, settings.PROPER_CHANNEL,
+                settings.WEEB_CHANNEL, settings.MAGAUS_CHANNEL]
                 link_identifiers = ['www.', '.com', 'http://', 'https://']
 
                 # Check for server invites
