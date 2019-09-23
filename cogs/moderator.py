@@ -420,6 +420,7 @@ class Moderator(commands.Cog):
     async def unmute(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_roles' in user_perms:
+            channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             mute = get(ctx.guild.roles, name = 'Muted')
             eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been unmuted',
                 avatar = member.avatar_url, description = f'**Reason: **{reason}')
