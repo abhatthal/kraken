@@ -396,42 +396,42 @@ class Moderator(commands.Cog):
 
 
     @commands.command(description = 'shhh...')
-    async def mute(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
+    async def mute(self, ctx, member : discord.Member):
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_roles' in user_perms:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             mute = get(ctx.guild.roles, name = 'Muted')
             eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been muted',
-                avatar = member.avatar_url, description = f'**Reason: **{reason}')
+                avatar = member.avatar_url)
             if eObj is not False:
                 await ctx.send(embed = eObj)
-            content = [('User', f'<@{member.id}>'), ('Moderator', str(ctx.author)), ('Reason', reason)]
+            content = [('User', f'<@{member.id}>'), ('Moderator', str(ctx.author))]
             eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[MUTE] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             if eObj_log is not False:
                 await channel.send(embed = eObj_log)
-            logger.info(f'[MUTE] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
+            logger.info(f'[MUTE] {member}\n Moderator: {ctx.author}\n')
             await member.add_roles(mute)
         else:
             await ctx.send(f"You can't mute people! {settings.ASAMI_EMOJI}")
 
 
     @commands.command(description = 'un-shhh...')
-    async def unmute(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
+    async def unmute(self, ctx, member : discord.Member):
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_roles' in user_perms:
             channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             mute = get(ctx.guild.roles, name = 'Muted')
             eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been unmuted',
-                avatar = member.avatar_url, description = f'**Reason: **{reason}')
+                avatar = member.avatar_url)
             if eObj is not False:
                 await ctx.send(embed = eObj)
-            content = [('User', f'<@{member.id}>'), ('Moderator', str(ctx.author)), ('Reason', reason)]
+            content = [('User', f'<@{member.id}>'), ('Moderator', str(ctx.author))]
             eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[UNMUTE] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             if eObj_log is not False:
                 await channel.send(embed = eObj_log)
-            logger.info(f'[UNMUTE] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
+            logger.info(f'[UNMUTE] {member}\n Moderator: {ctx.author}\n')
             await member.remove_roles(mute)
         else:
             await ctx.send(f"You can't unmute people! {settings.ASAMI_EMOJI}")            
