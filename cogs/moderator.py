@@ -399,6 +399,7 @@ class Moderator(commands.Cog):
     async def mute(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
         user_perms = await getListOfUserPerms(ctx)
         if 'manage_roles' in user_perms:
+            channel = self.bot.get_channel(settings.LOGGING_CHANNEL)
             mute = get(ctx.guild.roles, name = 'mute')
             eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been muted',
                 avatar = member.avatar_url, description = f'**Reason: **{reason}')
@@ -408,7 +409,7 @@ class Moderator(commands.Cog):
             eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[MUTE] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             if eObj_log is not False:
-                await ctx.send(embed = eObj)
+                await channel.send(embed = eObj_log)
             logger.info(f'[MUTE] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             await member.add_roles(mute)
         else:
@@ -428,7 +429,7 @@ class Moderator(commands.Cog):
             eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[UNMUTE] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             if eObj_log is not False:
-                await ctx.send(embed = eObj)
+                await channel.send(embed = eObj_log)
             logger.info(f'[UNMUTE] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
             await member.remove_roles(mute)
         else:
