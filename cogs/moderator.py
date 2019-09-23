@@ -404,6 +404,7 @@ class Moderator(commands.Cog):
                 avatar = member.avatar_url, description = f'**Reason: **{reason}')
             if eObj is not False:
                 await ctx.send(embed = eObj)
+            content = [('User', f'<@{member.id}>'), ('Moderator', str(ctx.author)), ('Reason', reason)]
             eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[MUTE] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             if eObj_log is not False:
@@ -423,6 +424,7 @@ class Moderator(commands.Cog):
                 avatar = member.avatar_url, description = f'**Reason: **{reason}')
             if eObj is not False:
                 await ctx.send(embed = eObj)
+            content = [('User', f'<@{member.id}>'), ('Moderator', str(ctx.author)), ('Reason', reason)]
             eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[UNMUTE] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             if eObj_log is not False:
