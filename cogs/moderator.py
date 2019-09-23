@@ -395,6 +395,44 @@ class Moderator(commands.Cog):
             await ctx.send(f"You can't turn toucans into bluecans! {settings.ASAMI_EMOJI}")
 
 
+    @commands.command(description = 'shhh...')
+    async def mute(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
+        user_perms = await getListOfUserPerms(ctx)
+        if 'manage_roles' in user_perms:
+            mute = get(ctx.guild.roles, name = 'mute')
+            eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been muted',
+                avatar = member.avatar_url, description = f'**Reason: **{reason}')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[MUTE] {member}' ,
+                avatar = member.avatar_url, content = content, inline = True)
+            if eObj_log is not False:
+                await ctx.send(embed = eObj)
+            logger.info(f'[MUTE] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
+            await member.add_roles(mute)
+        else:
+            await ctx.send(f"You can't mute people! {settings.ASAMI_EMOJI}")
+
+
+    @commands.command(description = 'un-shhh...')
+    async def unmute(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
+        user_perms = await getListOfUserPerms(ctx)
+        if 'manage_roles' in user_perms:
+            mute = get(ctx.guild.roles, name = 'mute')
+            eObj = await embed(ctx, colour = 0x2D2D2D, author = f'{member} has been unmuted',
+                avatar = member.avatar_url, description = f'**Reason: **{reason}')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[UNMUTE] {member}' ,
+                avatar = member.avatar_url, content = content, inline = True)
+            if eObj_log is not False:
+                await ctx.send(embed = eObj)
+            logger.info(f'[UNMUTE] {member}\n Moderator: {ctx.author}\n Reason: {reason}\n')
+            await member.remove_roles(mute)
+        else:
+            await ctx.send(f"You can't unmute people! {settings.ASAMI_EMOJI}")            
+
+
     @commands.command(aliases = ['removebluecan'], description = "removes a user's Bluecan role")
     async def remove_bluecan(self, ctx, member : discord.Member):
         user_perms = await getListOfUserPerms(ctx)
