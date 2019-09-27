@@ -19,7 +19,7 @@ class Member(commands.Cog):
     async def help(self, ctx, extension = None):
         # only show relevant cogs
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        ignore = ['events.py']
+        ignore = ['events.py', 'music.py']
         if extension == None:
             if not 'mod' in user_roles and not 'GOD' in user_roles:
                 ignore.append('moderator.py')
@@ -85,6 +85,8 @@ class Member(commands.Cog):
                     'clear_infraction' : '[infraction id]',
                     'give_bluecan' : '[member]',
                     'remove_bluecan' : '[member]',
+                    'mute' : '[member]',
+                    'unmute' : '[member]',
                     'ban_word' : '[word]',
                     'unban_word' : '[word]',
 

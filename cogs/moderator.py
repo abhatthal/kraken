@@ -392,7 +392,21 @@ class Moderator(commands.Cog):
                 await ctx.send(embed = eObj)
             await member.add_roles(bluecan)
         else:
-            await ctx.send(f"You can't turn toucans into bluecans! {settings.ASAMI_EMOJI}")
+            await ctx.send(f"You can't turn toucans into bluecans! {settings.ASAMI_EMOJI}")           
+
+
+    @commands.command(aliases = ['removebluecan'], description = "removes a user's Bluecan role")
+    async def remove_bluecan(self, ctx, member : discord.Member):
+        user_perms = await getListOfUserPerms(ctx)
+        if 'manage_roles' in user_perms:
+            bluecan = get(ctx.guild.roles, name = 'Bluecan')
+            eObj = await embed(ctx, title = 'Sorry!', author = member,
+                avatar = member.avatar_url, description = 'Your bluecan role has been removed.')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            await member.remove_roles(bluecan)
+        else:
+            await ctx.send(f"You can't turn bluecans into toucans! {settings.ASAMI_EMOJI}")
 
 
     @commands.command(description = 'shhh...')
@@ -434,21 +448,7 @@ class Moderator(commands.Cog):
             logger.info(f'[UNMUTE] {member}\n Moderator: {ctx.author}\n')
             await member.remove_roles(mute)
         else:
-            await ctx.send(f"You can't unmute people! {settings.ASAMI_EMOJI}")            
-
-
-    @commands.command(aliases = ['removebluecan'], description = "removes a user's Bluecan role")
-    async def remove_bluecan(self, ctx, member : discord.Member):
-        user_perms = await getListOfUserPerms(ctx)
-        if 'manage_roles' in user_perms:
-            bluecan = get(ctx.guild.roles, name = 'Bluecan')
-            eObj = await embed(ctx, title = 'Sorry!', author = member,
-                avatar = member.avatar_url, description = 'Your bluecan role has been removed.')
-            if eObj is not False:
-                await ctx.send(embed = eObj)
-            await member.remove_roles(bluecan)
-        else:
-            await ctx.send(f"You can't turn bluecans into toucans! {settings.ASAMI_EMOJI}")
+            await ctx.send(f"You can't unmute people! {settings.ASAMI_EMOJI}") 
 
 
     @commands.command(aliases = ['banword'], description = "Adds a word to blacklist")
