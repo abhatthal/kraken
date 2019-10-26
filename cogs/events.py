@@ -78,6 +78,10 @@ class Events(commands.Cog):
                     await guild.unban(user)
                     logger.info(f'[UNBAN] {user}\n Moderator: {settings.BOT_NAME}')
                     await logging_channel.send(embed = eObj)
+                    # DM user that they've been unbanned and why
+                    DMmsg = f"You've been unbanned from {guild.name}!\n"
+                    DMmsg += f"Reason: ```Temporary ban has expired```\n"
+                    await self.bot.send_message(member, DMmsg)
                 except:
                     pass
                 await cursor.execute(f'DELETE FROM tempbans WHERE member_id = {row[0]}')
