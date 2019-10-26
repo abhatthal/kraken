@@ -197,7 +197,7 @@ class Moderator(commands.Cog):
             # embed for logging channel
             mod_name = f'<@{self.bot.user.id}>' if automod else f'<@{ctx.author.id}>'
             content = [('User', f'<@{member.id}>'), ('Moderator', str(mod_name)), ('Reason', reason), ('Duration', duration, False)]
-            eObj_log = await embed(ctx, colour = 0xFFA000, author = f'[BAN] {member}' ,
+            eObj_log = await embed(ctx, colour = 0xF04848, author = f'[BAN] {member}' ,
                 avatar = member.avatar_url, content = content, inline = True)
             # log warning
             logger.info(f'[BAN] {member}\n Moderator: {mod_name}\n Reason: {reason}\n Duration: {duration}')
