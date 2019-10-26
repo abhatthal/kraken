@@ -76,6 +76,11 @@ class Moderator(commands.Cog):
                 await ctx.send(embed = eObj)
             if eObj_log is not False:
                 await channel.send(embed = eObj_log)
+            # DM user that they've been kicked and why
+            DMmsg = f"You've been kicked from {ctx.guild.name}!\n"
+            DMmsg += f"Reason: ```{reason}```"
+            await self.bot.send_message(member, DMmsg)
+            # actually kick them
             await member.kick(reason = reason)
         else:
             await ctx.send(f"Hey, don't kick anybirdie! {settings.ASAMI_EMOJI}")
@@ -112,6 +117,10 @@ class Moderator(commands.Cog):
             await cursor.execute(f'DELETE FROM infractions WHERE member_id = {member.id}')
             await cursor.execute(f'DELETE FROM economy WHERE member_id = {member.id}')
             await db.commit()
+            # DM user that they've been banned and why
+            DMmsg = f"You've been banned from {ctx.guild.name}!\n"
+            DMmsg += f"Reason: ```{reason}```"
+            await self.bot.send_message(member, DMmsg)
             # ban member
             await member.ban(reason = reason)
         else:
@@ -143,6 +152,9 @@ class Moderator(commands.Cog):
                         await ctx.send(embed = eObj)
                         await channel.send(embed = eObj)
                         await ctx.guild.unban(user)
+                        # DM user that they've been unbanned and why
+                        DMmsg = f"You've been unbanned from {ctx.guild.name}!\n"
+                        await self.bot.send_message(user, DMmsg)
                     return
             await ctx.send("That user isn't banned")
         else:
@@ -211,6 +223,11 @@ class Moderator(commands.Cog):
             INSERT INTO tempbans(member_id, tempban_id, guild_id, reason, unban_time)
             VALUES(?, ?, ?, ?, ?)''', (member.id, tempban_id, ctx.guild.id, str(reason), unban_time))
             await db.commit()
+            # DM user that they've been banned and why
+            DMmsg = f"You've been banned from {ctx.guild.name}!\n"
+            DMmsg += f"Reason: ```{reason}```\n"
+            DMmsg += f"Duration: ```{duration}```\n"
+            await self.bot.send_message(member, DMmsg)
             # ban and unban after time
             await member.ban(reason = reason)
             await asyncio.sleep(time_seconds)
@@ -222,6 +239,10 @@ class Moderator(commands.Cog):
             await cursor.close()
             await db.close()   
             eObj = await embed(ctx, author = f'[UNBAN] {member}')
+            # DM user that they've been unbanned and why
+            DMmsg = f"You've been unbanned from {ctx.guild.name}!\n"
+            DMmsg += f"Reason: ```Temporary ban of '{duration}' has expired```\n"
+            await self.bot.send_message(member, DMmsg)
             if eObj is not False:
                 await channel.send(embed = eObj)
         else:
