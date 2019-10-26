@@ -81,7 +81,7 @@ class Events(commands.Cog):
                     # DM user that they've been unbanned and why
                     DMmsg = f"You've been unbanned from {guild.name}!\n"
                     DMmsg += f"Reason: ```Temporary ban has expired```\n"
-                    await self.bot.send_message(member, DMmsg)
+                    await member.send(DMmsg)
                 except:
                     pass
                 await cursor.execute(f'DELETE FROM tempbans WHERE member_id = {row[0]}')

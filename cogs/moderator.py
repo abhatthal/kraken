@@ -79,7 +79,7 @@ class Moderator(commands.Cog):
             # DM user that they've been kicked and why
             DMmsg = f"You've been kicked from {ctx.guild.name}!\n"
             DMmsg += f"Reason: ```{reason}```"
-            await self.bot.send_message(member, DMmsg)
+            await member.send(DMmsg)
             # actually kick them
             await member.kick(reason = reason)
         else:
@@ -120,7 +120,7 @@ class Moderator(commands.Cog):
             # DM user that they've been banned and why
             DMmsg = f"You've been banned from {ctx.guild.name}!\n"
             DMmsg += f"Reason: ```{reason}```"
-            await self.bot.send_message(member, DMmsg)
+            await member.send(DMmsg)
             # ban member
             await member.ban(reason = reason)
         else:
@@ -154,7 +154,7 @@ class Moderator(commands.Cog):
                         await ctx.guild.unban(user)
                         # DM user that they've been unbanned and why
                         DMmsg = f"You've been unbanned from {ctx.guild.name}!\n"
-                        await self.bot.send_message(user, DMmsg)
+                        await user.send(DMmsg)
                     return
             await ctx.send("That user isn't banned")
         else:
@@ -227,7 +227,7 @@ class Moderator(commands.Cog):
             DMmsg = f"You've been banned from {ctx.guild.name}!\n"
             DMmsg += f"Reason: ```{reason}```\n"
             DMmsg += f"Duration: ```{duration}```\n"
-            await self.bot.send_message(member, DMmsg)
+            await member.send(DMmsg)
             # ban and unban after time
             await member.ban(reason = reason)
             await asyncio.sleep(time_seconds)
@@ -242,7 +242,7 @@ class Moderator(commands.Cog):
             # DM user that they've been unbanned and why
             DMmsg = f"You've been unbanned from {ctx.guild.name}!\n"
             DMmsg += f"Reason: ```Temporary ban of '{duration}' has expired```\n"
-            await self.bot.send_message(member, DMmsg)
+            await member.send(DMmsg)
             if eObj is not False:
                 await channel.send(embed = eObj)
         else:
