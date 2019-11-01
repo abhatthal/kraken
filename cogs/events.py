@@ -132,7 +132,7 @@ class Events(commands.Cog):
             warn = self.bot.get_command('warn')
             user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
             # rules don't apply to mods
-            if not 'mod' in user_roles and not 'GOD' in user_roles:
+            if not settings.MODERATOR in user_roles and not settings.ADMIN in user_roles:
                 # Check for bad words
                 suffixes = ['', 's', 'z', ',', '.', '!', '?', '*', '**', '***', '||']
                 prefixes = ['', ',', '*', '**', '***', '||']
@@ -147,7 +147,7 @@ class Events(commands.Cog):
 
                 exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL, settings.ART_CHANNEL,
                 settings.FANART_CHANNEL, settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL, settings.PROPER_CHANNEL,
-                settings.WEEB_CHANNEL, settings.MAGAUS_CHANNEL, settings.MUSIC_CHANNEL]
+                settings.WEEB_CHANNEL, settings.MAGAUS_CHANNEL, settings.MUSIC_CHANNEL, settings.GENERAL_VC_CHANNEL, settings.COOKING_CHANNEL]
                 link_identifiers = ['www.', '.com', 'http://', 'https://']
 
                 # Check for server invites

@@ -72,7 +72,7 @@ class Economy(commands.Cog):
         run = True
         if member == None:
             member = ctx.author
-        if not 'GOD' in user_roles:
+        if not settings.ADMIN in user_roles:
             run = False
             msg = f"You don't have permission to set balances! {settings.ASAMI_EMOJI}"
         if run:
@@ -114,7 +114,7 @@ class Economy(commands.Cog):
         run = True
         if member == None:
             member = ctx.author
-        if not 'GOD' in user_roles and member != ctx.author:
+        if not settings.ADMIN in user_roles and member != ctx.author:
             run = False
             msg = f"You don't have permission to make bank accounts for others! {settings.ASAMI_EMOJI}"
         if run:
@@ -163,7 +163,7 @@ class Economy(commands.Cog):
         # check member
         if member == None:
             member = ctx.author
-        if 'GOD' in user_roles:
+        if settings.ADMIN in user_roles:
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
@@ -335,7 +335,7 @@ class Economy(commands.Cog):
         footer = ''
         maintenance = False
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        if maintenance and not 'GOD' in user_roles:
+        if maintenance and not settings.ADMIN in user_roles:
             msg = 'The economy collapsed, we are trying to bail out.'
             footer = 'Command is under maintenance right now!'
         else:
@@ -387,7 +387,7 @@ class Economy(commands.Cog):
         title = 'Honest Bank'
         maintenance = False
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        if maintenance and not 'GOD' in user_roles:
+        if maintenance and not settings.ADMIN in user_roles:
             msg = f"Oof, there's no {CURRENCY_NAME} in the pond."
             footer = 'Command is under maintenance right now!'
         else:
@@ -447,7 +447,7 @@ class Economy(commands.Cog):
 
     async def cog_check(self, ctx):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        return 'mod' in user_roles or 'GOD' in user_roles or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
+        return settings.MODERATOR in user_roles or settings.ADMIN in user_roles or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
 
 
 def setup(bot):
