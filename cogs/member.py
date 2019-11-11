@@ -19,7 +19,7 @@ class Member(commands.Cog):
     async def help(self, ctx, extension = None):
         # only show relevant cogs
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        ignore = ['events.py', 'music.py']
+        ignore = ['events.py'] + settings.DISABLED_COGS
         if extension == None:
             if not settings.MODERATOR in user_roles and not settings.ADMIN in user_roles:
                 ignore.append('moderator.py')

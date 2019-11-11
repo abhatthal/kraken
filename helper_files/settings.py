@@ -49,6 +49,9 @@ KASH_DAB_EMOJI = '<:kash_dab:620410299933261844>'
 MODERATOR = 'mod'
 ADMIN = 'GOD'
 
+# Disabled Cogs
+DISABLED_COGS = ['music.py']
+
 # Blacklist
 with open('blacklist.json', 'r') as f:
     BLACKLIST = json.load(f)

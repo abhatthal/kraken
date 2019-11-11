@@ -8,7 +8,7 @@ bot = commands.Bot(command_prefix = settings.COMMAND_PREFIX, description = setti
 bot.remove_command('help')
 
 for filename in os.listdir('./cogs'):
-    if filename.endswith('.py') and filename != 'music.py':
+    if filename.endswith('.py') and filename not in settings.DISABLED_COGS:
         bot.load_extension(f'cogs.{filename[:-3]}')
 
 if __name__ == '__main__':
