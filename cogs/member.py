@@ -230,7 +230,7 @@ class Member(commands.Cog):
                     await pollPost.add_reaction(numbersUnicode[i])
 
 
-    @commands.command(aliases = ['bad_words'], description = 'See all the words you can't say')
+    @commands.command(aliases = ['bad_words'], description = 'See all the words you can\'t say')
     async def badwords(self, ctx):
         msg = ''
         for word in settings.BLACKLIST:
