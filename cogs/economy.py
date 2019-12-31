@@ -46,9 +46,10 @@ class Economy(commands.Cog):
             owner = self.bot.get_user(settings.OWNER)
             winner = self.bot.get_user(first[1])
             # send DM
-            eObj = await embed(ctx, title = 'Honest Bank Winner', description = f'{winner.name} is in first place with {first[0]} fish!')
-            if eObj is not False:
-                await owner.send(embed = eObj)
+            if (first[0] >= 50000):
+                eObj = await embed(ctx, title = 'Honest Bank Winner', description = f'{winner.name} is in first place with {first[0]} fish!')
+                if eObj is not False:
+                    await owner.send(embed = eObj)
         except:
             pass
 
