@@ -50,7 +50,7 @@ class Economy(commands.Cog):
             eObj = await embed(ctx, title = 'Honest Bank Winner', description = f'{winner.name} is in first place!')
             if eObj is not False:
                 await ctx.send(embed = eObj)
-        except Exception(e):
+        except Exception as e:
             print(e)
 
 
