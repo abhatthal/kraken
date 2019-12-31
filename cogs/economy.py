@@ -29,7 +29,32 @@ class Economy(commands.Cog):
         self.bot = bot
 
 
-    @commands.command(aliases = ['updateroles'], description = "manually updates economy roles")
+    @commands.command(aliases = ['50k'], description = 'Check for someone with more than 50k fish')
+    async def _50k(self, ctx):
+        try:
+            # connect to database
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
+            # get first place
+            await cursor.execute(f'SELECT MAX(currency), member_id FROM economy')
+            # fetch data
+            first = await cursor.fetchone()
+            # close connection
+            await cursor.close()
+            await db.close()
+            # Get owner account
+            owner = self.get_user(settings.OWNER)
+            # get winner account
+            winner = self.get_user(first[0])
+            # send DM
+            eObj = await embed(ctx, title = 'Honest Bank Winner', description = f'{winner.name} is in first place!')
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+        except:
+            pass
+
+
+    @commands.command(aliases = ['updateroles'], description = 'manually updates economy roles')
     async def update_roles(self, ctx, member : discord.Member = None):
         if member == None:
             member = ctx.author

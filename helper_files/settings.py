@@ -49,6 +49,8 @@ KASH_DAB_EMOJI = '<:kash_dab:620410299933261844>'
 MODERATOR = 'mod'
 ADMIN = 'GOD'
 
+OWNER = 330178605936017408
+
 # Disabled Cogs
 DISABLED_COGS = ['music.py']
 
