@@ -210,11 +210,7 @@ class Economy(commands.Cog):
                 await member.remove_roles(numberone)
                 await member.remove_roles(top10)
                 # delete account
-                await ctx.send(f'Member ID = {member.id}')
-
                 await cursor.execute(f'DELETE FROM economy WHERE member_id = {member.id}')
-
-                await ctx.send(f'Member ID = {member.id}')
 
                 await db.commit()
                 # close connection
