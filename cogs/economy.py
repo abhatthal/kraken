@@ -29,7 +29,7 @@ class Economy(commands.Cog):
         self.bot = bot
 
 
-    @commands.command(description = "manually updates economy roles")
+    @commands.command(aliases = ['updateroles'], description = "manually updates economy roles")
     async def update_roles(self, ctx, member : discord.Member = None):
         if member == None:
             member = ctx.author
@@ -65,7 +65,7 @@ class Economy(commands.Cog):
             pass
                 
 
-    @commands.command(description = "Admins Only: Change a user's balance")
+    @commands.command(aliases = ['setbalance'], description = "Admins Only: Change a user's balance")
     async def set_balance(self, ctx, amount : int, member : discord.Member = None):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         # check member
@@ -107,7 +107,7 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = f'Make yourself a bank account to keep your {CURRENCY_NAME}. Admins can add an optional member.')
+    @commands.command(aliases = ['makeaccount'], description = f'Make yourself a bank account to keep your {CURRENCY_NAME}. Admins can add an optional member.')
     async def make_account(self, ctx, member : discord.Member = None):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         # check member
@@ -154,7 +154,7 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = f'Admins Only: Deletes an account and all of its {CURRENCY_NAME}')
+    @commands.command(aliases = ['deleteaccount'], description = f'Admins Only: Deletes an account and all of its {CURRENCY_NAME}')
     async def delete_account(self, ctx, member : discord.Member = None):
         # Roles
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
@@ -198,7 +198,7 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(aliases=['check_balance'], description = f'see how many {CURRENCY_NAME} you or someone else have')
+    @commands.command(aliases = ['check_balance'], description = f'see how many {CURRENCY_NAME} you or someone else have')
     async def balance(self, ctx, member : discord.Member = None):
         # check member
         if member == None:
@@ -299,7 +299,7 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = 'Returns top ten richest toucans')
+    @commands.command((aliases = ['lb'], description = 'Returns top ten richest toucans')
     async def leaderboard(self, ctx):
         # connect to database
         db = await aiosqlite3.connect(settings.DATABASE)
