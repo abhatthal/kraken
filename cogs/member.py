@@ -238,8 +238,8 @@ class Member(commands.Cog):
         eObj = await embed(ctx, title = 'Bad Words', author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = msg, 
             footer = 'Saying any of the above words will result in a warning.')
         if eObj is not False:
-            await ctx.send(embed = eObj)
-
+            # await ctx.send(embed = eObj)
+            await ctx.author.send(embed = eObj)
 
     @commands.command(description = "Get a random dad joke")
     async def joke(self, ctx):
