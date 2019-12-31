@@ -189,9 +189,11 @@ class Economy(commands.Cog):
         if member == None:
             member = ctx.author
         if settings.ADMIN in user_roles:
+            await ctx.send(member)
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
+            await ctx.send(member)
             # check if user has an account
             await cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
             account = await cursor.fetchone()
