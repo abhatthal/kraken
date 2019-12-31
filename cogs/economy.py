@@ -42,16 +42,15 @@ class Economy(commands.Cog):
             # close connection
             await cursor.close()
             await db.close()
-            # Get owner account
+            # get users
             owner = self.bot.get_user(settings.OWNER)
-            # get winner account
             winner = self.bot.get_user(first[1])
             # send DM
-            eObj = await embed(ctx, title = 'Honest Bank Winner', description = f'{winner.name} is in first place!')
+            eObj = await embed(ctx, title = 'Honest Bank Winner', description = f'{winner.name} is in first place with {first[0]} fish!')
             if eObj is not False:
-                await ctx.send(embed = eObj)
-        except Exception as e:
-            print(e)
+                await owner.send(embed = eObj)
+        except:
+            pass
 
 
     @commands.command(aliases = ['updateroles'], description = 'manually updates economy roles')
