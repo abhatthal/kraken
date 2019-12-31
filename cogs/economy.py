@@ -45,7 +45,7 @@ class Economy(commands.Cog):
             # Get owner account
             owner = self.get_user(settings.OWNER)
             # get winner account
-            winner = self.get_user(first[0])
+            winner = self.get_user(first[1])
             # send DM
             eObj = await embed(ctx, title = 'Honest Bank Winner', description = f'{winner.name} is in first place!')
             if eObj is not False:
