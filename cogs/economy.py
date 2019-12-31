@@ -182,15 +182,13 @@ class Economy(commands.Cog):
     @commands.command(aliases = ['deleteaccount'], description = f'Admins Only: Deletes an account and all of its {CURRENCY_NAME}')
     async def delete_account(self, ctx, member : discord.Member = None):
         # Roles
-        user_roles = [role.name for role in sorted(ctx.author.roles, key = lambda x: int(x.position), reverse = True)]
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         top10 = get(ctx.guild.roles, id = top10_ID)
         numberone = get(ctx.guild.roles, id = numberone_ID)
         # check member
         if member == None:
             member = ctx.author
         if settings.ADMIN in user_roles:
-            # TEST
-            await ctx.send(member.id)
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
