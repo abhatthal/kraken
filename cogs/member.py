@@ -105,6 +105,8 @@ class Member(commands.Cog):
                             usage_string = ''
                         if command.name == '_8ball':
                             content.append((f'{settings.COMMAND_PREFIX}{command.name[1:]} {usage_string}', command.description))
+                        elif command.name == '_50k':
+                            pass
                         else:
                             content.append((f'{settings.COMMAND_PREFIX}{command.name} {usage_string}', command.description))
 
