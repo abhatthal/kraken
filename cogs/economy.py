@@ -195,6 +195,7 @@ class Economy(commands.Cog):
             await ctx.send(f'Member ID = {member.id}')
             # check if user has an account
             await cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
+            await ctx.send(f'Member ID = {member.id}')
             account = await cursor.fetchone()
             account = account[0]
             if account < 1:
