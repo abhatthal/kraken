@@ -190,7 +190,7 @@ class Economy(commands.Cog):
             member = ctx.author
         if settings.ADMIN in user_roles:
             # TEST
-            await ctx.send(member.name)
+            await ctx.send(member.id)
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
