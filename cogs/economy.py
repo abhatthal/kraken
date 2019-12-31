@@ -192,9 +192,9 @@ class Economy(commands.Cog):
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
-            await ctx.send(member.id)
+            await ctx.send(f'Member ID = {member.id}')
             # check if user has an account
-            await cursor.execute(f"SELECT COUNT(*) FROM economy WHERE member_id = {member.id}")
+            await cursor.execute(f'SELECT COUNT(*) FROM economy WHERE member_id = {member.id}')
             account = await cursor.fetchone()
             account = account[0]
             if account < 1:
