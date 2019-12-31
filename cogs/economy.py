@@ -50,8 +50,8 @@ class Economy(commands.Cog):
             eObj = await embed(ctx, title = 'Honest Bank Winner', description = f'{winner.name} is in first place!')
             if eObj is not False:
                 await ctx.send(embed = eObj)
-        except:
-            pass
+        except Exception(e):
+            print(e)
 
 
     @commands.command(aliases = ['updateroles'], description = 'manually updates economy roles')
