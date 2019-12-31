@@ -18,7 +18,7 @@ class Member(commands.Cog):
     @commands.command(pass_context = True)
     async def help(self, ctx, extension = None):
         # only show relevant cogs
-        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        user_roles = [role.name for role in sorted(ctx.author.roles, key = lambda x: int(x.position), reverse = True)]
         ignore = ['events.py'] + settings.DISABLED_COGS
         if extension == None:
             if not settings.MODERATOR in user_roles and not settings.ADMIN in user_roles:
@@ -153,7 +153,7 @@ class Member(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = 'returns how many members are on the server')
+    @commands.command(aliases = ['member_count'], description = 'returns how many members are on the server')
     async def membercount(self, ctx):
         id = self.bot.get_guild(ctx.guild.id)
         eObj = await embed(ctx, author = settings.BOT_NAME, avatar = settings.BOT_AVATAR, description = f'Member Count: {id.member_count}')
@@ -210,15 +210,15 @@ class Member(commands.Cog):
             return
         else:
             questions = list(questions)
-            optionString = "\n"
-            numbersEmoji = [":zero:", ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:",
-                            ":nine:", ":keycap_ten:"]
-            numbersUnicode = [u"0\u20e3", u"1\u20e3", u"2\u20e3", u"3\u20e3", u"4\u20e3", u"5\u20e3", u"6\u20e3",
-                              u"7\u20e3", u"8\u20e3", u"9\u20e3", u"\U0001F51F"]
+            optionString = '\n'
+            numbersEmoji = [':zero:', ':one:', ':two:', ':three:', ':four:', ':five:', ':six:', ':seven:', ':eight:',
+                            ':nine:', ':keycap_ten:']
+            numbersUnicode = [u'0\u20e3', u'1\u20e3', u'2\u20e3', u'3\u20e3', u'4\u20e3', u'5\u20e3', u'6\u20e3',
+                              u'7\u20e3', u'8\u20e3', u'9\u20e3', u'\U0001F51F']
             question = questions.pop(0)
             options = 0
             for m, n in zip(numbersEmoji, questions):
-                optionString += m + ": " + n + "\n"
+                optionString += m + ': ' + n + '\n'
                 options += 1
 
             content = [['Options:', optionString]]
@@ -230,7 +230,7 @@ class Member(commands.Cog):
                     await pollPost.add_reaction(numbersUnicode[i])
 
 
-    @commands.command(description = "See all the words you can't say")
+    @commands.command(aliases = ['bad_words'], description = 'See all the words you can't say')
     async def badwords(self, ctx):
         msg = ''
         for word in settings.BLACKLIST:
