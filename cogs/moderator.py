@@ -301,7 +301,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to warn anybirdie! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = "returns all a user's infractions")
+    @commands.command(description = "returns all of a user's infractions")
     async def infractions(self, ctx, member : discord.Member = None):
         user_perms = await getListOfUserPerms(ctx)
         if member == None:

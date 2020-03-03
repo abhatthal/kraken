@@ -224,7 +224,7 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(aliases = ['bal', 'check_balance'], description = f'see how many {CURRENCY_NAME} you or someone else have')
+    @commands.command(aliases = ['bal'], description = f'see how many {CURRENCY_NAME} you or someone else have')
     async def balance(self, ctx, member : discord.Member = None):
         # check member
         if member == None:
