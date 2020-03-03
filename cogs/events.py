@@ -145,11 +145,11 @@ class Events(commands.Cog):
                                 # at most one 'Bad word usage' warning per message
                                 break
 
-                exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL, settings.ART_CHANNEL,
-                 settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL, settings.PROPER_CHANNEL,
-                settings.WEEB_CHANNEL, settings.MAGAUS_CHANNEL, settings.MUSIC_CHANNEL, settings.GENERAL_VC_CHANNEL,
-                settings.COOKING_CHANNEL, settings.GAMING_CHANNEL]
-                link_identifiers = ['www.', '.com', 'http://', 'https://']
+                # exceptions = [settings.DEBATE_CHANNEL, settings.RETARDVILLE_CHANNEL, settings.MEMES_CHANNEL, settings.ART_CHANNEL,
+                #  settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL, settings.PROPER_CHANNEL,
+                # settings.WEEB_CHANNEL, settings.MAGAUS_CHANNEL, settings.MUSIC_CHANNEL, settings.GENERAL_VC_CHANNEL,
+                # settings.COOKING_CHANNEL, settings.GAMING_CHANNEL]
+                # link_identifiers = ['www.', '.com', 'http://', 'https://']
 
                 # Check for server invites
                 if 'discord.gg/' in message.content.lower():
@@ -157,12 +157,12 @@ class Events(commands.Cog):
                     await ctx.invoke(warn, member = message.author, reason = 'Posted an invite', automod = True, message = message.content)
 
                 # Check for external links
-                if not message.channel.id in exceptions:
-                    for link_identifier in link_identifiers:
-                        if link_identifier in message.content.lower():
-                            await message.delete()
-                            await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
-                            break
+                # if not message.channel.id in exceptions:
+                #     for link_identifier in link_identifiers:
+                #         if link_identifier in message.content.lower():
+                #             await message.delete()
+                #             await ctx.invoke(warn, member = message.author, reason = 'Posted a link', automod = True, message = message.content)
+                #             break
 
 
 def setup(bot):
