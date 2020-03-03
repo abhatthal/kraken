@@ -2,3 +2,4 @@ __pycache__
 
 bot.log
 honestbear.db
+blacklist.json
