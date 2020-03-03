@@ -4,12 +4,14 @@ from numpy.random import choice # for choosing from a given numerical ditributio
 import aiosqlite3
 import time # time.time() timestamp
 import datetime # datetime.timedelta
+import calendar
 from discord.ext import commands
 from discord.utils import get
 # Shamelessly took helper_files from Wall-E
 # https://github.com/CSSS/wall_e/tree/master/helper_files
 from helper_files.embed import embed
 import helper_files.settings as settings
+from shutil import copyfile # for backing up database
 
 CURRENCY_NAME = 'fish'
 CURRENCY_IMG = '🐟'
@@ -473,9 +475,48 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
+    @commands.command(aliases = ['crasheconomy'], description = "Admins Only: Clears Economy Table")
+    async def crash_economy(self, ctx):
+        # Roles
+        top10 = get(ctx.guild.roles, id = top10_ID)
+        numberone = get(ctx.guild.roles, id = numberone_ID)
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+
+        if settings.ADMIN in user_roles or ctx.author.id == settings.OWNER:
+            # connect to database
+            db = await aiosqlite3.connect(settings.DATABASE)
+            cursor = await db.cursor()
+            # get all users in economy
+            await cursor.execute('SELECT member_id FROM economy')
+            # fetch data
+            users = await cursor.fetchall()
+            for row_index in range(len(users)):
+                # try in case member wasn't found
+                try:
+                    member = ctx.guild.get_member(users[row_index][0])
+                    # delete roles
+                    await member.remove_roles(numberone)
+                    await member.remove_roles(top10)
+                except:
+                    pass
+            # backup entire database
+            copyfile(f'./{settings.DATABASE}', f'../Backups/{calendar.timegm(time.gmtime())}.db')
+            # delete all entries in economy table
+            await cursor.execute('DELETE FROM economy')
+            # close connection
+            await cursor.close()
+            await db.close()
+        else:
+            msg = f"You don't have permission to crash the economy! {settings.ASAMI_EMOJI}"
+        # send user message
+        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
+        if eObj is not False:
+            await ctx.send(embed = eObj)
+
+
     async def cog_check(self, ctx):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        return settings.MODERATOR in user_roles or settings.ADMIN in user_roles or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
+        return settings.MODERATOR in user_roles or settings.ADMIN in user_roles or ctx.author.id == settings.OWNER or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
 
 
 def setup(bot):
