@@ -88,6 +88,8 @@ class Economy(commands.Cog):
                 await member.remove_roles(top10)
         except:
             pass
+        # check for a winner
+        await ctx.invoke(self._50k)
                 
 
     @commands.command(aliases = ['setbalance'], description = "Admins Only: Change a user's balance")
