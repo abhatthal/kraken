@@ -394,32 +394,32 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to clear infractions! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(aliases = ['givebluecan'], description = 'gives a user the Bluecan role')
-    async def give_bluecan(self, ctx, member : discord.Member):
-        user_perms = await getListOfUserPerms(ctx)
-        if 'manage_roles' in user_perms:
-            bluecan = get(ctx.guild.roles, name = 'Bluecan')
-            eObj = await embed(ctx, title = 'Congrats!', author = f'{member}' ,
-                avatar = member.avatar_url, description = "You're a bluecan now!")
-            if eObj is not False:
-                await ctx.send(embed = eObj)
-            await member.add_roles(bluecan)
-        else:
-            await ctx.send(f"You can't turn toucans into bluecans! {settings.ASAMI_EMOJI}")           
+    # @commands.command(aliases = ['givebluecan'], description = 'gives a user the Bluecan role')
+    # async def give_bluecan(self, ctx, member : discord.Member):
+    #     user_perms = await getListOfUserPerms(ctx)
+    #     if 'manage_roles' in user_perms:
+    #         bluecan = get(ctx.guild.roles, name = 'Bluecan')
+    #         eObj = await embed(ctx, title = 'Congrats!', author = f'{member}' ,
+    #             avatar = member.avatar_url, description = "You're a bluecan now!")
+    #         if eObj is not False:
+    #             await ctx.send(embed = eObj)
+    #         await member.add_roles(bluecan)
+    #     else:
+    #         await ctx.send(f"You can't turn toucans into bluecans! {settings.ASAMI_EMOJI}")           
 
 
-    @commands.command(aliases = ['removebluecan'], description = "removes a user's Bluecan role")
-    async def remove_bluecan(self, ctx, member : discord.Member):
-        user_perms = await getListOfUserPerms(ctx)
-        if 'manage_roles' in user_perms:
-            bluecan = get(ctx.guild.roles, name = 'Bluecan')
-            eObj = await embed(ctx, title = 'Sorry!', author = member,
-                avatar = member.avatar_url, description = 'Your bluecan role has been removed.')
-            if eObj is not False:
-                await ctx.send(embed = eObj)
-            await member.remove_roles(bluecan)
-        else:
-            await ctx.send(f"You can't turn bluecans into toucans! {settings.ASAMI_EMOJI}")
+    # @commands.command(aliases = ['removebluecan'], description = "removes a user's Bluecan role")
+    # async def remove_bluecan(self, ctx, member : discord.Member):
+    #     user_perms = await getListOfUserPerms(ctx)
+    #     if 'manage_roles' in user_perms:
+    #         bluecan = get(ctx.guild.roles, name = 'Bluecan')
+    #         eObj = await embed(ctx, title = 'Sorry!', author = member,
+    #             avatar = member.avatar_url, description = 'Your bluecan role has been removed.')
+    #         if eObj is not False:
+    #             await ctx.send(embed = eObj)
+    #         await member.remove_roles(bluecan)
+    #     else:
+    #         await ctx.send(f"You can't turn bluecans into toucans! {settings.ASAMI_EMOJI}")
 
 
     @commands.command(description = 'shhh...')
