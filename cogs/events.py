@@ -99,34 +99,33 @@ class Events(commands.Cog):
         if not message.author.bot:
             ctx = await self.bot.get_context(message)
             # Event Messages outside of Debate
-            if message.channel.id != settings.DEBATE_CHANNEL:
-                bot_messages = []
-                if 'aww man' in message.content.lower() or 'aw man' in message.content.lower():
-                    bot_messages.append(await ctx.send('So we back in the mine'))
-                elif 'creeper' in message.content.lower():
-                    bot_messages.append(await ctx.send('aww man'))
+            bot_messages = []
+            if 'aww man' in message.content.lower() or 'aw man' in message.content.lower():
+                bot_messages.append(await ctx.send('So we back in the mine'))
+            elif 'creeper' in message.content.lower():
+                bot_messages.append(await ctx.send('aww man'))
 
-                if 'owo' in message.content.lower():
-                    bot_messages.append(await ctx.send("OwO What's this?"))
+            if 'owo' in message.content.lower():
+                bot_messages.append(await ctx.send("OwO What's this?"))
 
-                if 'no u' in message.content.lower():
-                    bot_messages.append(await ctx.send('NO U'))
+            if 'no u' in message.content.lower():
+                bot_messages.append(await ctx.send('NO U'))
 
-                if 'uwu' in message.content.lower():
-                    responses = ['urusai!', 'baka', 'uwu dattebayo']
-                    bot_messages.append(await ctx.send(choice(responses)))
+            if 'uwu' in message.content.lower():
+                responses = ['urusai!', 'baka', 'uwu dattebayo']
+                bot_messages.append(await ctx.send(choice(responses)))
 
-                if 'omae wa mo shindeiru' in message.content.lower() or 'お前はもう死んでいる' in message.content.lower():
-                    bot_messages.append(await ctx.send('NANI?!'))
+            if 'omae wa mo shindeiru' in message.content.lower() or 'お前はもう死んでいる' in message.content.lower():
+                bot_messages.append(await ctx.send('NANI?!'))
 
-                # Event Messages are temporary
-                for bot_message in bot_messages:
-                    await bot_message.delete(delay = 5)
-            
-                # Suggestions Voting
-                if message.channel.id in (settings.SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL):
-                    await message.add_reaction('✅')
-                    await message.add_reaction('❌')
+            # Event Messages are temporary
+            for bot_message in bot_messages:
+                await bot_message.delete(delay = 5)
+        
+            # Suggestions Voting
+            if message.channel.id in (settings.VIDEO_SUGGESTIONS_CHANNEL, settings.SERVER_SUGGESTIONS_CHANNEL, settings.EMOJI_SUGGESTIONS_CHANNEL):
+                await message.add_reaction('✅')
+                await message.add_reaction('❌')
 
             # Auto Moderation
             warn = self.bot.get_command('warn')
