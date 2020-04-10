@@ -15,6 +15,7 @@ from shutil import copyfile # for backing up database
 
 CURRENCY_NAME = 'fish'
 CURRENCY_IMG = '🐟'
+BANK_NAME = 'Kraken Bank'
 STARTING_VALUE = 500
 
 # payouts for .fish
@@ -31,14 +32,14 @@ class Economy(commands.Cog):
         self.bot = bot
 
 
-    @commands.command(aliases = ['50k'], description = 'Check for someone with more than 50k fish')
+    @commands.command(aliases = ['50k'], description = f'Check for someone with more than 50k {CURRENCY_NAME}')
     async def _50k(self, ctx):
         try:
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
             # get first place
-            await cursor.execute(f'SELECT MAX(currency), member_id FROM economy')
+            await cursor.execute('SELECT MAX(currency), member_id FROM economy')
             # fetch data
             first = await cursor.fetchone()
             # close connection
@@ -49,7 +50,7 @@ class Economy(commands.Cog):
             winner = self.bot.get_user(first[1])
             # send DM
             if (first[0] >= 50000):
-                eObj = await embed(ctx, title = 'Honest Bank Winner', description = f'{winner.name} is in first place with {first[0]} fish!')
+                eObj = await embed(ctx, title = 'Economy Winner', description = f'{winner.name} is in first place with {first[0]} {CURRENCY_NAME}!')
                 if eObj is not False:
                     await owner.send(embed = eObj)
         except:
@@ -131,7 +132,7 @@ class Economy(commands.Cog):
             # update roles
             await ctx.invoke(self.update_roles, member)
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
+        eObj = await embed(ctx, title = BANK_NAME, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
@@ -177,7 +178,7 @@ class Economy(commands.Cog):
         # send user message
         user = member.display_name
         avatar = member.avatar_url
-        eObj = await embed(ctx, title = 'Honest Bank', author = user,
+        eObj = await embed(ctx, title = BANK_NAME, author = user,
         avatar = avatar, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
@@ -223,7 +224,7 @@ class Economy(commands.Cog):
         else:
             msg = f"You don't have permission to delete bank accounts! {settings.ASAMI_EMOJI}"
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
+        eObj = await embed(ctx, title = BANK_NAME, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
@@ -268,7 +269,7 @@ class Economy(commands.Cog):
         # send user message
         user = member.display_name
         avatar = member.avatar_url
-        eObj = await embed(ctx, title = 'Honest Bank', author = user,
+        eObj = await embed(ctx, title = BANK_NAME, author = user,
         avatar = avatar, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
@@ -323,7 +324,7 @@ class Economy(commands.Cog):
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
-        eObj = await embed(ctx, title = 'Honest Bank', author = user,
+        eObj = await embed(ctx, title = BANK_NAME, author = user,
         avatar = avatar, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
@@ -354,7 +355,7 @@ class Economy(commands.Cog):
                 pass
             row_index += 1
         # send user message
-        eObj = await embed(ctx, inline = True, title = f'{CURRENCY_IMG} Honest Bank Leaderboard {CURRENCY_IMG}', content = content)
+        eObj = await embed(ctx, inline = True, title = f'{CURRENCY_IMG} {BANK_NAME} Leaderboard {CURRENCY_IMG}', content = content)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
@@ -405,7 +406,7 @@ class Economy(commands.Cog):
         # send user message
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
-        eObj = await embed(ctx, title = 'Honest Bank', description = msg, footer = footer, author = user, avatar = avatar)
+        eObj = await embed(ctx, title = BANK_NAME, description = msg, footer = footer, author = user, avatar = avatar)
         if eObj is not False:
             await ctx.send(embed = eObj)
 
@@ -414,7 +415,7 @@ class Economy(commands.Cog):
     async def fish(self, ctx, bet : int):
         msg = ''
         footer = ''
-        title = 'Honest Bank'
+        title = BANK_NAME
         maintenance = False
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         if maintenance and not settings.ADMIN in user_roles:
@@ -466,7 +467,7 @@ class Economy(commands.Cog):
     @commands.command(description = "Returns .fish payouts and probabilities")
     async def probability(self, ctx):
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank ``.fish`` Probabilities', footer = 'Code is open-source: https://github.com/abhatthal/HonestBear')
+        eObj = await embed(ctx, title = f'{BANK_NAME} ``.fish`` Probabilities', footer = f'Code is open-source: https://github.com/abhatthal/{settings.BOT_NAME}')
         # content = []
         for i in range(len(multipliers)):
             eObj.add_field(name = f'{str(multipliers[i])}x', value = f"{str('%.3f'%(weights[i] * 100))}%", inline = True)
@@ -509,7 +510,7 @@ class Economy(commands.Cog):
         else:
             msg = f"You don't have permission to crash the economy! {settings.ASAMI_EMOJI}"
         # send user message
-        eObj = await embed(ctx, title = 'Honest Bank', description = msg)
+        eObj = await embed(ctx, title = BANK_NAME, description = msg)
         if eObj is not False:
             await ctx.send(embed = eObj)
 

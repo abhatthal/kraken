@@ -13,7 +13,7 @@ import datetime
 import time
 import asyncio # await asyncio.sleep()
 import typing # for clear command typing.Union
-logger = logging.getLogger('HonestBear')
+logger = logging.getLogger(settings.BOT_NAME)
 
 
 class Moderator(commands.Cog):

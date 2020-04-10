@@ -3,7 +3,7 @@ from discord.ext import commands
 from os import listdir
 import logging
 import helper_files.settings as settings
-logger = logging.getLogger('HonestBear')
+logger = logging.getLogger(settings.BOT_NAME)
 
 
 class Admin(commands.Cog):

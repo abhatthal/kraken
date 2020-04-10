@@ -8,7 +8,7 @@ import logging
 import helper_files.settings as settings
 import aiosqlite3
 import asyncio # await asyncio.sleep()
-logger = logging.getLogger('HonestBear')
+logger = logging.getLogger(settings.BOT_NAME)
 
 
 class Events(commands.Cog):

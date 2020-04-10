@@ -4,19 +4,19 @@ import json # to read blacklist
 
 logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctime)s %(message)s', datefmt = '%Y-%m-%d %H:%M:%S')
 
-BOT_NAME = 'Honest Bear'
-BOT_AVATAR = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/HonestBear.png'
+BOT_NAME = 'Kraken'
+BOT_AVATAR = 'https://raw.githubusercontent.com/abhatthal/Kraken/master/images/Kraken.png'
 DESCRIPTION = 'A very honest discord bot'
 COMMAND_PREFIX = '.'
 
-DATABASE = 'honestbear.db'
+DATABASE = 'kraken.db'
 
 # Thumbnails
-ADMIN_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/admin.png'
-ECONOMY_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/economy.png'
-MEMBER_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/member.png'
-MODERATOR_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/moderator.png'
-MUSIC_IMG = 'https://raw.githubusercontent.com/abhatthal/HonestBear/master/images/music.png'
+ADMIN_IMG = 'https://raw.githubusercontent.com/abhatthal/Kraken/master/images/admin.png'
+ECONOMY_IMG = 'https://raw.githubusercontent.com/abhatthal/Kraken/master/images/economy.png'
+MEMBER_IMG = 'https://raw.githubusercontent.com/abhatthal/Kraken/master/images/member.png'
+MODERATOR_IMG = 'https://raw.githubusercontent.com/abhatthal/Kraken/master/images/moderator.png'
+MUSIC_IMG = 'https://raw.githubusercontent.com/abhatthal/Kraken/master/images/music.png'
 
 # Channels
 ## General
