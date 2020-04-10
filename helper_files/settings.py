@@ -6,7 +6,7 @@ logging.basicConfig(filename = 'bot.log', level = logging.INFO, format='%(asctim
 
 BOT_NAME = 'Kraken'
 BOT_AVATAR = 'https://raw.githubusercontent.com/abhatthal/Kraken/master/images/Kraken.png'
-DESCRIPTION = 'A very honest discord bot'
+DESCRIPTION = 'Part-time legendary sea monster, full-time Python 3 Discord bot.'
 COMMAND_PREFIX = '.'
 
 DATABASE = 'kraken.db'
