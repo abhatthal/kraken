@@ -15,7 +15,7 @@ from shutil import copyfile # for backing up database
 
 CURRENCY_NAME = 'fish'
 CURRENCY_IMG = '🐟'
-BANK_NAME = 'Kraken Bank'
+BANK_NAME = f'{settings.BOT_NAME} Bank'
 STARTING_VALUE = 500
 
 # payouts for .fish
