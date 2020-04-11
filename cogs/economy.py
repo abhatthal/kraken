@@ -450,7 +450,7 @@ class Economy(commands.Cog):
                         footer = 'Congratulations!'
                     else:
                         title = '🎊 GRAND PRIZE WINNER!! 🎊'
-                        footer = 'So much fish...'
+                        footer = f'So much {CURRENCY_NAME}...'
                 # update roles
                 await ctx.invoke(self.update_roles)
             # close connection
@@ -464,10 +464,10 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(description = "Returns .fish payouts and probabilities")
+    @commands.command(description = f'Returns {settings.COMMAND_PREFIX}{CURRENCY_NAME} payouts and probabilities')
     async def probability(self, ctx):
         # send user message
-        eObj = await embed(ctx, title = f'{BANK_NAME} ``.fish`` Probabilities', footer = f'Code is open-source: https://github.com/abhatthal/{settings.BOT_NAME}')
+        eObj = await embed(ctx, title = f'{BANK_NAME} ``{settings.COMMAND_PREFIX}{CURRENCY_NAME}`` Probabilities', footer = f'Code is open-source: https://github.com/abhatthal/{settings.BOT_NAME}')
         # content = []
         for i in range(len(multipliers)):
             eObj.add_field(name = f'{str(multipliers[i])}x', value = f"{str('%.3f'%(weights[i] * 100))}%", inline = True)
