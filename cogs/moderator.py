@@ -468,7 +468,7 @@ class Moderator(commands.Cog):
     async def ban_word(self, ctx, word : str):
         word = word.lower()
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        if settings.MODERATOR in user_roles or settings.ADMIN in user_roles:
+        if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
             if not word in settings.BLACKLIST:
                 settings.BLACKLIST.append(word)
                 settings.BLACKLIST.sort()
@@ -494,7 +494,7 @@ class Moderator(commands.Cog):
     async def unban_word(self, ctx, word : str):
         word = word.lower()
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        if settings.MODERATOR in user_roles or settings.ADMIN in user_roles:
+        if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
             if word in settings.BLACKLIST:
                 settings.BLACKLIST.remove(word)
                 with open('blacklist.json', 'w') as f:

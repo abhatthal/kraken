@@ -21,9 +21,9 @@ class Member(commands.Cog):
         user_roles = [role.name for role in sorted(ctx.author.roles, key = lambda x: int(x.position), reverse = True)]
         ignore = ['events.py'] + settings.DISABLED_COGS
         if extension == None:
-            if not settings.MODERATOR in user_roles and not settings.ADMIN in user_roles:
+            if not settings.MODERATOR in user_roles and ctx.author.id != settings.OWNER:
                 ignore.append('moderator.py')
-            if not settings.ADMIN in user_roles:
+            if ctx.author.id != settings.OWNER:
                 ignore.append('admin.py')
         else:
             for filename in os.listdir('./cogs'):

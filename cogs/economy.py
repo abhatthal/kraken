@@ -97,12 +97,11 @@ class Economy(commands.Cog):
 
     @commands.command(aliases = ['setbalance'], description = "Admins Only: Change a user's balance")
     async def set_balance(self, ctx, amount : int, member : discord.Member = None):
-        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         # check member
         run = True
         if member == None:
             member = ctx.author
-        if not settings.ADMIN in user_roles:
+        if ctx.author.id != settings.OWNER:
             run = False
             msg = f"You don't have permission to set balances! {settings.ASAMI_EMOJI}"
         if run:
@@ -139,12 +138,11 @@ class Economy(commands.Cog):
 
     @commands.command(aliases = ['makeaccount'], description = f'Make yourself a bank account to keep your {CURRENCY_NAME}. Admins can add an optional member.')
     async def make_account(self, ctx, member : discord.Member = None):
-        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         # check member
         run = True
         if member == None:
             member = ctx.author
-        if not settings.ADMIN in user_roles and member != ctx.author:
+        if ctx.author.id != settings.OWNER and member != ctx.author:
             run = False
             msg = f"You don't have permission to make bank accounts for others! {settings.ASAMI_EMOJI}"
         if run:
@@ -187,13 +185,12 @@ class Economy(commands.Cog):
     @commands.command(aliases = ['deleteaccount'], description = f'Admins Only: Deletes an account and all of its {CURRENCY_NAME}')
     async def delete_account(self, ctx, member : discord.Member = None):
         # Roles
-        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         top10 = get(ctx.guild.roles, id = top10_ID)
         numberone = get(ctx.guild.roles, id = numberone_ID)
         # check member
         if member == None:
             member = ctx.author
-        if settings.ADMIN in user_roles:
+        if ctx.author.id == settings.OWNER:
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
@@ -365,8 +362,7 @@ class Economy(commands.Cog):
         msg = ''
         footer = ''
         maintenance = False
-        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        if maintenance and not settings.ADMIN in user_roles:
+        if maintenance and ctx.author.id != settings.OWNER:
             msg = 'The economy collapsed, we are trying to bail out.'
             footer = 'Command is under maintenance right now!'
         else:
@@ -417,8 +413,7 @@ class Economy(commands.Cog):
         footer = ''
         title = BANK_NAME
         maintenance = False
-        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        if maintenance and not settings.ADMIN in user_roles:
+        if maintenance and ctx.author.id != settings.OWNER:
             msg = f"Oof, there's no {CURRENCY_NAME} in the pond."
             footer = 'Command is under maintenance right now!'
         else:
@@ -481,9 +476,8 @@ class Economy(commands.Cog):
         # Roles
         top10 = get(ctx.guild.roles, id = top10_ID)
         numberone = get(ctx.guild.roles, id = numberone_ID)
-        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
 
-        if settings.ADMIN in user_roles or ctx.author.id == settings.OWNER:
+        if ctx.author.id == settings.OWNER:
             # connect to database
             db = await aiosqlite3.connect(settings.DATABASE)
             cursor = await db.cursor()
@@ -517,7 +511,7 @@ class Economy(commands.Cog):
 
     async def cog_check(self, ctx):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        return settings.MODERATOR in user_roles or settings.ADMIN in user_roles or ctx.author.id == settings.OWNER or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
+        return settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER or ctx.channel.id in (settings.BOT_SPAM_CHANNEL, settings.ECONOMY_CHANNEL)
 
 
 def setup(bot):

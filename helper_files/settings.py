@@ -47,8 +47,6 @@ KASH_DAB_EMOJI = '<:kash_dab:620410299933261844>'
 
 # Roles
 MODERATOR = 'mod'
-ADMIN = 'God'
-
 OWNER = 330178605936017408
 
 # Disabled Cogs
