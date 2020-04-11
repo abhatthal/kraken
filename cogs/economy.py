@@ -330,7 +330,7 @@ class Economy(commands.Cog):
             await ctx.send(embed = eObj)
 
 
-    @commands.command(aliases = ['lb'], description = 'Returns top ten richest toucans')
+    @commands.command(aliases = ['lb'], description = f'See who has the most {CURRENCY_NAME}')
     async def leaderboard(self, ctx):
         # connect to database
         db = await aiosqlite3.connect(settings.DATABASE)
