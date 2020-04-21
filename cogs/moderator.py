@@ -541,8 +541,9 @@ class Moderator(commands.Cog):
                 await ctx.send(embed = eObj)
             # flip alarm status
             ALARM_STATUS = not ALARM_STATUS
+            await ctx.send(ctx.guild.channels)
         else:
-            await ctx.send(f"You can't pull the alarm!\nContact a moderator if we're being raided. {settings.ASAMI_EMOJI}")
+            await ctx.send(f"Only moderators can pull the alarm! {settings.ASAMI_EMOJI}\n")
 
 
 def setup(bot):
