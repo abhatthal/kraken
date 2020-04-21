@@ -25,6 +25,8 @@ channel_perms = []
 class Moderator(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        global alarm_status
+        global channel_perms
     
 
     @commands.command(description = 'Clears messages in a particular channel')
