@@ -520,27 +520,31 @@ class Moderator(commands.Cog):
 
     @commands.command(description = 'Enable/Disable sending messages')
     async def alarm(self, ctx):
-        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        user = ctx.author.display_name
-        avatar = ctx.author.avatar_url
-        if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
-            if not self.alarm_status:
-                msg = 'The raid alarm has been pulled. Users without roles are unable to send messages.'
-                logger.info(f'[ALARM] Enabled\n Moderator: {user}\n')
-            else:
-                msg = 'The raid alarm has been disabled. All users are now able to send messages again.'
-                logger.info(f'[ALARM] Disabled\n Moderator: {user}\n')
-            # embed to send user
-            eObj = await embed(ctx, title = 'Raid Alarm', author = user,
-                avatar = avatar, description = msg)
-            # send embed if valid
-            if eObj is not False:
-                await ctx.send(embed = eObj)
-            # flip alarm status
-            self.alarm_status = not self.alarm_status
-            await ctx.send(ctx.guild.channels)
+        maintenance = True
+        if maintenance and ctx.author.id != settings.OWNER:
+            await ctx.send(f'This command is under construction. Sorry! {settings.ASAMI_EMOJI}\n')
         else:
-            await ctx.send(f"Only moderators can pull the alarm! {settings.ASAMI_EMOJI}\n")
+            user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+            user = ctx.author.display_name
+            avatar = ctx.author.avatar_url
+            if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
+                if not self.alarm_status:
+                    msg = 'The raid alarm has been pulled. Users without roles are unable to send messages.'
+                    logger.info(f'[ALARM] Enabled\n Moderator: {user}\n')
+                else:
+                    msg = 'The raid alarm has been disabled. All users are now able to send messages again.'
+                    logger.info(f'[ALARM] Disabled\n Moderator: {user}\n')
+                # embed to send user
+                eObj = await embed(ctx, colour = 0xF04848, title = 'Raid Alarm', author = user,
+                    avatar = avatar, description = msg)
+                # send embed if valid
+                if eObj is not False:
+                    await ctx.send(embed = eObj)
+                # flip alarm status
+                self.alarm_status = not self.alarm_status
+                await ctx.send(ctx.guild.channels)
+            else:
+                await ctx.send(f"Only moderators can pull the alarm! {settings.ASAMI_EMOJI}\n")
 
 
 def setup(bot):
