@@ -15,18 +15,13 @@ import asyncio # await asyncio.sleep()
 import typing # for clear command typing.Union
 logger = logging.getLogger(settings.BOT_NAME)
 
-# Store alarm status and channel info in RAM.
-# Doesn't need to be in a database.
-# (For alarm command)
-alarm_status = False
-channel_perms = []
-
 
 class Moderator(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        global alarm_status
-        global channel_perms
+        # for alarm command
+        self.alarm_status = False
+        self.channel_perms = []
     
 
     @commands.command(description = 'Clears messages in a particular channel')
