@@ -524,7 +524,7 @@ class Moderator(commands.Cog):
         user = ctx.author.display_name
         avatar = ctx.author.avatar_url
         if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
-            if self.alarm_status:
+            if not self.alarm_status:
                 msg = 'The raid alarm has been pulled. Users without roles are unable to send messages.'
                 logger.info(f'[ALARM] Enabled\n Moderator: {user}\n')
             else:
