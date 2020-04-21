@@ -15,6 +15,12 @@ import asyncio # await asyncio.sleep()
 import typing # for clear command typing.Union
 logger = logging.getLogger(settings.BOT_NAME)
 
+# Store alarm status and channel info in RAM.
+# Doesn't need to be in a database.
+# (For alarm command)
+ALARM_STATUS = False
+CHANNELS_PERMS = []
+
 
 class Moderator(commands.Cog):
     def __init__(self, bot):
@@ -53,7 +59,7 @@ class Moderator(commands.Cog):
             await ctx.send(f'Sorry, only mods can clear messages! {settings.ASAMI_EMOJI}')
 
 
-    @commands.command(description = 'kick a user from the server')
+    @commands.command(description = 'Kick a user from the server')
     async def kick(self, ctx, member : discord.Member, *, reason = 'Unspecified'):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
@@ -241,7 +247,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to ban anybirdie! {settings.ASAMI_EMOJI}")
                 
 
-    @commands.command(description = 'give a user an infraction')
+    @commands.command(description = 'Give a user an infraction')
     async def warn(self, ctx, member : discord.Member, *, reason = 'Unspecified', automod = False, message = None):
         user_perms = await getListOfUserPerms(ctx)
         if member.id == self.bot.user.id:
@@ -301,7 +307,7 @@ class Moderator(commands.Cog):
             await ctx.send(f"You're not allowed to warn anybirdie! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = "returns all of a user's infractions")
+    @commands.command(description = "See all of a user's infractions")
     async def infractions(self, ctx, member : discord.Member = None):
         user_perms = await getListOfUserPerms(ctx)
         if member == None:
@@ -513,6 +519,30 @@ class Moderator(commands.Cog):
             logger.info(f'[UNBAN WORD] {word}\n Moderator: {ctx.author}\n')
         else:
             await ctx.send(f"You can't unban words! {settings.ASAMI_EMOJI}")
+
+
+    @commands.command(description = "Enable/Disable sending messages")
+    async def alarm(self, ctx):
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
+            if ALARM_STATUS:
+                msg = 'The raid alarm has been pulled. Users without roles are unable to send messages.'
+                logger.info(f'[ALARM] Enabled\n Moderator: {user}\n')
+            else:
+                msg = 'The raid alarm has been disabled. All users are now able to send messages again.'
+                logger.info(f'[ALARM] Disabled\n Moderator: {user}\n')
+            user = ctx.author.display_name
+            avatar = ctx.author.avatar_url
+            # embed to send user
+            eObj = await embed(ctx, title = 'Raid Alarm', author = user,
+                avatar = avatar, description = msg)
+            # send embed if valid
+            if eObj is not False:
+                await ctx.send(embed = eObj)
+            # flip alarm status
+            ALARM_STATUS = not ALARM_STATUS
+        else:
+            await ctx.send(f"You can't pull the alarm!\nContact a moderator if we're being raided. {settings.ASAMI_EMOJI}")
 
 
 def setup(bot):
