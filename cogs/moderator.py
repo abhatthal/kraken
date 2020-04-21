@@ -518,9 +518,11 @@ class Moderator(commands.Cog):
             await ctx.send(f"You can't unban words! {settings.ASAMI_EMOJI}")
 
 
-    @commands.command(description = "Enable/Disable sending messages")
+    @commands.command(description = 'Enable/Disable sending messages')
     async def alarm(self, ctx):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        user = ctx.author.display_name
+        avatar = ctx.author.avatar_url
         if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
             if self.alarm_status:
                 msg = 'The raid alarm has been pulled. Users without roles are unable to send messages.'
@@ -528,8 +530,6 @@ class Moderator(commands.Cog):
             else:
                 msg = 'The raid alarm has been disabled. All users are now able to send messages again.'
                 logger.info(f'[ALARM] Disabled\n Moderator: {user}\n')
-            user = ctx.author.display_name
-            avatar = ctx.author.avatar_url
             # embed to send user
             eObj = await embed(ctx, title = 'Raid Alarm', author = user,
                 avatar = avatar, description = msg)
