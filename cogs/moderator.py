@@ -522,7 +522,7 @@ class Moderator(commands.Cog):
     async def alarm(self, ctx):
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
-            if alarm_status:
+            if self.alarm_status:
                 msg = 'The raid alarm has been pulled. Users without roles are unable to send messages.'
                 logger.info(f'[ALARM] Enabled\n Moderator: {user}\n')
             else:
@@ -537,7 +537,7 @@ class Moderator(commands.Cog):
             if eObj is not False:
                 await ctx.send(embed = eObj)
             # flip alarm status
-            alarm_status = not alarm_status
+            self.alarm_status = not self.alarm_status
             await ctx.send(ctx.guild.channels)
         else:
             await ctx.send(f"Only moderators can pull the alarm! {settings.ASAMI_EMOJI}\n")
