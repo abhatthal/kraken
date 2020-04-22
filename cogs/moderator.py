@@ -531,12 +531,14 @@ class Moderator(commands.Cog):
                     msg = 'The raid alarm has been pulled. Users without roles are unable to send messages.'
                     logger.info(f'[ALARM] Enabled\n Moderator: {user}\n')
                     Permission = 0
+                    Colour = 0xF04848
                 else:
                     msg = 'The raid alarm has been disabled. All users are now able to send messages again.'
                     logger.info(f'[ALARM] Disabled\n Moderator: {user}\n')
                     Permission = 67456064
+                    Colour = 0x3b745b
                 # embed to send user
-                eObj = await embed(ctx, colour = 0xF04848, title = 'Raid Alarm', author = user,
+                eObj = await embed(ctx, colour = Colour, title = 'Raid Alarm', author = user,
                     avatar = avatar, description = msg)
                 # send embed if valid
                 if eObj is not False:
