@@ -530,9 +530,11 @@ class Moderator(commands.Cog):
                 if not self.alarm_status:
                     msg = 'The raid alarm has been pulled. Users without roles are unable to send messages.'
                     logger.info(f'[ALARM] Enabled\n Moderator: {user}\n')
+                    Permission = 0
                 else:
                     msg = 'The raid alarm has been disabled. All users are now able to send messages again.'
                     logger.info(f'[ALARM] Disabled\n Moderator: {user}\n')
+                    Permission = 67456064
                 # embed to send user
                 eObj = await embed(ctx, colour = 0xF04848, title = 'Raid Alarm', author = user,
                     avatar = avatar, description = msg)
@@ -542,8 +544,8 @@ class Moderator(commands.Cog):
 
                 # toggle sending messages for @everyone in all guilds
                 for guild in self.bot.guilds:
-                    await ctx.send(guild.default_role.permissions)
-                    # await guild.default_role.edit(permissions = {send_messages:self.alarm_status})
+                    # await ctx.send(guild.default_role.permissions)
+                    await guild.default_role.edit(permissions = Permission)
 
                 # flip alarm status
                 self.alarm_status = not self.alarm_status
