@@ -543,8 +543,9 @@ class Moderator(commands.Cog):
                 # flip alarm status
                 self.alarm_status = not self.alarm_status
 
+                await ctx.send('Channel Names and IDs')
                 for channel in ctx.guild.channels:
-                    await ctx.send(channel.name)
+                    await ctx.send(f'{channel.name} : {channel.id}')
 
             else:
                 await ctx.send(f"Only moderators can pull the alarm! {settings.ASAMI_EMOJI}\n")
