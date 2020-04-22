@@ -544,7 +544,7 @@ class Moderator(commands.Cog):
                 self.alarm_status = not self.alarm_status
 
                 await ctx.send('Channel Names and IDs')
-                for channel in ctx.guild.channels:
+                for channel in self.bot.get_all_channels():
                     await ctx.send(f'{channel.name} : {channel.id}')
 
             else:
