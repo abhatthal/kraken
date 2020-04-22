@@ -519,7 +519,7 @@ class Moderator(commands.Cog):
 
     @commands.command(description = 'Enable/Disable sending messages')
     async def alarm(self, ctx):
-        maintenance = True
+        maintenance = False
         if maintenance and ctx.author.id != settings.OWNER:
             await ctx.send(f'This command is under construction. Sorry! {settings.ASAMI_EMOJI}\n')
         else:
@@ -543,8 +543,7 @@ class Moderator(commands.Cog):
                     await ctx.send(embed = eObj)
                 # toggle sending messages for @everyone in all guilds
                 for guild in self.bot.guilds:
-                    await ctx.send(guild.default_role.permissions)
-                    # await guild.default_role.edit(permissions = Permission)
+                    # await ctx.send(guild.default_role.permissions)
                     await guild.default_role.edit(permissions = discord.Permissions(permissions=Permission))
 
                 # flip alarm status
