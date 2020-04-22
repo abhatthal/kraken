@@ -545,7 +545,7 @@ class Moderator(commands.Cog):
                 for guild in self.bot.guilds:
                     await ctx.send(guild.default_role.permissions)
                     # await guild.default_role.edit(permissions = Permission)
-                    await guild.default_role.edit(value = discord.Permissions(permissions=Permission))
+                    await guild.default_role.edit(permissions = discord.Permissions(permissions=Permission))
 
                 # flip alarm status
                 self.alarm_status = not self.alarm_status
