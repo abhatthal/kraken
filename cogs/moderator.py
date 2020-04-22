@@ -21,7 +21,6 @@ class Moderator(commands.Cog):
         self.bot = bot
         # for alarm command
         self.alarm_status = False
-        self.channel_perms = {}
     
 
     @commands.command(description = 'Clears messages in a particular channel')
