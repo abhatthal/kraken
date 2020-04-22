@@ -540,12 +540,14 @@ class Moderator(commands.Cog):
                 # send embed if valid
                 if eObj is not False:
                     await ctx.send(embed = eObj)
+
+                # toggle sending messages for @everyone in all guilds
+                for guild in self.bot.guilds:
+                    # await ctx.send(guild.name)
+                    await self.bot.edit_role(guild.default_role, send_messages=self.alarm_status)
+
                 # flip alarm status
                 self.alarm_status = not self.alarm_status
-
-                # Get all guilds the bot is in
-                for guild in self.bot.guilds:
-                    await ctx.send(guild.name)
 
             else:
                 await ctx.send(f"Only moderators can pull the alarm! {settings.ASAMI_EMOJI}\n")
