@@ -542,8 +542,7 @@ class Moderator(commands.Cog):
 
                 # toggle sending messages for @everyone in all guilds
                 for guild in self.bot.guilds:
-                    # await ctx.send(guild.name)
-                    await guild.default_role.edit(send_messages = self.alarm_status)
+                    await guild.default_role.edit(send_messages=self.alarm_status)
 
                 # flip alarm status
                 self.alarm_status = not self.alarm_status
