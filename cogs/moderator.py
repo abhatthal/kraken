@@ -21,7 +21,7 @@ class Moderator(commands.Cog):
         self.bot = bot
         # for alarm command
         self.alarm_status = False
-        self.channel_perms = []
+        self.channel_perms = {}
     
 
     @commands.command(description = 'Clears messages in a particular channel')
@@ -543,9 +543,9 @@ class Moderator(commands.Cog):
                 # flip alarm status
                 self.alarm_status = not self.alarm_status
 
-                await ctx.send('Channel Names and IDs')
-                for channel in self.bot.get_all_channels():
-                    await ctx.send(f'{channel.name} : {channel.id}')
+                # Get all guilds the bot is in
+                for guild in self.bot.guilds:
+                    await ctx.send(guild.name)
 
             else:
                 await ctx.send(f"Only moderators can pull the alarm! {settings.ASAMI_EMOJI}\n")
