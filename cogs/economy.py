@@ -501,6 +501,7 @@ class Economy(commands.Cog):
             # close connection
             await cursor.close()
             await db.close()
+            msg = f'Economy crashed successfully!'
         else:
             msg = f"You don't have permission to crash the economy! {settings.ASAMI_EMOJI}"
         # send user message
