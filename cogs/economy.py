@@ -12,6 +12,7 @@ from discord.utils import get
 from helper_files.embed import embed
 import helper_files.settings as settings
 from shutil import copyfile # for backing up database
+from os import system # a hacky solution to deleting databases
 
 CURRENCY_NAME = 'fish'
 CURRENCY_IMG = '🐟'
@@ -497,7 +498,8 @@ class Economy(commands.Cog):
             # backup entire database
             copyfile(f'./{settings.DATABASE}', f'../Backups/{calendar.timegm(time.gmtime())}.db')
             # delete all entries in economy table
-            await cursor.execute('DELETE FROM economy')
+            # await cursor.execute('DELETE FROM economy')
+            system(f'sqlite3 {settings.DATABASE} "DELETE FROM economy;"')
             # close connection
             await cursor.close()
             await db.close()
