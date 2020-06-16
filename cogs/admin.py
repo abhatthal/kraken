@@ -69,7 +69,8 @@ class Admin(commands.Cog):
 
 
     async def cog_check(self, ctx):
-        return ctx.author.id == settings.OWNER
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
+        return settings.BOT_MANAGER in user_roles
 
 
 def setup(bot):

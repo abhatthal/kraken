@@ -470,7 +470,7 @@ class Moderator(commands.Cog):
     async def ban_word(self, ctx, word : str):
         word = word.lower()
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
+        if settings.MODERATOR in user_roles or settings.BOT_MANAGER in user_roles:
             if not word in settings.BLACKLIST:
                 settings.BLACKLIST.append(word)
                 settings.BLACKLIST.sort()
@@ -496,7 +496,7 @@ class Moderator(commands.Cog):
     async def unban_word(self, ctx, word : str):
         word = word.lower()
         user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
-        if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
+        if settings.MODERATOR in user_roles or settings.BOT_MANAGER in user_roles:
             if word in settings.BLACKLIST:
                 settings.BLACKLIST.remove(word)
                 with open('blacklist.json', 'w') as f:
@@ -519,14 +519,15 @@ class Moderator(commands.Cog):
 
     @commands.command(description = 'Enable/Disable sending messages')
     async def alarm(self, ctx):
+        user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
         maintenance = False
-        if maintenance and ctx.author.id != settings.OWNER:
+        if maintenance and settings.BOT_MANAGER not in user_roles:
             await ctx.send(f'This command is under construction. Sorry! {settings.ASAMI_EMOJI}\n')
         else:
             user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
             user = ctx.author.display_name
             avatar = ctx.author.avatar_url
-            if settings.MODERATOR in user_roles or ctx.author.id == settings.OWNER:
+            if settings.MODERATOR in user_roles or settings.BOT_MANAGER in user_roles:
                 if not self.alarm_status:
                     Title = 'Raid Alarm Enabled'
                     msg = 'The raid alarm has been pulled. Users without roles are unable to send or see messages.'

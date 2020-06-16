@@ -131,7 +131,7 @@ class Events(commands.Cog):
             warn = self.bot.get_command('warn')
             user_roles = [role.name for role in sorted(ctx.author.roles, key=lambda x: int(x.position), reverse=True)]
             # rules don't apply to mods
-            if not settings.MODERATOR in user_roles and ctx.author.id != settings.OWNER:
+            if not settings.MODERATOR in user_roles and not settings.BOT_MANAGER in user_roles:
                 # Check for bad words
                 suffixes = ['', 's', 'z', ',', '.', '!', '?', '*', '**', '***', '||']
                 prefixes = ['', ',', '*', '**', '***', '||']
