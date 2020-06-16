@@ -6,7 +6,7 @@
 
 Part-time legendary sea monster, full-time Discord bot.
 
-<a href=http://bhatthal.ddns.net>Hosted in California</a> 
+Hosted in California
 
 # License
 [GNU GPL v3](LICENSE).
